@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum Sulap Eksklusif</title>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-black to-gray-900 min-h-screen text-white">
+  <div class="max-w-3xl mx-auto p-4">
+    <h1 class="text-3xl font-bold text-center mb-6">FORUM SULAP EKSKLUSIF</h1>
+
+    <!-- Auth Section -->
+    <div id="auth-section" class="text-center mb-6">
+      <button id="google-login" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">Masuk dengan Google</button>
+      <p id="signup-disabled-msg" class="text-red-500 hidden mt-2">Pendaftaran ditutup karena kuota penuh.</p>
+    </div>
+
+    <!-- Form Username Setelah Login Pertama Kali -->
+    <div id="username-form" class="hidden mb-6">
+      <input id="username-input" type="text" placeholder="Buat Username" class="w-full p-2 rounded text-black" />
+      <button onclick="saveUsername()" class="mt-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Simpan</button>
+    </div>
+
+    <!-- Forum Section -->
+    <div id="forum-section" class="hidden">
+      <div class="mb-4">
+        <select id="kategori" class="p-2 rounded text-black">
+          <option value="Mentalism">Mentalism</option>
+          <option value="Kartu">Kartu</option>
+          <option value="Close-Up">Close-Up</option>
+          <option value="Stage">Stage</option>
+          <option value="Ilusi">Ilusi</option>
+        </select>
+        <input id="judul-thread" type="text" placeholder="Judul Thread" class="p-2 rounded text-black w-full mt-2" />
+        <textarea id="isi-thread" placeholder="Isi thread kamu..." class="p-2 rounded text-black w-full mt-2"></textarea>
+        <button onclick="buatThread()" class="mt-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Buat Thread</button>
+      </div>
+      <div id="daftar-thread"></div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC8tPxeBPSdoXJSsolAZoZC_uADNPGtaHo",
+      authDomain: "noc-forum.firebaseapp.com",
+      projectId: "noc-forum",
+      storageBucket: "noc-forum.firebasestorage.app",
+      messagingSenderId: "684127909778",
+      appId: "1:684127909778:web:5c24872a8a31f0a289334b",
+      measurementId: "G-T7GPJE0990"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser = null;
+
+    document.getElementById('google-login').addEventListener('click', async () => {
+      const userCount = (await db.collection('users').get()).size;
+      if (userCount >= 15) {
+        document.getElementById('signup-disabled-msg').classList.remove('hidden');
+        return;
+      }
+
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).then(async (result) => {
+        currentUser = result.user;
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        if (!doc.exists) {
+          document.getElementById('username-form').classList.remove('hidden');
+        } else {
+          loadForum();
+        }
+      });
+    });
+
+    async function saveUsername() {
+      const username = document.getElementById('username-input').value.trim();
+      if (!username) return;
+      await db.collection('users').doc(currentUser.uid).set({
+        username: username,
+        email: currentUser.email,
+        joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      document.getElementById('username-form').classList.add('hidden');
+      loadForum();
+    }
+
+    async function loadForum() {
+      document.getElementById('auth-section').classList.add('hidden');
+      document.getElementById('forum-section').classList.remove('hidden');
+      tampilkanThread();
+    }
+
+    async function buatThread() {
+      const title = document.getElementById('judul-thread').value.trim();
+      const content = document.getElementById('isi-thread').value.trim();
+      const category = document.getElementById('kategori').value;
+      if (!title || !content) return;
+
+      const userDoc = await db.collection('users').doc(currentUser.uid).get();
+      await db.collection('threads').add({
+        title: title,
+        content: content,
+        category: category,
+        createdBy: userDoc.data().username,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      tampilkanThread();
+    }
+
+    async function tampilkanThread() {
+      const snapshot = await db.collection('threads').orderBy('createdAt', 'desc').get();
+      const container = document.getElementById('daftar-thread');
+      container.innerHTML = '';
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement('div');
+        div.className = 'p-4 bg-white/10 rounded mb-4';
+        div.innerHTML = `
+          <h3 class="text-xl font-semibold">${data.title}</h3>
+          <p class="text-sm text-gray-400">Kategori: ${data.category} | Oleh: ${data.createdBy}</p>
+          <p class="mt-2">${data.content}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
