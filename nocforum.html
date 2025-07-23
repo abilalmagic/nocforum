@@ -502,17 +502,20 @@
                         body: JSON.stringify({ data: newPost })
                     });
 
-                    if (!response.ok) throw new Error('Gagal mengirim data.');
+                    if (!response.ok) throw new Error('Gagal mengirim data ke server.');
                     
-                    // PERBAIKAN: Update Optimis
-                    allPosts.push(newPost); // Langsung tambahkan ke data lokal
-                    logToScreen('Post berhasil dikirim ke server.', 'success');
+                    logToScreen('Post berhasil dikirim! Menunggu sinkronisasi server...', 'success');
                     
                     document.getElementById('new-post-form').reset();
                     document.getElementById('new-post-form').classList.add('hidden');
                     
-                    // Langsung render detail dari data lokal, tidak perlu menunggu
-                    renderPostDetail(newPost.postid);
+                    // PERBAIKAN: Logika baru yang lebih aman
+                    setTimeout(async () => {
+                        logToScreen('Mengambil ulang data terbaru dari server...');
+                        await fetchAllData(); // Ambil semua data yang sudah pasti tersimpan
+                        renderPostsList(currentCategory); // Tampilkan ulang daftar thread
+                        logToScreen('Daftar thread telah diperbarui.', 'success');
+                    }, 3000); // Jeda 3 detik untuk memberi waktu Google Sheet
 
                 } catch (error) {
                     logToScreen(`Gagal membuat post: ${error.message}`, 'error');
