@@ -37,6 +37,10 @@
             background-color: #b91c1c;
             box-shadow: 0 0 15px rgba(185, 28, 28, 0.7);
         }
+        .btn-primary:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+        }
         .card {
             background-color: #1c1c1c;
             border: 1px solid #333;
@@ -59,13 +63,13 @@
 
     <div id="app" class="container mx-auto max-w-4xl p-4">
 
-        <!-- Navigasi Atas -->
-        <nav class="relative flex justify-center items-center p-4 mb-8">
+        <!-- Navigasi Atas (Mobile Friendly) -->
+        <nav class="flex flex-col md:flex-row md:justify-between items-center p-4 mb-8 gap-4">
             <div class="text-center">
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC FORUM Logo" class="h-12 w-auto mx-auto">
                 <p class="text-sm text-gray-400 mt-2">forum diskusi sulap asik</p>
             </div>
-            <div id="nav-user-section" class="absolute top-1/2 right-4 -translate-y-1/2">
+            <div id="nav-user-section" class="text-center">
                 <!-- Diisi oleh JS -->
             </div>
         </nav>
@@ -114,7 +118,7 @@
         
         <!-- Tampilan Kategori -->
         <div id="category-view" class="hidden">
-            <h2 class="font-gothic-title text-2xl text-center mb-8">Pilih Kategori</h2>
+            <h2 class="font-gothic-title text-2xl md:text-3xl text-center mb-8">Pilih Kategori</h2>
             <div id="category-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Kategori akan dirender di sini oleh JS -->
             </div>
@@ -123,7 +127,7 @@
         <!-- Tampilan Utama Forum (Daftar Post per Kategori) -->
         <div id="forum-view" class="hidden">
             <button id="back-to-categories" class="mb-6 text-red-500 hover:underline">&larr; Kembali ke Kategori</button>
-            <h2 id="forum-category-title" class="font-gothic-title text-3xl mb-6"></h2>
+            <h2 id="forum-category-title" class="font-gothic-title text-2xl md:text-3xl mb-6 text-center md:text-left"></h2>
             <button id="show-new-post-form" class="w-full p-3 mb-6 btn-primary rounded">Buat Thread Baru</button>
             <form id="new-post-form" class="card p-6 mb-8 hidden">
                 <h3 class="font-gothic-title text-xl mb-4">Thread Baru</h3>
@@ -204,9 +208,9 @@
             function updateNav() {
                 if (currentUser) {
                     navUserSection.innerHTML = `
-                        <div class="flex items-center gap-4">
+                        <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
                             <span>Welcome, <strong class="text-red-500">${currentUser.username}</strong></span>
-                            <button id="logout-btn" class="p-2 px-4 bg-gray-700 hover:bg-gray-600 rounded">Logout</button>
+                            <button id="logout-btn" class="w-full md:w-auto p-2 px-4 bg-gray-700 hover:bg-gray-600 rounded text-sm">Logout</button>
                         </div>
                     `;
                     document.getElementById('logout-btn').addEventListener('click', handleLogout);
@@ -299,7 +303,7 @@
                 const categoryList = document.getElementById('category-list');
                 categoryList.innerHTML = CATEGORIES.map(cat => `
                     <div class="card p-6 text-center cursor-pointer category-card" data-categoryid="${cat.id}">
-                        <h3 class="font-gothic-title text-2xl text-red-400">${cat.name}</h3>
+                        <h3 class="font-gothic-title text-xl md:text-2xl text-red-400">${cat.name}</h3>
                     </div>
                 `).join('');
 
@@ -323,20 +327,20 @@
                 filteredPosts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 
                 if (filteredPosts.length === 0) {
-                    postsList.innerHTML = `<p class="text-center text-gray-400">Belum ada thread di kategori ini.</p>`;
+                    postsList.innerHTML = `<div class="card p-6 text-center text-gray-400">Belum ada thread di kategori ini.</div>`;
                 } else {
                     postsList.innerHTML = filteredPosts.map(post => {
                         const commentCount = allComments.filter(c => c.postid === post.postid).length;
                         const likeCount = allLikes.filter(l => l.postid === post.postid).length;
                         return `
-                            <div class="card p-4 flex justify-between items-center cursor-pointer hover:border-red-600" data-postid="${post.postid}">
-                                <div>
-                                    <h3 class="font-gothic-title text-xl text-red-400">${post.title}</h3>
+                            <div class="card p-4 flex flex-col md:flex-row md:justify-between md:items-center gap-2 cursor-pointer hover:border-red-600" data-postid="${post.postid}">
+                                <div class="w-full">
+                                    <h3 class="font-gothic-title text-lg md:text-xl text-red-400">${post.title}</h3>
                                     <p class="text-sm text-gray-400">oleh ${post.username} - ${new Date(post.timestamp).toLocaleDateString('id-ID')}</p>
                                 </div>
-                                <div class="text-right">
-                                    <p>${commentCount} Komentar</p>
-                                    <p>${likeCount} Suka</p>
+                                <div class="w-full md:w-auto flex justify-start md:justify-end gap-4 text-sm text-gray-400 pt-2 md:pt-0 border-t border-gray-700 md:border-none">
+                                    <span>${commentCount} Komentar</span>
+                                    <span>${likeCount} Suka</span>
                                 </div>
                             </div>
                         `;
@@ -351,14 +355,28 @@
             function renderPostDetail(postId) {
                 currentPostId = postId;
                 const post = allPosts.find(p => p.postid === postId);
-                if (!post) return;
+                if (!post) {
+                    alert('Thread tidak ditemukan. Mungkin telah dihapus.');
+                    renderPostsList(currentCategory);
+                    showView('forum');
+                    return;
+                }
 
                 const postLikes = allLikes.filter(l => l.postid === postId);
                 const userHasLiked = postLikes.some(l => l.userid === currentUser.userid);
 
+                let deleteButtonHTML = '';
+                if (post.userid === currentUser.userid) {
+                    deleteButtonHTML = `
+                        <button class="delete-post-btn p-2 rounded text-gray-500 hover:text-red-500 ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    `;
+                }
+
                 const postContentArea = document.getElementById('post-content-area');
                 postContentArea.innerHTML = `
-                    <h2 class="font-gothic-title text-3xl mb-2">${post.title}</h2>
+                    <h2 class="font-gothic-title text-2xl md:text-3xl mb-2">${post.title}</h2>
                     <p class="text-sm text-gray-500 mb-4">oleh ${post.username} pada ${new Date(post.timestamp).toLocaleString('id-ID')}</p>
                     <p class="whitespace-pre-wrap mb-6">${post.content}</p>
                     <div class="flex items-center">
@@ -366,10 +384,14 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="${userHasLiked ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
                         </button>
                         <span class="ml-2">${postLikes.length} Suka</span>
+                        ${deleteButtonHTML}
                     </div>
                 `;
                 
                 document.querySelector('.like-btn').addEventListener('click', () => handleLike(postId));
+                if (post.userid === currentUser.userid) {
+                    document.querySelector('.delete-post-btn').addEventListener('click', () => handleDeletePost(postId));
+                }
 
                 renderComments(postId);
                 showView('postDetail');
@@ -393,12 +415,16 @@
                 }
             }
 
-            // --- Fungsi Aksi (Post, Comment, Like) ---
+            // --- Fungsi Aksi (Post, Comment, Like, Delete) ---
             async function handleNewPost(e) {
                 e.preventDefault();
                 const title = document.getElementById('new-post-title').value;
                 const content = document.getElementById('new-post-content').value;
                 if (!title || !content || !currentCategory) return;
+
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Mengirim...';
 
                 const newPost = {
                     postid: Date.now().toString(),
@@ -411,18 +437,29 @@
                 };
 
                 try {
-                    await fetch(API_URLS.posts, {
+                    const response = await fetch(API_URLS.posts, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ data: newPost })
                     });
+
+                    if (!response.ok) throw new Error('Gagal mengirim data.');
+
                     document.getElementById('new-post-form').reset();
                     document.getElementById('new-post-form').classList.add('hidden');
-                    await fetchAllData();
-                    renderPostsList(currentCategory);
+                    
+                    // FIX: Langsung tambahkan post baru ke array lokal
+                    allPosts.push(newPost);
+                    
+                    // Langsung pindah ke halaman detail post yang baru dibuat
+                    renderPostDetail(newPost.postid);
+
                 } catch (error) {
                     console.error("Gagal membuat post:", error);
-                    alert("Gagal membuat post baru.");
+                    alert("Gagal membuat post baru. Silakan coba lagi.");
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Kirim';
                 }
             }
             
@@ -447,8 +484,8 @@
                         body: JSON.stringify({ data: newComment })
                     });
                     document.getElementById('comment-form').reset();
-                    await fetchAllData();
-                    renderPostDetail(currentPostId);
+                    allComments.push(newComment); // Update lokal
+                    renderComments(currentPostId); // Render ulang hanya komentar
                 } catch (error) {
                     console.error("Gagal mengirim komentar:", error);
                     alert("Gagal mengirim komentar.");
@@ -474,11 +511,38 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ data: newLike })
                     });
-                    await fetchAllData();
-                    renderPostDetail(postId);
+                    allLikes.push(newLike); // Update lokal
+                    renderPostDetail(postId); // Render ulang seluruh detail
                 } catch (error) {
                     console.error("Gagal menyukai post:", error);
                     alert("Gagal menyukai post.");
+                }
+            }
+            
+            async function handleDeletePost(postId) {
+                if (!confirm('Apakah Anda yakin ingin menghapus thread ini? Aksi ini tidak dapat dibatalkan.')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URLS.posts}/postid/${postId}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Gagal menghapus thread dari database.');
+                    }
+
+                    // Hapus post dari array lokal
+                    allPosts = allPosts.filter(p => p.postid !== postId);
+                    
+                    alert('Thread berhasil dihapus.');
+                    renderPostsList(currentCategory);
+                    showView('forum');
+
+                } catch (error) {
+                    console.error("Gagal menghapus post:", error);
+                    alert("Gagal menghapus thread. Silakan coba lagi.");
                 }
             }
 
