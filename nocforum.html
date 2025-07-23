@@ -57,6 +57,28 @@
         .hidden {
             display: none;
         }
+        /* Floating Console Styles */
+        #floating-console-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            width: 90%;
+            max-width: 400px;
+            z-index: 9999;
+        }
+        #floating-console {
+            height: 150px;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid #444;
+            overflow-y: auto;
+            padding: 0.5rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+        .log-error { color: #f87171; }
+        .log-success { color: #4ade80; }
+        .log-info { color: #9ca3af; }
     </style>
 </head>
 <body class="text-gray-300">
@@ -163,6 +185,16 @@
 
     </div>
 
+    <!-- Floating Console -->
+    <div id="floating-console-container" class="rounded-lg shadow-2xl">
+        <div class="bg-gray-800 text-white p-2 flex justify-between items-center rounded-t-lg">
+            <h4 class="font-bold text-sm">NOC Console</h4>
+            <button id="clear-console-btn" class="text-xs bg-gray-600 hover:bg-red-700 px-2 py-1 rounded">Bersihkan</button>
+        </div>
+        <div id="floating-console"></div>
+    </div>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- URL API ANDA SUDAH DIMASUKKAN ---
@@ -197,6 +229,21 @@
             let currentPostId = null;
             let currentCategory = null;
 
+            // --- Floating Console Function ---
+            function logToScreen(message, type = 'info') {
+                const consoleEl = document.getElementById('floating-console');
+                const p = document.createElement('p');
+                const time = new Date().toLocaleTimeString();
+                p.innerHTML = `<span class="text-gray-600">${time}</span> > ${message}`;
+                
+                if (type === 'success') p.classList.add('log-success');
+                else if (type === 'error') p.classList.add('log-error');
+                else p.classList.add('log-info');
+                
+                consoleEl.appendChild(p);
+                consoleEl.scrollTop = consoleEl.scrollHeight; // Auto-scroll to bottom
+            }
+
             // --- Fungsi Navigasi & Tampilan ---
             function showView(viewName) {
                 Object.values(views).forEach(view => view.classList.add('hidden'));
@@ -222,6 +269,7 @@
             // --- Fungsi Otentikasi & User ---
             async function handleLogin(e) {
                 e.preventDefault();
+                logToScreen('Mencoba login...');
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
                 try {
@@ -230,18 +278,19 @@
                     if (users.length > 0) {
                         currentUser = users[0];
                         sessionStorage.setItem('forumUser', JSON.stringify(currentUser));
+                        logToScreen(`Login berhasil untuk ${currentUser.username}`, 'success');
                         initApp();
                     } else {
-                        alert('Email atau password salah.');
+                        logToScreen('Login gagal: Email atau password salah.', 'error');
                     }
                 } catch (error) {
-                    console.error('Login error:', error);
-                    alert('Terjadi kesalahan saat login.');
+                    logToScreen(`Kesalahan login: ${error.message}`, 'error');
                 }
             }
 
             async function handleSignup(e) {
                 e.preventDefault();
+                logToScreen('Mencoba mendaftarkan pengguna baru...');
                 const username = document.getElementById('signup-username').value;
                 const email = document.getElementById('signup-email').value;
                 const password = document.getElementById('signup-password').value;
@@ -250,7 +299,7 @@
                     const checkResponse = await fetch(`${API_URLS.users}/search?email=${email}`);
                     const existingUsers = await checkResponse.json();
                     if (existingUsers.length > 0) {
-                        alert('Email ini sudah terdaftar.');
+                        logToScreen('Pendaftaran gagal: Email sudah terdaftar.', 'error');
                         return;
                     }
 
@@ -261,18 +310,18 @@
                         body: JSON.stringify({ data: newUser })
                     });
                     
-                    alert('Pendaftaran berhasil! Silakan login.');
+                    logToScreen('Pendaftaran berhasil! Silakan login.', 'success');
                     showView('login');
                     document.getElementById('login-form').reset();
                     document.getElementById('signup-form').reset();
 
                 } catch (error) {
-                    console.error('Signup error:', error);
-                    alert('Terjadi kesalahan saat mendaftar.');
+                    logToScreen(`Kesalahan pendaftaran: ${error.message}`, 'error');
                 }
             }
 
             function handleLogout() {
+                logToScreen('Pengguna telah logout.');
                 currentUser = null;
                 currentCategory = null;
                 currentPostId = null;
@@ -283,6 +332,7 @@
 
             // --- Fungsi Fetch Data ---
             async function fetchAllData() {
+                logToScreen('Mengambil semua data dari server...');
                 try {
                     const cacheBuster = `?_=${new Date().getTime()}`;
                     const [postsRes, commentsRes, likesRes] = await Promise.all([
@@ -298,9 +348,9 @@
                     allPosts = await postsRes.json();
                     allComments = await commentsRes.json();
                     allLikes = await likesRes.json();
+                    logToScreen('Semua data berhasil diambil.', 'success');
                 } catch (error) {
-                    console.error("Gagal memuat semua data:", error);
-                    alert("Gagal memuat data forum. Coba refresh halaman.");
+                    logToScreen(`Gagal memuat data: ${error.message}`, 'error');
                 }
             }
 
@@ -316,6 +366,7 @@
                 document.querySelectorAll('.category-card').forEach(card => {
                     card.addEventListener('click', () => {
                         currentCategory = card.dataset.categoryid;
+                        logToScreen(`Masuk ke kategori: ${currentCategory}`);
                         renderPostsList(currentCategory);
                         showView('forum');
                     });
@@ -359,10 +410,11 @@
             }
             
             function renderPostDetail(postId) {
+                logToScreen(`Menampilkan detail post dengan ID: ${postId}`);
                 currentPostId = postId;
                 const post = allPosts.find(p => p.postid === postId);
                 if (!post) {
-                    alert('Thread tidak ditemukan. Mungkin telah dihapus.');
+                    logToScreen(`Post dengan ID ${postId} tidak ditemukan. Mungkin telah dihapus.`, 'error');
                     renderPostsList(currentCategory);
                     showView('forum');
                     return;
@@ -431,6 +483,7 @@
                 const submitButton = e.target.querySelector('button[type="submit"]');
                 submitButton.disabled = true;
                 submitButton.textContent = 'Mengirim...';
+                logToScreen('Membuat post baru...');
 
                 const newPost = {
                     postid: Date.now().toString(),
@@ -454,16 +507,15 @@
                     document.getElementById('new-post-form').reset();
                     document.getElementById('new-post-form').classList.add('hidden');
                     
-                    // PERBAIKAN: Setelah berhasil mengirim, tunggu sebentar lalu ambil ulang semua data
-                    alert('Thread berhasil dibuat! Menyinkronkan data...');
+                    logToScreen('Post berhasil dibuat! Menyinkronkan data...', 'success');
                     setTimeout(async () => {
+                        logToScreen('Mengambil ulang semua data untuk mendapatkan versi terbaru...');
                         await fetchAllData();
                         renderPostDetail(newPost.postid);
-                    }, 2500); // Jeda 2.5 detik
+                    }, 2500);
 
                 } catch (error) {
-                    console.error("Gagal membuat post:", error);
-                    alert("Gagal membuat post baru. Silakan coba lagi.");
+                    logToScreen(`Gagal membuat post: ${error.message}`, 'error');
                 } finally {
                     submitButton.disabled = false;
                     submitButton.textContent = 'Kirim';
@@ -491,18 +543,18 @@
                         body: JSON.stringify({ data: newComment })
                     });
                     document.getElementById('comment-form').reset();
-                    allComments.push(newComment); // Update lokal untuk respons cepat
-                    renderComments(currentPostId); // Render ulang hanya komentar
+                    allComments.push(newComment);
+                    renderComments(currentPostId);
+                    logToScreen('Komentar berhasil dikirim.', 'success');
                 } catch (error) {
-                    console.error("Gagal mengirim komentar:", error);
-                    alert("Gagal mengirim komentar.");
+                    logToScreen(`Gagal mengirim komentar: ${error.message}`, 'error');
                 }
             }
 
             async function handleLike(postId) {
                 const userHasLiked = allLikes.some(l => l.postid === postId && l.userid === currentUser.userid);
                 if (userHasLiked) {
-                    alert("Anda sudah menyukai post ini.");
+                    logToScreen('Pengguna sudah menyukai post ini.', 'info');
                     return;
                 }
 
@@ -518,11 +570,11 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ data: newLike })
                     });
-                    allLikes.push(newLike); // Update lokal
-                    renderPostDetail(postId); // Render ulang seluruh detail
+                    allLikes.push(newLike);
+                    renderPostDetail(postId);
+                    logToScreen('Post berhasil disukai.', 'success');
                 } catch (error) {
-                    console.error("Gagal menyukai post:", error);
-                    alert("Gagal menyukai post.");
+                    logToScreen(`Gagal menyukai post: ${error.message}`, 'error');
                 }
             }
             
@@ -530,6 +582,7 @@
                 if (!confirm('Apakah Anda yakin ingin menghapus thread ini? Aksi ini tidak dapat dibatalkan.')) {
                     return;
                 }
+                logToScreen(`Mencoba menghapus post ID: ${postId}...`);
 
                 try {
                     const response = await fetch(`${API_URLS.posts}/postid/${postId}`, {
@@ -540,25 +593,25 @@
                         throw new Error('Gagal menghapus thread dari database.');
                     }
 
-                    // Hapus post dari array lokal
                     allPosts = allPosts.filter(p => p.postid !== postId);
                     
-                    alert('Thread berhasil dihapus.');
+                    logToScreen('Thread berhasil dihapus.', 'success');
                     renderPostsList(currentCategory);
                     showView('forum');
 
                 } catch (error) {
-                    console.error("Gagal menghapus post:", error);
-                    alert("Gagal menghapus thread. Silakan coba lagi.");
+                    logToScreen(`Gagal menghapus post: ${error.message}`, 'error');
                 }
             }
 
             // --- Inisialisasi & Event Listeners ---
             async function initApp() {
+                logToScreen('Menginisialisasi aplikasi...');
                 updateNav();
                 await fetchAllData();
                 renderCategories();
                 showView('category');
+                logToScreen('Aplikasi siap.', 'success');
             }
 
             function checkSession() {
@@ -589,6 +642,9 @@
             });
             document.getElementById('new-post-form').addEventListener('submit', handleNewPost);
             document.getElementById('comment-form').addEventListener('submit', handleNewComment);
+            document.getElementById('clear-console-btn').addEventListener('click', () => {
+                document.getElementById('floating-console').innerHTML = '';
+            });
 
             checkSession();
         });
