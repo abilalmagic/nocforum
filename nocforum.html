@@ -503,16 +503,16 @@
                     });
 
                     if (!response.ok) throw new Error('Gagal mengirim data.');
-
+                    
+                    // PERBAIKAN: Update Optimis
+                    allPosts.push(newPost); // Langsung tambahkan ke data lokal
+                    logToScreen('Post berhasil dikirim ke server.', 'success');
+                    
                     document.getElementById('new-post-form').reset();
                     document.getElementById('new-post-form').classList.add('hidden');
                     
-                    logToScreen('Post berhasil dibuat! Menyinkronkan data...', 'success');
-                    setTimeout(async () => {
-                        logToScreen('Mengambil ulang semua data untuk mendapatkan versi terbaru...');
-                        await fetchAllData();
-                        renderPostDetail(newPost.postid);
-                    }, 2500);
+                    // Langsung render detail dari data lokal, tidak perlu menunggu
+                    renderPostDetail(newPost.postid);
 
                 } catch (error) {
                     logToScreen(`Gagal membuat post: ${error.message}`, 'error');
