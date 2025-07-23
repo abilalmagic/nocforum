@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOC FORUM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #0d0d0d;
+        }
+        .font-gothic-title {
+            font-family: 'Cinzel', serif;
+        }
+        .form-input {
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            color: #eee;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #b91c1c;
+            box-shadow: 0 0 10px rgba(185, 28, 28, 0.5);
+        }
+        .btn-primary {
+            background-color: #991b1b;
+            color: #f1f1f1;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary:hover {
+            background-color: #b91c1c;
+            box-shadow: 0 0 15px rgba(185, 28, 28, 0.7);
+        }
+        .card {
+            background-color: #1c1c1c;
+            border: 1px solid #333;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .category-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(185, 28, 28, 0.3);
+            border-color: #b91c1c;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="text-gray-300">
+
+    <div id="app" class="container mx-auto max-w-4xl p-4">
+
+        <!-- Navigasi Atas -->
+        <nav class="relative flex justify-center items-center p-4 mb-8">
+            <div class="text-center">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC FORUM Logo" class="h-12 w-auto mx-auto">
+                <p class="text-sm text-gray-400 mt-2">forum diskusi sulap asik</p>
+            </div>
+            <div id="nav-user-section" class="absolute top-1/2 right-4 -translate-y-1/2">
+                <!-- Diisi oleh JS -->
+            </div>
+        </nav>
+
+        <!-- Tampilan Login -->
+        <div id="login-view">
+            <div class="card p-8 max-w-md mx-auto">
+                <h2 class="font-gothic-title text-2xl text-center mb-6">Login</h2>
+                <form id="login-form">
+                    <div class="mb-4">
+                        <label for="login-email" class="block mb-2">Email</label>
+                        <input type="email" id="login-email" class="w-full p-3 form-input rounded" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="login-password" class="block mb-2">Password</label>
+                        <input type="password" id="login-password" class="w-full p-3 form-input rounded" required>
+                    </div>
+                    <button type="submit" class="w-full p-3 btn-primary rounded">Masuk</button>
+                </form>
+                <p class="text-center mt-4">Belum punya akun? <a href="#" id="show-signup" class="text-red-500 hover:underline">Daftar di sini</a></p>
+            </div>
+        </div>
+
+        <!-- Tampilan Sign Up -->
+        <div id="signup-view" class="hidden">
+            <div class="card p-8 max-w-md mx-auto">
+                <h2 class="font-gothic-title text-2xl text-center mb-6">Buat Akun</h2>
+                <form id="signup-form">
+                    <div class="mb-4">
+                        <label for="signup-username" class="block mb-2">Username</label>
+                        <input type="text" id="signup-username" class="w-full p-3 form-input rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="signup-email" class="block mb-2">Email</label>
+                        <input type="email" id="signup-email" class="w-full p-3 form-input rounded" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="signup-password" class="block mb-2">Password</label>
+                        <input type="password" id="signup-password" class="w-full p-3 form-input rounded" required>
+                    </div>
+                    <button type="submit" class="w-full p-3 btn-primary rounded">Daftar</button>
+                </form>
+                <p class="text-center mt-4">Sudah punya akun? <a href="#" id="show-login" class="text-red-500 hover:underline">Login di sini</a></p>
+            </div>
+        </div>
+        
+        <!-- Tampilan Kategori -->
+        <div id="category-view" class="hidden">
+            <h2 class="font-gothic-title text-2xl text-center mb-8">Pilih Kategori</h2>
+            <div id="category-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Kategori akan dirender di sini oleh JS -->
+            </div>
+        </div>
+
+        <!-- Tampilan Utama Forum (Daftar Post per Kategori) -->
+        <div id="forum-view" class="hidden">
+            <button id="back-to-categories" class="mb-6 text-red-500 hover:underline">&larr; Kembali ke Kategori</button>
+            <h2 id="forum-category-title" class="font-gothic-title text-3xl mb-6"></h2>
+            <button id="show-new-post-form" class="w-full p-3 mb-6 btn-primary rounded">Buat Thread Baru</button>
+            <form id="new-post-form" class="card p-6 mb-8 hidden">
+                <h3 class="font-gothic-title text-xl mb-4">Thread Baru</h3>
+                <input type="text" id="new-post-title" placeholder="Judul Thread" class="w-full p-3 mb-4 form-input rounded" required>
+                <textarea id="new-post-content" placeholder="Isi thread Anda..." rows="5" class="w-full p-3 mb-4 form-input rounded" required></textarea>
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancel-new-post" class="p-2 px-4 bg-gray-600 rounded">Batal</button>
+                    <button type="submit" class="p-2 px-4 btn-primary rounded">Kirim</button>
+                </div>
+            </form>
+            <div id="posts-list" class="space-y-6"></div>
+        </div>
+
+        <!-- Tampilan Detail Post (Post + Komentar) -->
+        <div id="post-detail-view" class="hidden">
+            <button id="back-to-forum" class="mb-6 text-red-500 hover:underline">&larr; Kembali ke Daftar Thread</button>
+            <div id="post-content-area" class="card p-6 mb-6"></div>
+            <div id="comments-section">
+                <h3 class="font-gothic-title text-xl mb-4">Komentar</h3>
+                <form id="comment-form" class="mb-6">
+                    <textarea id="comment-content" placeholder="Tulis komentar Anda..." rows="3" class="w-full p-3 form-input rounded" required></textarea>
+                    <button type="submit" class="mt-2 p-2 px-4 btn-primary rounded">Kirim Komentar</button>
+                </form>
+                <div id="comments-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 text-sm mt-12 p-4 border-t border-gray-700">
+            <p>dibuat untuk happy, kalo ga happy pergi by Prof.Z - nocfams 2025</p>
+            <p class="text-xs mt-1">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- URL API ANDA SUDAH DIMASUKKAN ---
+            const API_URLS = {
+                users: 'https://sheetdb.io/api/v1/zn7xn2sefoeon',
+                posts: 'https://sheetdb.io/api/v1/mmum3hxb4qbh6',
+                comments: 'https://sheetdb.io/api/v1/50utsnmwuq34x',
+                likes: 'https://sheetdb.io/api/v1/23r6t331w7vrs'
+            };
+
+            const CATEGORIES = [
+                { id: 'cardmagic', name: 'Card Magic' },
+                { id: 'coinmagic', name: 'Coin Magic' },
+                { id: 'mentalism', name: 'Mentalism' },
+                { id: 'everydayobject', name: 'Everyday Object' },
+                { id: 'market', name: 'Market' }
+            ];
+
+            // --- Seleksi Elemen DOM ---
+            const views = {
+                login: document.getElementById('login-view'),
+                signup: document.getElementById('signup-view'),
+                category: document.getElementById('category-view'),
+                forum: document.getElementById('forum-view'),
+                postDetail: document.getElementById('post-detail-view')
+            };
+            const navUserSection = document.getElementById('nav-user-section');
+            
+            // --- State Aplikasi ---
+            let currentUser = null;
+            let allPosts = [], allComments = [], allLikes = [];
+            let currentPostId = null;
+            let currentCategory = null;
+
+            // --- Fungsi Navigasi & Tampilan ---
+            function showView(viewName) {
+                Object.values(views).forEach(view => view.classList.add('hidden'));
+                if (views[viewName]) {
+                    views[viewName].classList.remove('hidden');
+                }
+            }
+
+            function updateNav() {
+                if (currentUser) {
+                    navUserSection.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <span>Welcome, <strong class="text-red-500">${currentUser.username}</strong></span>
+                            <button id="logout-btn" class="p-2 px-4 bg-gray-700 hover:bg-gray-600 rounded">Logout</button>
+                        </div>
+                    `;
+                    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+                } else {
+                    navUserSection.innerHTML = '';
+                }
+            }
+
+            // --- Fungsi Otentikasi & User ---
+            async function handleLogin(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                try {
+                    const response = await fetch(`${API_URLS.users}/search?email=${email}&password=${password}`);
+                    const users = await response.json();
+                    if (users.length > 0) {
+                        currentUser = users[0];
+                        sessionStorage.setItem('forumUser', JSON.stringify(currentUser));
+                        initApp();
+                    } else {
+                        alert('Email atau password salah.');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    alert('Terjadi kesalahan saat login.');
+                }
+            }
+
+            async function handleSignup(e) {
+                e.preventDefault();
+                const username = document.getElementById('signup-username').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+
+                try {
+                    const checkResponse = await fetch(`${API_URLS.users}/search?email=${email}`);
+                    const existingUsers = await checkResponse.json();
+                    if (existingUsers.length > 0) {
+                        alert('Email ini sudah terdaftar.');
+                        return;
+                    }
+
+                    const newUser = { userid: Date.now().toString(), username, email, password };
+                    await fetch(API_URLS.users, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: newUser })
+                    });
+                    
+                    alert('Pendaftaran berhasil! Silakan login.');
+                    showView('login');
+                    document.getElementById('login-form').reset();
+                    document.getElementById('signup-form').reset();
+
+                } catch (error) {
+                    console.error('Signup error:', error);
+                    alert('Terjadi kesalahan saat mendaftar.');
+                }
+            }
+
+            function handleLogout() {
+                currentUser = null;
+                currentCategory = null;
+                currentPostId = null;
+                sessionStorage.removeItem('forumUser');
+                showView('login');
+                updateNav();
+            }
+
+            // --- Fungsi Fetch Data ---
+            async function fetchAllData() {
+                try {
+                    const [postsRes, commentsRes, likesRes] = await Promise.all([
+                        fetch(API_URLS.posts),
+                        fetch(API_URLS.comments),
+                        fetch(API_URLS.likes)
+                    ]);
+                    allPosts = await postsRes.json();
+                    allComments = await commentsRes.json();
+                    allLikes = await likesRes.json();
+                } catch (error) {
+                    console.error("Gagal memuat semua data:", error);
+                    alert("Gagal memuat data forum. Coba refresh halaman.");
+                }
+            }
+
+            // --- Fungsi Render ---
+            function renderCategories() {
+                const categoryList = document.getElementById('category-list');
+                categoryList.innerHTML = CATEGORIES.map(cat => `
+                    <div class="card p-6 text-center cursor-pointer category-card" data-categoryid="${cat.id}">
+                        <h3 class="font-gothic-title text-2xl text-red-400">${cat.name}</h3>
+                    </div>
+                `).join('');
+
+                document.querySelectorAll('.category-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        currentCategory = card.dataset.categoryid;
+                        renderPostsList(currentCategory);
+                        showView('forum');
+                    });
+                });
+            }
+
+            function renderPostsList(category) {
+                const postsList = document.getElementById('posts-list');
+                const categoryTitle = document.getElementById('forum-category-title');
+                
+                const categoryObj = CATEGORIES.find(c => c.id === category);
+                categoryTitle.textContent = categoryObj ? categoryObj.name : 'Semua Thread';
+
+                const filteredPosts = allPosts.filter(p => p.category === category);
+                filteredPosts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                if (filteredPosts.length === 0) {
+                    postsList.innerHTML = `<p class="text-center text-gray-400">Belum ada thread di kategori ini.</p>`;
+                } else {
+                    postsList.innerHTML = filteredPosts.map(post => {
+                        const commentCount = allComments.filter(c => c.postid === post.postid).length;
+                        const likeCount = allLikes.filter(l => l.postid === post.postid).length;
+                        return `
+                            <div class="card p-4 flex justify-between items-center cursor-pointer hover:border-red-600" data-postid="${post.postid}">
+                                <div>
+                                    <h3 class="font-gothic-title text-xl text-red-400">${post.title}</h3>
+                                    <p class="text-sm text-gray-400">oleh ${post.username} - ${new Date(post.timestamp).toLocaleDateString('id-ID')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p>${commentCount} Komentar</p>
+                                    <p>${likeCount} Suka</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                document.querySelectorAll('#posts-list [data-postid]').forEach(el => {
+                    el.addEventListener('click', () => showPostDetail(el.dataset.postid));
+                });
+            }
+            
+            function renderPostDetail(postId) {
+                currentPostId = postId;
+                const post = allPosts.find(p => p.postid === postId);
+                if (!post) return;
+
+                const postLikes = allLikes.filter(l => l.postid === postId);
+                const userHasLiked = postLikes.some(l => l.userid === currentUser.userid);
+
+                const postContentArea = document.getElementById('post-content-area');
+                postContentArea.innerHTML = `
+                    <h2 class="font-gothic-title text-3xl mb-2">${post.title}</h2>
+                    <p class="text-sm text-gray-500 mb-4">oleh ${post.username} pada ${new Date(post.timestamp).toLocaleString('id-ID')}</p>
+                    <p class="whitespace-pre-wrap mb-6">${post.content}</p>
+                    <div class="flex items-center">
+                        <button class="like-btn p-2 rounded ${userHasLiked ? 'text-red-500' : 'text-gray-500'}" data-liked="${userHasLiked}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="${userHasLiked ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
+                        </button>
+                        <span class="ml-2">${postLikes.length} Suka</span>
+                    </div>
+                `;
+                
+                document.querySelector('.like-btn').addEventListener('click', () => handleLike(postId));
+
+                renderComments(postId);
+                showView('postDetail');
+            }
+
+            function renderComments(postId) {
+                const commentsList = document.getElementById('comments-list');
+                const postComments = allComments
+                    .filter(c => c.postid === postId)
+                    .sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                if (postComments.length === 0) {
+                    commentsList.innerHTML = '<p class="text-gray-500">Belum ada komentar.</p>';
+                } else {
+                    commentsList.innerHTML = postComments.map(comment => `
+                        <div class="card p-4 border-l-2 border-red-800">
+                            <p class="text-sm mb-2"><strong>${comment.username}</strong> - <span class="text-gray-500">${new Date(comment.timestamp).toLocaleString('id-ID')}</span></p>
+                            <p>${comment.content}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // --- Fungsi Aksi (Post, Comment, Like) ---
+            async function handleNewPost(e) {
+                e.preventDefault();
+                const title = document.getElementById('new-post-title').value;
+                const content = document.getElementById('new-post-content').value;
+                if (!title || !content || !currentCategory) return;
+
+                const newPost = {
+                    postid: Date.now().toString(),
+                    userid: currentUser.userid,
+                    username: currentUser.username,
+                    title,
+                    content,
+                    timestamp: new Date().toISOString(),
+                    category: currentCategory
+                };
+
+                try {
+                    await fetch(API_URLS.posts, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: newPost })
+                    });
+                    document.getElementById('new-post-form').reset();
+                    document.getElementById('new-post-form').classList.add('hidden');
+                    await fetchAllData();
+                    renderPostsList(currentCategory);
+                } catch (error) {
+                    console.error("Gagal membuat post:", error);
+                    alert("Gagal membuat post baru.");
+                }
+            }
+            
+            async function handleNewComment(e) {
+                e.preventDefault();
+                const content = document.getElementById('comment-content').value;
+                if (!content) return;
+                
+                const newComment = {
+                    commentid: Date.now().toString(),
+                    postid: currentPostId,
+                    userid: currentUser.userid,
+                    username: currentUser.username,
+                    content,
+                    timestamp: new Date().toISOString()
+                };
+                
+                try {
+                    await fetch(API_URLS.comments, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: newComment })
+                    });
+                    document.getElementById('comment-form').reset();
+                    await fetchAllData();
+                    renderPostDetail(currentPostId);
+                } catch (error) {
+                    console.error("Gagal mengirim komentar:", error);
+                    alert("Gagal mengirim komentar.");
+                }
+            }
+
+            async function handleLike(postId) {
+                const userHasLiked = allLikes.some(l => l.postid === postId && l.userid === currentUser.userid);
+                if (userHasLiked) {
+                    alert("Anda sudah menyukai post ini.");
+                    return;
+                }
+
+                const newLike = {
+                    likeid: Date.now().toString(),
+                    postid: postId,
+                    userid: currentUser.userid
+                };
+
+                try {
+                    await fetch(API_URLS.likes, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: newLike })
+                    });
+                    await fetchAllData();
+                    renderPostDetail(postId);
+                } catch (error) {
+                    console.error("Gagal menyukai post:", error);
+                    alert("Gagal menyukai post.");
+                }
+            }
+
+            // --- Inisialisasi & Event Listeners ---
+            async function initApp() {
+                updateNav();
+                await fetchAllData();
+                renderCategories();
+                showView('category');
+            }
+
+            function checkSession() {
+                const user = sessionStorage.getItem('forumUser');
+                if (user) {
+                    currentUser = JSON.parse(user);
+                    initApp();
+                } else {
+                    showView('login');
+                }
+            }
+
+            // Event Listeners
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('signup-form').addEventListener('submit', handleSignup);
+            document.getElementById('show-signup').addEventListener('click', () => showView('signup'));
+            document.getElementById('show-login').addEventListener('click', () => showView('login'));
+            document.getElementById('back-to-forum').addEventListener('click', () => {
+                showView('forum');
+                renderPostsList(currentCategory)
+            });
+            document.getElementById('back-to-categories').addEventListener('click', () => showView('category'));
+            document.getElementById('show-new-post-form').addEventListener('click', () => {
+                document.getElementById('new-post-form').classList.toggle('hidden');
+            });
+            document.getElementById('cancel-new-post').addEventListener('click', () => {
+                document.getElementById('new-post-form').classList.add('hidden');
+            });
+            document.getElementById('new-post-form').addEventListener('submit', handleNewPost);
+            document.getElementById('comment-form').addEventListener('submit', handleNewComment);
+
+            checkSession();
+        });
+    </script>
+</body>
+</html>
