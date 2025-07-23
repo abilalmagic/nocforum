@@ -284,11 +284,20 @@
             // --- Fungsi Fetch Data ---
             async function fetchAllData() {
                 try {
+                    // PERBAIKAN: Menambahkan parameter acak untuk mencegah cache
+                    // Ini memastikan kita selalu mendapatkan data terbaru dari server
+                    const cacheBuster = `?_=${new Date().getTime()}`;
+
                     const [postsRes, commentsRes, likesRes] = await Promise.all([
-                        fetch(API_URLS.posts),
-                        fetch(API_URLS.comments),
-                        fetch(API_URLS.likes)
+                        fetch(API_URLS.posts + cacheBuster),
+                        fetch(API_URLS.comments + cacheBuster),
+                        fetch(API_URLS.likes + cacheBuster)
                     ]);
+
+                    if (!postsRes.ok || !commentsRes.ok || !likesRes.ok) {
+                        throw new Error('Gagal mengambil data dari salah satu sheet.');
+                    }
+
                     allPosts = await postsRes.json();
                     allComments = await commentsRes.json();
                     allLikes = await likesRes.json();
