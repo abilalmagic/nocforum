@@ -284,10 +284,7 @@
             // --- Fungsi Fetch Data ---
             async function fetchAllData() {
                 try {
-                    // PERBAIKAN: Menambahkan parameter acak untuk mencegah cache
-                    // Ini memastikan kita selalu mendapatkan data terbaru dari server
                     const cacheBuster = `?_=${new Date().getTime()}`;
-
                     const [postsRes, commentsRes, likesRes] = await Promise.all([
                         fetch(API_URLS.posts + cacheBuster),
                         fetch(API_URLS.comments + cacheBuster),
@@ -457,11 +454,12 @@
                     document.getElementById('new-post-form').reset();
                     document.getElementById('new-post-form').classList.add('hidden');
                     
-                    // FIX: Langsung tambahkan post baru ke array lokal
-                    allPosts.push(newPost);
-                    
-                    // Langsung pindah ke halaman detail post yang baru dibuat
-                    renderPostDetail(newPost.postid);
+                    // PERBAIKAN: Setelah berhasil mengirim, tunggu sebentar lalu ambil ulang semua data
+                    alert('Thread berhasil dibuat! Menyinkronkan data...');
+                    setTimeout(async () => {
+                        await fetchAllData();
+                        renderPostDetail(newPost.postid);
+                    }, 2500); // Jeda 2.5 detik
 
                 } catch (error) {
                     console.error("Gagal membuat post:", error);
@@ -493,7 +491,7 @@
                         body: JSON.stringify({ data: newComment })
                     });
                     document.getElementById('comment-form').reset();
-                    allComments.push(newComment); // Update lokal
+                    allComments.push(newComment); // Update lokal untuk respons cepat
                     renderComments(currentPostId); // Render ulang hanya komentar
                 } catch (error) {
                     console.error("Gagal mengirim komentar:", error);
