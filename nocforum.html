@@ -30,8 +30,30 @@
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            100% { transform: rotate(300deg); }
         }
+        /* Floating Console Styles */
+        #floating-console-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            width: 90%;
+            max-width: 400px;
+            z-index: 9999;
+        }
+        #floating-console {
+            height: 150px;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid #444;
+            overflow-y: auto;
+            padding: 0.5rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+        .log-error { color: #f87171; }
+        .log-success { color: #4ade80; }
+        .log-info { color: #9ca3af; }
     </style>
 </head>
 <body class="text-gray-300">
@@ -53,6 +75,15 @@
             <p>dibuat untuk happy, kalo ga happy pergi by Prof.Z - nocfams 2025</p>
             <p class="text-xs mt-1">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
         </footer>
+    </div>
+    
+    <!-- Floating Console -->
+    <div id="floating-console-container" class="rounded-lg shadow-2xl">
+        <div class="bg-gray-800 text-white p-2 flex justify-between items-center rounded-t-lg">
+            <h4 class="font-bold text-sm">NOC Console</h4>
+            <button id="clear-console-btn" class="text-xs bg-gray-600 hover:bg-red-700 px-2 py-1 rounded">Bersihkan</button>
+        </div>
+        <div id="floating-console"></div>
     </div>
 
     <script>
@@ -85,6 +116,21 @@
             // --- ELEMEN UTAMA ---
             const mainContent = document.getElementById('main-content');
             const navUserSection = document.getElementById('nav-user-section');
+
+            // --- Floating Console Function ---
+            function logToScreen(message, type = 'info') {
+                const consoleEl = document.getElementById('floating-console');
+                const p = document.createElement('p');
+                const time = new Date().toLocaleTimeString();
+                p.innerHTML = `<span class="text-gray-600">${time}</span> > ${message}`;
+                
+                if (type === 'success') p.classList.add('log-success');
+                else if (type === 'error') p.classList.add('log-error');
+                else p.classList.add('log-info');
+                
+                consoleEl.appendChild(p);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
 
             // --- FUNGSI RENDER TAMPILAN ---
             const render = {
@@ -151,18 +197,18 @@
                     `;
                     document.querySelectorAll('.category-card').forEach(card => card.addEventListener('click', e => {
                         currentCategory = e.currentTarget.dataset.categoryid;
-                        searchKeyword = ''; // Clear search when entering category
+                        searchKeyword = '';
                         render.posts();
                     }));
                     const searchInput = document.getElementById('search-input');
                     searchInput.addEventListener('search', () => {
                         searchKeyword = searchInput.value;
-                        currentCategory = null; // Reset category for global search
+                        currentCategory = null;
                         render.posts();
                     });
                 },
                 posts: () => {
-                    const backButton = `<button onclick="render.categories()" class="mb-6 text-red-500 hover:underline">&larr; Kembali ke Kategori</button>`;
+                    const backButton = `<button class="back-to-categories-btn mb-6 text-red-500 hover:underline">&larr; Kembali ke Kategori</button>`;
                     
                     let title = 'Hasil Pencarian';
                     if (currentCategory) {
@@ -187,7 +233,7 @@
                         const likeCount = allData.likes.filter(l => l.postid === post.postid).length;
                         const viewCount = allData.views.filter(v => v.postid === post.postid).length;
                         return `
-                            <div class="card p-4 flex flex-col md:flex-row md:justify-between md:items-center gap-2 cursor-pointer hover:border-red-600" onclick="actions.viewPost('${post.postid}')">
+                            <div class="card p-4 flex flex-col md:flex-row md:justify-between md:items-center gap-2 cursor-pointer hover:border-red-600 post-item" data-postid="${post.postid}">
                                 <div class="w-full">
                                     <h3 class="font-gothic-title text-lg md:text-xl text-red-400">${post.title}</h3>
                                     <p class="text-sm text-gray-400">oleh ${post.username} - ${new Date(post.timestamp).toLocaleDateString('id-ID')}</p>
@@ -217,6 +263,8 @@
                         <div class="space-y-6">${postsHTML}</div>
                     `;
                     const newPostForm = document.getElementById('new-post-form');
+                    document.querySelector('.back-to-categories-btn').addEventListener('click', render.categories);
+                    document.querySelectorAll('.post-item').forEach(el => el.addEventListener('click', e => actions.viewPost(e.currentTarget.dataset.postid)));
                     document.getElementById('show-new-post-form').addEventListener('click', () => newPostForm.classList.remove('hidden'));
                     document.getElementById('cancel-new-post').addEventListener('click', () => newPostForm.classList.add('hidden'));
                     newPostForm.addEventListener('submit', actions.createPost);
@@ -233,19 +281,19 @@
                     const userHasLiked = allData.likes.some(l => l.postid === currentPostId && l.userid === currentUser.userid);
                     const viewCount = allData.views.filter(v => v.postid === currentPostId).length;
                     
-                    const deleteButton = post.userid === currentUser.userid ? `<button onclick="actions.deletePost('${post.postid}')" class="p-2 rounded text-gray-500 hover:text-red-500 ml-auto">Hapus</button>` : '';
+                    const deleteButton = post.userid === currentUser.userid ? `<button id="delete-post-btn" class="p-2 rounded text-gray-500 hover:text-red-500 ml-auto">Hapus</button>` : '';
 
                     const comments = allData.comments.filter(c => c.postid === currentPostId);
                     const commentsHTML = actions.buildCommentsTree(comments);
 
                     mainContent.innerHTML = `
-                        <button onclick="render.posts()" class="mb-6 text-red-500 hover:underline">&larr; Kembali ke Daftar Thread</button>
+                        <button class="back-to-posts-btn mb-6 text-red-500 hover:underline">&larr; Kembali ke Daftar Thread</button>
                         <div class="card p-6 mb-6">
                             <h2 class="font-gothic-title text-3xl mb-2">${post.title}</h2>
                             <p class="text-sm text-gray-500 mb-4">oleh ${post.username} pada ${new Date(post.timestamp).toLocaleString('id-ID')}</p>
                             <p class="whitespace-pre-wrap mb-6">${post.content}</p>
                             <div class="flex items-center">
-                                <button onclick="actions.likePost('${post.postid}')" class="p-2 rounded ${userHasLiked ? 'text-red-500' : 'text-gray-500'}">Suka</button>
+                                <button id="like-post-btn" class="p-2 rounded ${userHasLiked ? 'text-red-500' : 'text-gray-500'}">Suka</button>
                                 <span class="ml-2">${likeCount} Suka</span>
                                 <span class="ml-4">${viewCount} Dilihat</span>
                                 ${deleteButton}
@@ -260,7 +308,13 @@
                             <div class="space-y-4">${commentsHTML}</div>
                         </div>
                     `;
+                    document.querySelector('.back-to-posts-btn').addEventListener('click', render.posts);
+                    document.getElementById('like-post-btn').addEventListener('click', () => actions.likePost(post.postid));
+                    if (post.userid === currentUser.userid) {
+                        document.getElementById('delete-post-btn').addEventListener('click', () => actions.deletePost(post.postid));
+                    }
                     document.getElementById('comment-form').addEventListener('submit', e => actions.createComment(e, currentPostId));
+                    document.querySelectorAll('.reply-form').forEach(form => form.addEventListener('submit', e => actions.createComment(e, currentPostId, e.target.dataset.parentid)));
                 },
                 loading: (message) => {
                     mainContent.innerHTML = `<div class="flex flex-col items-center justify-center p-8"><div class="loader"></div><p class="mt-4">${message}</p></div>`;
@@ -353,7 +407,7 @@
                         body: JSON.stringify({ data: newPost })
                     });
                     if (response.ok) {
-                        await new Promise(resolve => setTimeout(resolve, 2000)); // Jeda aman
+                        await new Promise(resolve => setTimeout(resolve, 2000));
                         await actions.fetchData();
                         render.posts();
                     } else {
@@ -367,15 +421,14 @@
                     if (!hasViewed) {
                         const newView = { viewid: Date.now().toString(), postid: postId, userid: currentUser.userid };
                         allData.views.push(newView);
-                        await fetch(API_URLS.views, {
+                        fetch(API_URLS.views, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ data: newView })
                         });
-                        // Update view count in posts sheet
                         const post = allData.posts.find(p => p.postid === postId);
                         const currentViews = parseInt(post.views || '0', 10);
-                        await fetch(`${API_URLS.posts}/postid/${postId}`, {
+                        fetch(`${API_URLS.posts}/postid/${postId}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ data: { views: (currentViews + 1).toString() } })
@@ -440,28 +493,36 @@
                                     <p class="text-sm mb-2"><strong>${comment.username}</strong> - <span class="text-gray-500">${new Date(comment.timestamp).toLocaleString('id-ID')}</span></p>
                                     <p>${comment.content}</p>
                                     <div class="ml-4 mt-4">
-                                        <a href="#" class="text-xs text-red-500 hover:underline" onclick="event.preventDefault(); document.getElementById('reply-form-${comment.commentid}').classList.toggle('hidden')">Balas</a>
-                                        <form id="reply-form-${comment.commentid}" class="mt-2 hidden">
+                                        <a href="#" class="text-xs text-red-500 hover:underline reply-btn" data-commentid="${comment.commentid}">Balas</a>
+                                        <form id="reply-form-${comment.commentid}" class="mt-2 hidden reply-form" data-parentid="${comment.commentid}">
                                             <textarea id="reply-content-${comment.commentid}" rows="2" class="w-full p-2 form-input rounded"></textarea>
                                             <button type="submit" class="mt-2 p-1 px-3 text-sm btn-primary rounded">Kirim Balasan</button>
                                         </form>
-                                        ${replies}
+                                        <div class="pl-4 border-l border-gray-700 mt-4">${replies}</div>
                                     </div>
                                 </div>
                             `;
                         }).join('');
+                },
+                updateNav: () => {
+                    if (currentUser) {
+                        navUserSection.innerHTML = `
+                            <div class="flex items-center gap-4">
+                                <span>Welcome, <strong class="text-red-500">${currentUser.username}</strong></span>
+                                <button id="logout-button" class="p-2 px-4 bg-gray-700 hover:bg-gray-600 rounded">Logout</button>
+                            </div>
+                        `;
+                        document.getElementById('logout-button').addEventListener('click', actions.logout);
+                    } else {
+                        navUserSection.innerHTML = '';
+                    }
                 },
                 init: async () => {
                     render.loading('Memuat data forum...');
                     const user = sessionStorage.getItem('forumUser');
                     if (user) {
                         currentUser = JSON.parse(user);
-                        navUserSection.innerHTML = `
-                            <div class="flex items-center gap-4">
-                                <span>Welcome, <strong class="text-red-500">${currentUser.username}</strong></span>
-                                <button onclick="actions.logout()" class="p-2 px-4 bg-gray-700 hover:bg-gray-600 rounded">Logout</button>
-                            </div>
-                        `;
+                        actions.updateNav();
                         await actions.fetchData();
                         render.categories();
                     } else {
@@ -472,6 +533,10 @@
             
             // --- INISIALISASI APLIKASI ---
             actions.init();
+
+            document.getElementById('clear-console-btn').addEventListener('click', () => {
+                document.getElementById('floating-console').innerHTML = '';
+            });
         });
     </script>
 
