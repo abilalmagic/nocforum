@@ -502,23 +502,28 @@
                         body: JSON.stringify({ data: newPost })
                     });
 
-                    if (!response.ok) throw new Error('Gagal mengirim data ke server.');
+                    // PERBAIKAN: Log error yang lebih detail
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        const errorMessage = errorData.error || `Server merespons dengan status: ${response.status}`;
+                        throw new Error(errorMessage);
+                    }
                     
                     logToScreen('Post berhasil dikirim! Menunggu sinkronisasi server...', 'success');
                     
                     document.getElementById('new-post-form').reset();
                     document.getElementById('new-post-form').classList.add('hidden');
                     
-                    // PERBAIKAN: Logika baru yang lebih aman
                     setTimeout(async () => {
                         logToScreen('Mengambil ulang data terbaru dari server...');
-                        await fetchAllData(); // Ambil semua data yang sudah pasti tersimpan
-                        renderPostsList(currentCategory); // Tampilkan ulang daftar thread
+                        await fetchAllData();
+                        renderPostsList(currentCategory);
                         logToScreen('Daftar thread telah diperbarui.', 'success');
-                    }, 3000); // Jeda 3 detik untuk memberi waktu Google Sheet
+                    }, 3000);
 
                 } catch (error) {
                     logToScreen(`Gagal membuat post: ${error.message}`, 'error');
+                    logToScreen('Mohon periksa URL API Posts & izin Google Sheet.', 'info');
                 } finally {
                     submitButton.disabled = false;
                     submitButton.textContent = 'Kirim';
