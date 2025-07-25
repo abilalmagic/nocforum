@@ -68,7 +68,8 @@
 
     <!-- Header -->
     <header id="header" class="bg-gray-900/50 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-amber-500/20 py-4">
-        <div class="container mx-auto relative flex justify-center items-center px-4">
+        <div class="container mx-auto relative flex flex-col md:flex-row md:justify-center items-center px-4">
+            <!-- Logo and Title Section -->
             <div class="flex flex-col items-center">
                 <img 
                     src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" 
@@ -80,7 +81,8 @@
                     magic underground society
                 </p>
             </div>
-            <div id="user-info" class="absolute right-4 top-1/2 -translate-y-1/2 hidden items-center space-x-4">
+            <!-- User Info Section -->
+            <div id="user-info" class="hidden items-center space-x-4 justify-center pt-4 md:pt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2">
                 <span id="user-display-name" class="hidden md:inline text-sm text-gray-400 font-mono"></span>
                 <img id="user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-400/50" />
                 <button id="logout-btn" class="bg-amber-600/50 border border-amber-500 text-white font-bold py-2 px-4 rounded-md hover:bg-amber-600/80 hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all duration-300">
