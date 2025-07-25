@@ -314,13 +314,22 @@
             document.getElementById('post-list-title').textContent = category;
             if (currentUnsubscribe) currentUnsubscribe();
 
-            const q = query(collection(db, "posts"), where("category", "==", category), orderBy("createdAt", "desc"));
+            // Query diubah: orderBy dihapus untuk menghindari error index
+            const q = query(collection(db, "posts"), where("category", "==", category));
             currentUnsubscribe = onSnapshot(q, (snapshot) => {
                 if (snapshot.empty) {
                     postListContainer.innerHTML = `<p class="text-center text-gray-500 py-10 font-mono">-- Belum ada postingan di kategori ini. --</p>`;
                     return;
                 }
-                postListContainer.innerHTML = snapshot.docs.map(doc => {
+                
+                // Urutkan data di sisi klien (browser)
+                const sortedDocs = snapshot.docs.sort((a, b) => {
+                    const timeA = a.data().createdAt?.toDate() || 0;
+                    const timeB = b.data().createdAt?.toDate() || 0;
+                    return timeB - timeA;
+                });
+
+                postListContainer.innerHTML = sortedDocs.map(doc => {
                     const post = doc.data();
                     const postDate = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
                     return `
