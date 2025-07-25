@@ -49,6 +49,19 @@
             background-color: rgba(251, 191, 36, 1);
             box-shadow: 0 0 25px rgba(251, 191, 36, 0.6);
         }
+        .form-input {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            width: 100%;
+            color: #d1d5db;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5);
+        }
     </style>
 </head>
 <body class="bg-grid-amber-500/10">
@@ -87,62 +100,56 @@
         <div id="view-login" class="view">
             <div class="flex flex-col items-center justify-center mt-16 md:mt-20">
                 <div class="glass-effect p-8 rounded-xl shadow-2xl shadow-amber-500/10 text-center w-full max-w-md">
-                    <h2 class="text-4xl font-bold mb-2 text-white font-orbitron tracking-wide">NOC FORUM</h2>
-                    <p class="text-amber-400/80 mb-8 font-mono">// a sanctuary for magicians</p>
-                    <button id="login-btn" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center space-x-3 text-lg">
-                        <svg class="w-6 h-6" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.22c-.24-.71-.38-1.45-.38-2.22s.14-1.51.38-2.22l-7.98-6.19C.92 18.26 0 21.03 0 24c0 2.97.92 5.74 2.56 8.1l7.97-6.88z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
-                        <span>Authenticate with Google</span>
-                    </button>
-                    <p class="text-xs text-gray-500 mt-6 font-mono">
-                        Admin can revoke access. Unauthorized entry is a breach of protocol.
+                    <h2 class="text-3xl font-bold mb-6 text-white font-orbitron tracking-wide">LOGIN</h2>
+                    <form id="login-form" class="space-y-4 text-left">
+                        <input type="email" id="login-email" placeholder="Email" class="form-input" required>
+                        <input type="password" id="login-password" placeholder="Password" class="form-input" required>
+                        <button type="submit" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg text-lg mt-4">Masuk</button>
+                    </form>
+                    <p class="text-sm text-gray-400 mt-6">
+                        Belum punya akun? <a href="#" id="go-to-register" class="font-bold text-amber-400 hover:underline">Daftar di sini</a>
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- Signup View -->
-        <div id="view-signup" class="view">
+        <!-- Register View -->
+        <div id="view-register" class="view">
             <div class="max-w-2xl mx-auto glass-effect p-8 rounded-xl shadow-2xl shadow-amber-500/10 mt-10">
-                <h2 class="text-3xl font-bold mb-6 text-amber-400 font-mono">PROFILE_INITIALIZATION</h2>
-                <p class="text-gray-300 mb-6">Lengkapi profil Anda dengan menjawab pertanyaan berikut.</p>
-                <form id="signup-form" class="space-y-6">
-                    <div>
-                        <label class="block mb-2 font-semibold text-gray-200 font-mono">Berapa lama bermain sulap?</label>
-                        <select id="magic-experience" class="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono" required>
-                            <option value="" disabled selected>Pilih durasi...</option>
-                            <option value="Kurang dari 1 tahun">&lt; 1 Year [Novice]</option>
-                            <option value="1 - 5 tahun">1 - 5 Years [Adept]</option>
-                            <option value="Lebih dari 5 tahun">&gt; 5 Years [Master]</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block mb-2 font-semibold text-gray-200 font-mono">Aliran sulap yang diminati:</label>
-                        <select id="magic-genre" class="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono" required>
-                            <option value="" disabled selected>Pilih aliran...</option>
-                            <option>Mentalism</option>
-                            <option>Sleight of Hand</option>
-                            <option>Illusionism</option>
-                            <option>Escapology</option>
-                            <option>Bizarre Magic</option>
-                            <option>Comedy Magic</option>
-                            <option>Mathemagics</option>
-                            <option>Storytelling Magic</option>
-                            <option>Neo‑Experimental Magic</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg text-lg">
-                        Simpan & Masuk Forum
-                    </button>
+                <h2 class="text-3xl font-bold mb-6 text-amber-400 font-mono">BUAT AKUN BARU</h2>
+                <form id="register-form" class="space-y-4">
+                    <input type="text" id="register-username" placeholder="Username" class="form-input" required>
+                    <input type="email" id="register-email" placeholder="Email" class="form-input" required>
+                    <input type="password" id="register-password" placeholder="Password (minimal 6 karakter)" class="form-input" required>
+                    
+                    <hr class="border-gray-700 my-4">
+
+                    <label class="block pt-2 font-semibold text-gray-200 font-mono">Berapa lama bermain sulap?</label>
+                    <select id="magic-experience" class="form-input" required>
+                        <option value="" disabled selected>Pilih durasi...</option>
+                        <option value="Kurang dari 1 tahun">&lt; 1 Year [Novice]</option>
+                        <option value="1 - 5 tahun">1 - 5 Years [Adept]</option>
+                        <option value="Lebih dari 5 tahun">&gt; 5 Years [Master]</option>
+                    </select>
+                    
+                    <label class="block pt-2 font-semibold text-gray-200 font-mono">Aliran sulap yang diminati:</label>
+                    <select id="magic-genre" class="form-input" required>
+                        <option value="" disabled selected>Pilih aliran...</option>
+                        <option>Mentalism</option> <option>Sleight of Hand</option> <option>Illusionism</option> <option>Escapology</option> <option>Bizarre Magic</option> <option>Comedy Magic</option> <option>Mathemagics</option> <option>Storytelling Magic</option> <option>Neo‑Experimental Magic</option>
+                    </select>
+                    
+                    <button type="submit" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg text-lg mt-6">Daftar & Masuk</button>
                 </form>
+                <p class="text-sm text-gray-400 mt-6 text-center">
+                    Sudah punya akun? <a href="#" id="go-to-login" class="font-bold text-amber-400 hover:underline">Masuk di sini</a>
+                </p>
             </div>
         </div>
 
         <!-- Categories View -->
         <div id="view-categories" class="view">
              <h2 class="text-4xl font-bold mb-8 text-center text-white font-orbitron tracking-wider">SELECT_CATEGORY</h2>
-             <div id="category-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Kategori akan dirender oleh JavaScript -->
-             </div>
+             <div id="category-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
 
         <!-- Post List View -->
@@ -152,23 +159,17 @@
                     <button id="back-to-categories-btn" class="text-amber-400 hover:text-amber-300 font-mono">&larr; Kembali ke Kategori</button>
                     <h2 id="post-list-title" class="text-3xl font-bold text-white font-orbitron tracking-wide"></h2>
                 </div>
-                <button id="create-post-btn" class="btn-gold text-white font-bold py-2 px-6 rounded-md">
-                    Buat Postingan
-                </button>
+                <button id="create-post-btn" class="btn-gold text-white font-bold py-2 px-6 rounded-md">Buat Postingan</button>
             </div>
             <div class="mb-6">
-                <input id="search-input" type="text" placeholder="Cari postingan..." class="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"/>
+                <input id="search-input" type="text" placeholder="Cari postingan..." class="form-input"/>
             </div>
-            <div id="post-list-container" class="space-y-4">
-                <!-- Daftar postingan akan dirender oleh JavaScript -->
-            </div>
+            <div id="post-list-container" class="space-y-4"></div>
         </div>
         
         <!-- Post Detail View -->
         <div id="view-post-detail" class="view">
-            <div id="post-detail-container" class="glass-effect p-4 md:p-8 rounded-xl">
-                 <!-- Detail postingan akan dirender oleh JavaScript -->
-            </div>
+            <div id="post-detail-container" class="glass-effect p-4 md:p-8 rounded-xl"></div>
         </div>
 
     </main>
@@ -178,8 +179,8 @@
         <div class="bg-gray-900 border border-amber-500/30 p-6 rounded-lg shadow-2xl shadow-amber-500/10 w-full max-w-2xl">
             <h3 id="create-post-modal-title" class="text-2xl font-bold mb-4 text-white font-mono"></h3>
             <form id="create-post-form" class="space-y-4">
-                <input type="text" id="post-title-input" placeholder="Judul..." class="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono" required />
-                <textarea id="post-content-input" placeholder="Isi postingan..." rows="6" class="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono" required></textarea>
+                <input type="text" id="post-title-input" placeholder="Judul..." class="form-input" required />
+                <textarea id="post-content-input" placeholder="Isi postingan..." rows="6" class="form-input" required></textarea>
                 <div class="flex justify-end space-x-3">
                     <button type="button" id="cancel-post-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
                     <button type="submit" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Kirim</button>
@@ -188,15 +189,6 @@
         </div>
     </div>
     
-    <!-- Modal for Blocked Message -->
-    <div id="blocked-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
-        <div class="bg-gray-800 border border-red-500/50 p-8 rounded-lg shadow-2xl shadow-red-500/20 text-center max-w-md">
-            <h2 class="text-3xl font-bold text-red-500 mb-4">AKSES DITOLAK</h2>
-            <p class="text-gray-300">Akun Anda telah ditangguhkan oleh administrator.</p>
-        </div>
-    </div>
-
-
     <footer class="text-center py-6 mt-10 border-t border-amber-500/10">
         <p class="text-gray-600 text-sm font-mono">&copy; 2024 NOC_FORUM // Data stream secured.</p>
     </footer>
@@ -204,10 +196,9 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // --- Firebase Configuration ---
         const firebaseConfig = {
             apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
             authDomain: "magicnoc-125b6.firebaseapp.com",
@@ -217,55 +208,32 @@
             appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
         };
 
-        // --- Initialize Firebase ---
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
 
         let currentUser = null;
         let currentCategory = null;
         let currentUnsubscribe = null;
 
-        // --- UI Elements ---
         const views = document.querySelectorAll('.view');
         const userInfo = document.getElementById('user-info');
         const userDisplayName = document.getElementById('user-display-name');
         const userAvatar = document.getElementById('user-avatar');
+        const defaultAvatar = "https://placehold.co/100x100/1f2937/d1d5db?text=NOC";
         
-        // --- Navigation Logic ---
         function showView(viewId) {
-            views.forEach(view => {
-                view.classList.toggle('active', view.id === viewId);
-            });
+            views.forEach(view => view.classList.toggle('active', view.id === viewId));
         }
 
-        // --- Authentication Logic ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const blockedDocRef = doc(db, "blockedUsers", user.email);
-                const blockedDocSnap = await getDoc(blockedDocRef);
-
-                if (blockedDocSnap.exists()) {
-                    document.getElementById('blocked-modal').classList.remove('hidden');
-                    await signOut(auth);
-                    return;
-                }
-                
                 currentUser = user;
-                const userDocRef = doc(db, "users", user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-
                 userInfo.classList.remove('hidden');
                 userInfo.classList.add('flex');
                 userDisplayName.textContent = user.displayName;
-                userAvatar.src = user.photoURL;
-
-                if (userDocSnap.exists()) {
-                    showView('view-categories');
-                } else {
-                    showView('view-signup');
-                }
+                userAvatar.src = user.photoURL || defaultAvatar;
+                showView('view-categories');
             } else {
                 currentUser = null;
                 userInfo.classList.add('hidden');
@@ -274,49 +242,59 @@
             }
         });
 
-        document.getElementById('login-btn').addEventListener('click', () => {
-            signInWithPopup(auth, googleProvider).catch(error => console.error("Login Error:", error));
+        document.getElementById('go-to-register').addEventListener('click', (e) => { e.preventDefault(); showView('view-register'); });
+        document.getElementById('go-to-login').addEventListener('click', (e) => { e.preventDefault(); showView('view-login'); });
+        document.getElementById('logo-img').addEventListener('click', () => { if (currentUser) showView('view-categories'); });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            signInWithEmailAndPassword(auth, email, password)
+                .catch(error => alert(`Login Gagal: ${error.message}`));
         });
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth);
-        });
-        
-        document.getElementById('logo-img').addEventListener('click', () => {
-            if (currentUser) {
-                showView('view-categories');
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const magicExperience = document.getElementById('magic-experience').value;
+            const magicGenre = document.getElementById('magic-genre').value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                await updateProfile(user, {
+                    displayName: username,
+                    photoURL: defaultAvatar
+                });
+
+                await setDoc(doc(db, "users", user.uid), {
+                    displayName: username,
+                    email: user.email,
+                    photoURL: defaultAvatar,
+                    magicExperience,
+                    magicGenre,
+                    createdAt: serverTimestamp()
+                });
+
+            } catch (error) {
+                alert(`Pendaftaran Gagal: ${error.message}`);
             }
         });
 
-        // --- Signup Logic ---
-        document.getElementById('signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return;
-
-            const formData = {
-                magicExperience: document.getElementById('magic-experience').value,
-                magicGenre: document.getElementById('magic-genre').value,
-                displayName: currentUser.displayName,
-                email: currentUser.email,
-                photoURL: currentUser.photoURL,
-                createdAt: serverTimestamp()
-            };
-
-            await setDoc(doc(db, "users", currentUser.uid), formData);
-            showView('view-categories');
-        });
-
-        // --- Category Rendering ---
         const categories = [
-            { name: "Card Magic", icon: `...`, desc: "Diskusi seputar trik dan teknik sulap kartu." },
-            { name: "Coin Magic", icon: `...`, desc: "Semua tentang manipulasi dan ilusi dengan koin." },
-            { name: "Mentalism", icon: `...`, desc: "Membaca pikiran, prediksi, dan keajaiban psikologis." },
-            { name: "Everyday Object", icon: `...`, desc: "Sulap menggunakan benda-benda sehari-hari." },
-            { name: "Idea", icon: `...`, desc: "Bagikan dan kembangkan ide-ide sulap baru." },
-            { name: "Magic Market", icon: `...`, desc: "Jual beli alat atau lecture sulap." },
+            { name: "Card Magic", desc: "Diskusi seputar trik dan teknik sulap kartu." },
+            { name: "Coin Magic", desc: "Semua tentang manipulasi dan ilusi dengan koin." },
+            { name: "Mentalism", desc: "Membaca pikiran, prediksi, dan keajaiban psikologis." },
+            { name: "Everyday Object", desc: "Sulap menggunakan benda-benda sehari-hari." },
+            { name: "Idea", desc: "Bagikan dan kembangkan ide-ide sulap baru." },
+            { name: "Magic Market", desc: "Jual beli alat atau lecture sulap." },
         ];
-        const categoryListContainer = document.getElementById('category-list');
-        categoryListContainer.innerHTML = categories.map(cat => `
+        document.getElementById('category-list').innerHTML = categories.map(cat => `
             <div data-category="${cat.name}" class="category-card glass-effect p-6 rounded-xl shadow-lg hover:shadow-amber-500/20 hover:border-amber-500/50 hover:-translate-y-2 transition-all duration-300 cursor-pointer group">
                 <h3 class="text-2xl font-bold text-amber-400 group-hover:text-white font-orbitron transition-colors duration-300">${cat.name}</h3>
                 <p class="text-gray-400 mt-2">${cat.desc}</p>
@@ -331,13 +309,10 @@
             });
         });
 
-        // --- Post List Logic ---
         const postListContainer = document.getElementById('post-list-container');
-        const postListTitle = document.getElementById('post-list-title');
-        
         async function renderPosts(category) {
-            postListTitle.textContent = category;
-            if (currentUnsubscribe) currentUnsubscribe(); // Unsubscribe from previous listener
+            document.getElementById('post-list-title').textContent = category;
+            if (currentUnsubscribe) currentUnsubscribe();
 
             const q = query(collection(db, "posts"), where("category", "==", category), orderBy("createdAt", "desc"));
             currentUnsubscribe = onSnapshot(q, (snapshot) => {
@@ -345,13 +320,13 @@
                     postListContainer.innerHTML = `<p class="text-center text-gray-500 py-10 font-mono">-- Belum ada postingan di kategori ini. --</p>`;
                     return;
                 }
-                const postsHtml = snapshot.docs.map(doc => {
+                postListContainer.innerHTML = snapshot.docs.map(doc => {
                     const post = doc.data();
                     const postDate = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
                     return `
                         <div data-post-id="${doc.id}" class="post-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group">
                             <div class="flex items-center mb-3">
-                                <img src="${post.authorPhotoURL}" alt="${post.authorName}" class="w-8 h-8 rounded-full mr-3 border-2 border-gray-600 group-hover:border-amber-500/50 transition-colors" />
+                                <img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-8 h-8 rounded-full mr-3 border-2 border-gray-600 group-hover:border-amber-500/50 transition-colors" />
                                 <span class="text-sm text-gray-500 font-mono">${post.authorName} &bull; ${postDate}</span>
                             </div>
                             <h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${post.title}</h3>
@@ -365,29 +340,20 @@
                         </div>
                     `;
                 }).join('');
-                postListContainer.innerHTML = postsHtml;
-                
-                document.querySelectorAll('.post-card').forEach(card => {
-                    card.addEventListener('click', () => {
-                        renderPostDetail(card.dataset.postId);
-                    });
-                });
+                document.querySelectorAll('.post-card').forEach(card => card.addEventListener('click', () => renderPostDetail(card.dataset.postId)));
             });
         }
         
         document.getElementById('back-to-categories-btn').addEventListener('click', () => showView('view-categories'));
 
-        // --- Search Logic ---
         document.getElementById('search-input').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             document.querySelectorAll('.post-card').forEach(card => {
                 const title = card.querySelector('h3').textContent.toLowerCase();
-                const isVisible = title.includes(searchTerm);
-                card.style.display = isVisible ? 'block' : 'none';
+                card.style.display = title.includes(searchTerm) ? 'block' : 'none';
             });
         });
 
-        // --- Post Detail Logic ---
         const postDetailContainer = document.getElementById('post-detail-container');
         let postDetailUnsubscribe = null;
         let commentsUnsubscribe = null;
@@ -418,7 +384,7 @@
                         ${isAuthor ? `<button id="delete-post-btn" data-post-id="${docSnap.id}" class="bg-red-600/50 border border-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600/80 text-sm">Hapus</button>` : ''}
                     </div>
                     <div class="flex items-center mb-4 text-sm text-gray-400">
-                        <img src="${post.authorPhotoURL}" alt="${post.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" />
+                        <img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" />
                         <div class="font-mono">
                             <p class="font-semibold text-gray-200">${post.authorName}</p>
                             <p>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('id-ID') : ''}</p>
@@ -426,21 +392,17 @@
                     </div>
                     <p class="text-gray-300 whitespace-pre-wrap leading-relaxed mb-6 text-lg">${post.content}</p>
                     <div class="flex items-center space-x-6 border-t border-b border-gray-700 py-3 mb-6">
-                        <button id="like-btn" data-post-id="${docSnap.id}" class="flex items-center space-x-2 text-lg transition-colors ${isLiked ? 'text-amber-400' : 'text-gray-500 hover:text-white'}">
+                        <button id="like-btn" class="flex items-center space-x-2 text-lg transition-colors ${isLiked ? 'text-amber-400' : 'text-gray-500 hover:text-white'}">
                             <span>⭐</span>
                             <span class="font-semibold font-mono">${post.likes?.length || 0}</span>
                         </button>
-                        <div class="flex items-center space-x-2 text-lg text-gray-500">
-                            <span>👁️</span>
-                            <span class="font-mono">${post.viewCount || 0}</span>
-                        </div>
+                        <div class="flex items-center space-x-2 text-lg text-gray-500"><span>👁️</span><span class="font-mono">${post.viewCount || 0}</span></div>
                     </div>
                     <div id="comment-section"></div>
                 `;
                 
                 renderComments(postId);
                 
-                // Add event listeners for new elements
                 document.getElementById('back-to-posts-btn').addEventListener('click', () => showView('view-post-list'));
                 if (isAuthor) {
                     document.getElementById('delete-post-btn').addEventListener('click', async (e) => {
@@ -450,9 +412,8 @@
                         }
                     });
                 }
-                document.getElementById('like-btn').addEventListener('click', async (e) => {
+                document.getElementById('like-btn').addEventListener('click', async () => {
                     if (!currentUser) return;
-                    const postRef = doc(db, "posts", postId);
                     if (isLiked) {
                         await updateDoc(postRef, { likes: arrayRemove(currentUser.uid) });
                     } else {
@@ -469,134 +430,52 @@
                 const commentsHtml = snapshot.docs.map(doc => {
                     const comment = doc.data();
                     const repliesHtml = (comment.replies || []).map(reply => `
-                        <div class="flex space-x-3 mt-3">
-                            <img src="${reply.authorPhotoURL}" alt="${reply.authorName}" class="w-8 h-8 rounded-full mt-1 border-2 border-gray-600"/>
-                            <div class="flex-grow bg-gray-700/80 p-2 rounded-lg">
-                                <p class="font-semibold text-amber-200 text-sm font-mono">${reply.authorName}</p>
-                                <p class="text-gray-300 text-sm">${reply.text}</p>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    return `
-                        <div class="flex space-x-3">
-                            <img src="${comment.authorPhotoURL}" alt="${comment.authorName}" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-700"/>
-                            <div class="flex-grow">
-                                <div class="bg-gray-800/70 p-3 rounded-lg">
-                                    <p class="font-semibold text-amber-300 font-mono text-sm">${comment.authorName}</p>
-                                    <p class="text-gray-300">${comment.text}</p>
-                                </div>
-                                <div class="text-xs text-gray-500 mt-1 flex space-x-3 font-mono">
-                                    <span>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString('id-ID') : ''}</span>
-                                    <button class="reply-btn font-semibold hover:text-white" data-comment-id="${doc.id}">Balas</button>
-                                </div>
-                                <div class="pl-4 border-l-2 border-gray-700 space-y-3 mt-3">${repliesHtml}</div>
-                                <div id="reply-form-${doc.id}" class="hidden mt-2 pl-4">
-                                    <form class="reply-form flex space-x-2" data-comment-id="${doc.id}">
-                                        <input type="text" placeholder="Tulis balasan..." class="flex-grow p-2 bg-gray-700 rounded-md border border-gray-600 text-sm font-mono"/>
-                                        <button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-md text-sm">Kirim</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                        <div class="flex space-x-3 mt-3"><img src="${reply.authorPhotoURL || defaultAvatar}" alt="${reply.authorName}" class="w-8 h-8 rounded-full mt-1 border-2 border-gray-600"/><div class="flex-grow bg-gray-700/80 p-2 rounded-lg"><p class="font-semibold text-amber-200 text-sm font-mono">${reply.authorName}</p><p class="text-gray-300 text-sm">${reply.text}</p></div></div>`).join('');
+                    return `<div class="flex space-x-3"><img src="${comment.authorPhotoURL || defaultAvatar}" alt="${comment.authorName}" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-700"/><div class="flex-grow"><div class="bg-gray-800/70 p-3 rounded-lg"><p class="font-semibold text-amber-300 font-mono text-sm">${comment.authorName}</p><p class="text-gray-300">${comment.text}</p></div><div class="text-xs text-gray-500 mt-1 flex space-x-3 font-mono"><span>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString('id-ID') : ''}</span><button class="reply-btn font-semibold hover:text-white" data-comment-id="${doc.id}">Balas</button></div><div class="pl-4 border-l-2 border-gray-700 space-y-3 mt-3">${repliesHtml}</div><div id="reply-form-${doc.id}" class="hidden mt-2 pl-4"><form class="reply-form flex space-x-2" data-comment-id="${doc.id}"><input type="text" placeholder="Tulis balasan..." class="flex-grow p-2 bg-gray-700 rounded-md border border-gray-600 text-sm font-mono"/><button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-md text-sm">Kirim</button></form></div></div></div>`;
                 }).join('');
 
-                commentSection.innerHTML = `
-                    <h3 class="text-2xl font-bold mb-4 text-white font-mono">Komentar (${snapshot.size})</h3>
-                    <div class="space-y-4 mb-6">${commentsHtml}</div>
-                    ${currentUser ? `
-                    <form id="comment-form" class="flex space-x-3 items-start">
-                        <img src="${currentUser.photoURL}" alt="You" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-600"/>
-                        <textarea id="comment-input" placeholder="Tulis komentar..." rows="2" class="flex-grow p-3 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"></textarea>
-                        <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-md h-full">Kirim</button>
-                    </form>
-                    ` : ''}
-                `;
+                commentSection.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-white font-mono">Komentar (${snapshot.size})</h3><div class="space-y-4 mb-6">${commentsHtml}</div>
+                    ${currentUser ? `<form id="comment-form" class="flex space-x-3 items-start"><img src="${currentUser.photoURL || defaultAvatar}" alt="You" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-600"/><textarea id="comment-input" placeholder="Tulis komentar..." rows="2" class="form-input"></textarea><button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-md h-full">Kirim</button></form>` : ''}`;
                 
-                // Add event listeners for new elements
                 if (currentUser) {
                     document.getElementById('comment-form').addEventListener('submit', async (e) => {
                         e.preventDefault();
                         const commentInput = document.getElementById('comment-input');
                         if (!commentInput.value.trim()) return;
-                        await addDoc(collection(db, "posts", postId, "comments"), {
-                            text: commentInput.value,
-                            authorId: currentUser.uid,
-                            authorName: currentUser.displayName,
-                            authorPhotoURL: currentUser.photoURL,
-                            createdAt: serverTimestamp(),
-                            replies: []
-                        });
+                        await addDoc(collection(db, "posts", postId, "comments"), { text: commentInput.value, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), replies: [] });
                         await updateDoc(doc(db, "posts", postId), { commentCount: increment(1) });
                         commentInput.value = '';
                     });
                 }
-                
-                document.querySelectorAll('.reply-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const formId = `reply-form-${e.target.dataset.commentId}`;
-                        document.getElementById(formId).classList.toggle('hidden');
-                    });
-                });
-
-                document.querySelectorAll('.reply-form').forEach(form => {
-                    form.addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        const commentId = e.target.dataset.commentId;
-                        const replyText = e.target.querySelector('input').value;
-                        if (!replyText.trim()) return;
-
-                        const newReply = {
-                            id: crypto.randomUUID(),
-                            text: replyText,
-                            authorId: currentUser.uid,
-                            authorName: currentUser.displayName,
-                            authorPhotoURL: currentUser.photoURL,
-                            createdAt: new Date().toISOString()
-                        };
-                        const commentRef = doc(db, "posts", postId, "comments", commentId);
-                        await updateDoc(commentRef, { replies: arrayUnion(newReply) });
-                        e.target.querySelector('input').value = '';
-                        document.getElementById(`reply-form-${commentId}`).classList.add('hidden');
-                    });
-                });
+                document.querySelectorAll('.reply-btn').forEach(btn => btn.addEventListener('click', (e) => document.getElementById(`reply-form-${e.target.dataset.commentId}`).classList.toggle('hidden')));
+                document.querySelectorAll('.reply-form').forEach(form => form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const commentId = e.target.dataset.commentId;
+                    const replyText = e.target.querySelector('input').value;
+                    if (!replyText.trim()) return;
+                    const newReply = { id: crypto.randomUUID(), text: replyText, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: new Date().toISOString() };
+                    await updateDoc(doc(db, "posts", postId, "comments", commentId), { replies: arrayUnion(newReply) });
+                    e.target.querySelector('input').value = '';
+                    document.getElementById(`reply-form-${commentId}`).classList.add('hidden');
+                }));
             });
         }
 
-        // --- Create Post Modal Logic ---
         const createPostModal = document.getElementById('create-post-modal');
         document.getElementById('create-post-btn').addEventListener('click', () => {
             document.getElementById('create-post-modal-title').textContent = `Postingan Baru di ${currentCategory}`;
             createPostModal.classList.remove('hidden');
         });
-        document.getElementById('cancel-post-btn').addEventListener('click', () => {
-            createPostModal.classList.add('hidden');
-        });
+        document.getElementById('cancel-post-btn').addEventListener('click', () => createPostModal.classList.add('hidden'));
         document.getElementById('create-post-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('post-title-input').value;
             const content = document.getElementById('post-content-input').value;
             if (!title.trim() || !content.trim()) return;
-
-            await addDoc(collection(db, "posts"), {
-                title,
-                content,
-                category: currentCategory,
-                authorId: currentUser.uid,
-                authorName: currentUser.displayName,
-                authorPhotoURL: currentUser.photoURL,
-                createdAt: serverTimestamp(),
-                viewCount: 0,
-                likes: [],
-                commentCount: 0,
-            });
-            
-            document.getElementById('post-title-input').value = '';
-            document.getElementById('post-content-input').value = '';
+            await addDoc(collection(db, "posts"), { title, content, category: currentCategory, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), viewCount: 0, likes: [], commentCount: 0 });
+            document.getElementById('create-post-form').reset();
             createPostModal.classList.add('hidden');
         });
-
     </script>
 </body>
 </html>
