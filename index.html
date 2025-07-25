@@ -8,97 +8,38 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap');
         
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: #111827;
-            color: #d1d5db;
-        }
-        
-        .font-orbitron {
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .bg-grid-amber-500\/10 {
-            background-image:
-                linear-gradient(to right, rgba(245, 158, 11, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(245, 158, 11, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-
-        .glass-effect {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-
-        .view {
-            display: none;
-        }
-
-        .view.active {
-            display: block;
-        }
-        
-        .btn-gold {
-            background-color: rgba(245, 158, 11, 0.8);
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
-        }
-        .btn-gold:hover {
-            background-color: rgba(251, 191, 36, 1);
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.6);
-        }
-        .form-input {
-            background-color: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 0.375rem;
-            padding: 0.75rem;
-            width: 100%;
-            color: #d1d5db;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #f59e0b;
-            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5);
-        }
+        body { font-family: 'Roboto Mono', monospace; background-color: #111827; color: #d1d5db; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .bg-grid-amber-500\/10 { background-image: linear-gradient(to right, rgba(245, 158, 11, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245, 158, 11, 0.05) 1px, transparent 1px); background-size: 40px 40px; }
+        .glass-effect { background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .view { display: none; }
+        .view.active { display: block; }
+        .btn-gold { background-color: rgba(245, 158, 11, 0.8); transition: all 0.3s ease; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        .btn-gold:hover { background-color: rgba(251, 191, 36, 1); box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
+        .form-input { background-color: #1f2937; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.75rem; width: 100%; color: #d1d5db; }
+        .form-input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5); }
+        .clickable-link { color: #fbbf24; text-decoration: underline; }
+        .clickable-link:hover { color: #f59e0b; }
     </style>
 </head>
 <body class="bg-grid-amber-500/10">
 
-    <!-- Header -->
     <header id="header" class="bg-gray-900/50 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-amber-500/20 py-4">
         <div class="container mx-auto relative flex flex-col md:flex-row md:justify-center items-center px-4">
-            <!-- Logo and Title Section -->
             <div class="flex flex-col items-center">
-                <img 
-                    src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" 
-                    alt="NOC Forum Logo" 
-                    id="logo-img"
-                    class="h-12 cursor-pointer"
-                />
-                <p class="text-amber-400/70 text-sm font-mono mt-1 tracking-widest">
-                    magic underground society
-                </p>
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRvODLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC Forum Logo" id="logo-img" class="h-12 cursor-pointer"/>
+                <p class="text-amber-400/70 text-sm font-mono mt-1 tracking-widest">magic underground society</p>
             </div>
-            <!-- User Info Section -->
             <div id="user-info" class="hidden items-center space-x-4 justify-center pt-4 md:pt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2">
                 <span id="user-display-name" class="hidden md:inline text-sm text-gray-400 font-mono"></span>
                 <img id="user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-400/50" />
-                <button id="logout-btn" class="bg-amber-600/50 border border-amber-500 text-white font-bold py-2 px-4 rounded-md hover:bg-amber-600/80 hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all duration-300">
-                    Keluar
-                </button>
+                <button id="logout-btn" class="bg-amber-600/50 border border-amber-500 text-white font-bold py-2 px-4 rounded-md hover:bg-amber-600/80 hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all duration-300">Keluar</button>
             </div>
         </div>
     </header>
 
     <main class="container mx-auto p-4 md:p-6">
-        <!-- Loading View (now hidden, just for logic) -->
-        <div id="view-loading" class="view active">
-            <!-- Konten dihapus agar tidak memakan tempat -->
-        </div>
-
-        <!-- Login View -->
+        <div id="view-loading" class="view active"></div>
         <div id="view-login" class="view">
             <div class="flex flex-col items-center justify-center mt-16 md:mt-20">
                 <div class="glass-effect p-8 rounded-xl shadow-2xl shadow-amber-500/10 text-center w-full max-w-md">
@@ -108,14 +49,10 @@
                         <input type="password" id="login-password" placeholder="Password" class="form-input" required>
                         <button type="submit" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg text-lg mt-4">Masuk</button>
                     </form>
-                    <p class="text-sm text-gray-400 mt-6">
-                        Belum punya akun? <a href="#" id="go-to-register" class="font-bold text-amber-400 hover:underline">Daftar di sini</a>
-                    </p>
+                    <p class="text-sm text-gray-400 mt-6">Belum punya akun? <a href="#" id="go-to-register" class="font-bold text-amber-400 hover:underline">Daftar di sini</a></p>
                 </div>
             </div>
         </div>
-
-        <!-- Register View -->
         <div id="view-register" class="view">
             <div class="max-w-2xl mx-auto glass-effect p-8 rounded-xl shadow-2xl shadow-amber-500/10 mt-10">
                 <h2 class="text-3xl font-bold mb-6 text-amber-400 font-mono">BUAT AKUN BARU</h2>
@@ -123,38 +60,28 @@
                     <input type="text" id="register-username" placeholder="Username" class="form-input" required>
                     <input type="email" id="register-email" placeholder="Email" class="form-input" required>
                     <input type="password" id="register-password" placeholder="Password (minimal 6 karakter)" class="form-input" required>
-                    
                     <hr class="border-gray-700 my-4">
-
                     <label class="block pt-2 font-semibold text-gray-200 font-mono">Berapa lama bermain sulap?</label>
-                    <select id="magic-experience" class="form-input" required>
-                        <option value="" disabled selected>Pilih durasi...</option>
-                        <option value="Kurang dari 1 tahun">&lt; 1 Year [Novice]</option>
-                        <option value="1 - 5 tahun">1 - 5 Years [Adept]</option>
-                        <option value="Lebih dari 5 tahun">&gt; 5 Years [Master]</option>
-                    </select>
-                    
+                    <select id="magic-experience" class="form-input" required><option value="" disabled selected>Pilih durasi...</option><option value="Kurang dari 1 tahun">&lt; 1 Year [Novice]</option><option value="1 - 5 tahun">1 - 5 Years [Adept]</option><option value="Lebih dari 5 tahun">&gt; 5 Years [Master]</option></select>
                     <label class="block pt-2 font-semibold text-gray-200 font-mono">Aliran sulap yang diminati:</label>
-                    <select id="magic-genre" class="form-input" required>
-                        <option value="" disabled selected>Pilih aliran...</option>
-                        <option>Mentalism</option> <option>Sleight of Hand</option> <option>Illusionism</option> <option>Escapology</option> <option>Bizarre Magic</option> <option>Comedy Magic</option> <option>Mathemagics</option> <option>Storytelling Magic</option> <option>Neo‑Experimental Magic</option>
-                    </select>
-                    
+                    <select id="magic-genre" class="form-input" required><option value="" disabled selected>Pilih aliran...</option><option>Mentalism</option><option>Sleight of Hand</option><option>Illusionism</option><option>Escapology</option><option>Bizarre Magic</option><option>Comedy Magic</option><option>Mathemagics</option><option>Storytelling Magic</option><option>Neo‑Experimental Magic</option></select>
                     <button type="submit" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg text-lg mt-6">Daftar & Masuk</button>
                 </form>
-                <p class="text-sm text-gray-400 mt-6 text-center">
-                    Sudah punya akun? <a href="#" id="go-to-login" class="font-bold text-amber-400 hover:underline">Masuk di sini</a>
-                </p>
+                <p class="text-sm text-gray-400 mt-6 text-center">Sudah punya akun? <a href="#" id="go-to-login" class="font-bold text-amber-400 hover:underline">Masuk di sini</a></p>
             </div>
         </div>
-
-        <!-- Categories View -->
         <div id="view-categories" class="view">
-             <h2 class="text-4xl font-bold mb-8 text-center text-white font-orbitron tracking-wider">CATEGORY</h2>
+             <div id="announcement-section" class="mb-12">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-3xl font-bold text-white font-orbitron tracking-wider">PENGUMUMAN</h2>
+                    <button id="create-announcement-btn" class="hidden btn-gold text-white font-bold py-2 px-4 rounded-md text-sm">Buat Pengumuman</button>
+                </div>
+                <div id="announcement-container" class="space-y-4"></div>
+             </div>
+             <hr class="border-amber-500/20 my-8">
+             <h2 class="text-4xl font-bold mb-8 text-center text-white font-orbitron tracking-wider">SELECT_CATEGORY</h2>
              <div id="category-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
-
-        <!-- Post List View -->
         <div id="view-post-list" class="view">
             <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -163,43 +90,56 @@
                 </div>
                 <button id="create-post-btn" class="btn-gold text-white font-bold py-2 px-6 rounded-md">Buat Postingan</button>
             </div>
-            <div class="mb-6">
-                <input id="search-input" type="text" placeholder="Cari postingan..." class="form-input"/>
-            </div>
+            <div class="mb-6"><input id="search-input" type="text" placeholder="Cari postingan..." class="form-input"/></div>
             <div id="post-list-container" class="space-y-4"></div>
         </div>
-        
-        <!-- Post Detail View -->
-        <div id="view-post-detail" class="view">
-            <div id="post-detail-container" class="glass-effect p-4 md:p-8 rounded-xl"></div>
-        </div>
-
+        <div id="view-detail" class="view"><div id="detail-container" class="glass-effect p-4 md:p-8 rounded-xl"></div></div>
     </main>
     
-    <!-- Modal for Creating Post -->
     <div id="create-post-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60] p-4">
         <div class="bg-gray-900 border border-amber-500/30 p-6 rounded-lg shadow-2xl shadow-amber-500/10 w-full max-w-2xl">
             <h3 id="create-post-modal-title" class="text-2xl font-bold mb-4 text-white font-mono"></h3>
             <form id="create-post-form" class="space-y-4">
                 <input type="text" id="post-title-input" placeholder="Judul..." class="form-input" required />
                 <textarea id="post-content-input" placeholder="Isi postingan..." rows="6" class="form-input" required></textarea>
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-400">Unggah Gambar (Opsional)</label>
+                    <input id="post-image-input" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30" type="file" accept="image/*">
+                </div>
+                <div id="upload-progress" class="hidden w-full bg-gray-700 rounded-full h-2.5"><div id="upload-progress-bar" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div></div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" id="cancel-post-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
-                    <button type="submit" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Kirim</button>
+                    <button type="submit" id="submit-post-btn" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Kirim</button>
                 </div>
             </form>
         </div>
     </div>
     
-    <footer class="text-center py-6 mt-10 border-t border-amber-500/10">
-        <p class="text-gray-600 text-sm font-mono">&copy; 2024 NOC_FORUM // Data stream secured.</p>
-    </footer>
+    <div id="create-announcement-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60] p-4">
+        <div class="bg-gray-900 border border-amber-500/30 p-6 rounded-lg shadow-2xl shadow-amber-500/10 w-full max-w-2xl">
+            <h3 class="text-2xl font-bold mb-4 text-white font-mono">Buat Pengumuman Baru</h3>
+            <form id="create-announcement-form" class="space-y-4">
+                <input type="text" id="announcement-title-input" placeholder="Judul Pengumuman..." class="form-input" required />
+                <textarea id="announcement-content-input" placeholder="Isi Pengumuman..." rows="6" class="form-input" required></textarea>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancel-announcement-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
+                    <button type="submit" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Publikasikan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <footer class="text-center py-6 mt-10 border-t border-amber-500/10"><p class="text-gray-600 text-sm font-mono">&copy; 2024 NOC_FORUM // Data stream secured.</p></footer>
+    <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg text-sm z-50"></div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+        // --- PENTING: Ganti dengan User ID Admin Anda ---
+        const ADMIN_UIDS = ["Ix3gKNJPNZSnLQj2YTAfQp76IL72"]; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
@@ -213,279 +153,184 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        let currentUser = null;
-        let currentCategory = null;
-        let currentUnsubscribe = null;
-
-        const views = document.querySelectorAll('.view');
-        const userInfo = document.getElementById('user-info');
-        const userDisplayName = document.getElementById('user-display-name');
-        const userAvatar = document.getElementById('user-avatar');
+        let currentUser = null, currentCategory = null, currentUnsubscribe = null, viewHistory = [];
+        const views = document.querySelectorAll('.view'), userInfo = document.getElementById('user-info'), userDisplayName = document.getElementById('user-display-name'), userAvatar = document.getElementById('user-avatar');
         const defaultAvatar = "https://placehold.co/100x100/1f2937/d1d5db?text=NOC";
         
-        function showView(viewId) {
+        function showView(viewId, isNavigatingBack = false) {
             views.forEach(view => view.classList.toggle('active', view.id === viewId));
+            if (!isNavigatingBack) {
+                history.pushState({ view: viewId }, '', `#${viewId}`);
+                if (viewHistory[viewHistory.length - 1] !== viewId) viewHistory.push(viewId);
+            }
+        }
+        
+        function linkify(text) {
+            const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\bwww\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlRegex, function(url, fullUrl, protocol) {
+                const properUrl = protocol ? fullUrl : `http://${fullUrl}`;
+                return `<a href="${properUrl}" target="_blank" rel="noopener noreferrer" class="clickable-link">${url}</a>`;
+            });
         }
 
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, user => {
+            const createAnnouncementBtn = document.getElementById('create-announcement-btn');
             if (user) {
                 currentUser = user;
-                userInfo.classList.remove('hidden');
-                userInfo.classList.add('flex');
+                userInfo.classList.remove('hidden'); userInfo.classList.add('flex');
                 userDisplayName.textContent = user.displayName;
                 userAvatar.src = user.photoURL || defaultAvatar;
+
+                if (ADMIN_UIDS.includes(user.uid)) {
+                    createAnnouncementBtn.classList.remove('hidden');
+                } else {
+                    createAnnouncementBtn.classList.add('hidden');
+                }
+                
+                renderAnnouncements();
                 showView('view-categories');
             } else {
                 currentUser = null;
-                userInfo.classList.add('hidden');
-                userInfo.classList.remove('flex');
+                userInfo.classList.add('hidden'); userInfo.classList.remove('flex');
+                createAnnouncementBtn.classList.add('hidden');
                 showView('view-login');
             }
         });
 
-        document.getElementById('go-to-register').addEventListener('click', (e) => { e.preventDefault(); showView('view-register'); });
-        document.getElementById('go-to-login').addEventListener('click', (e) => { e.preventDefault(); showView('view-login'); });
+        document.getElementById('go-to-register').addEventListener('click', e => { e.preventDefault(); showView('view-register'); });
+        document.getElementById('go-to-login').addEventListener('click', e => { e.preventDefault(); history.back(); });
         document.getElementById('logo-img').addEventListener('click', () => { if (currentUser) showView('view-categories'); });
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-
-        document.getElementById('login-form').addEventListener('submit', (e) => {
+        document.getElementById('login-form').addEventListener('submit', e => {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            signInWithEmailAndPassword(auth, email, password)
+            signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value)
                 .catch(error => alert(`Login Gagal: ${error.message}`));
         });
-
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
+        document.getElementById('register-form').addEventListener('submit', async e => {
             e.preventDefault();
-            const username = document.getElementById('register-username').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const magicExperience = document.getElementById('magic-experience').value;
-            const magicGenre = document.getElementById('magic-genre').value;
-
+            const username = document.getElementById('register-username').value, email = document.getElementById('register-email').value, password = document.getElementById('register-password').value, magicExperience = document.getElementById('magic-experience').value, magicGenre = document.getElementById('magic-genre').value;
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                await updateProfile(user, {
-                    displayName: username,
-                    photoURL: defaultAvatar
-                });
-
-                await setDoc(doc(db, "users", user.uid), {
-                    displayName: username,
-                    email: user.email,
-                    photoURL: defaultAvatar,
-                    magicExperience,
-                    magicGenre,
-                    createdAt: serverTimestamp()
-                });
-
-            } catch (error) {
-                alert(`Pendaftaran Gagal: ${error.message}`);
-            }
+                const { user } = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(user, { displayName: username, photoURL: defaultAvatar });
+                await setDoc(doc(db, "users", user.uid), { displayName: username, email: user.email, photoURL: defaultAvatar, magicExperience, magicGenre, createdAt: serverTimestamp() });
+            } catch (error) { alert(`Pendaftaran Gagal: ${error.message}`); }
         });
 
-        const categories = [
-            { name: "Card Magic", desc: "Diskusi seputar trik dan teknik sulap kartu." },
-            { name: "Coin Magic", desc: "Semua tentang manipulasi dan ilusi dengan koin." },
-            { name: "Mentalism", desc: "Membaca pikiran, prediksi, dan keajaiban psikologis." },
-            { name: "Everyday Object", desc: "Sulap menggunakan benda-benda sehari-hari." },
-            { name: "Idea", desc: "Bagikan dan kembangkan ide-ide sulap baru." },
-            { name: "Magic Market", desc: "Jual beli alat atau lecture sulap." },
-        ];
-        document.getElementById('category-list').innerHTML = categories.map(cat => `
-            <div data-category="${cat.name}" class="category-card glass-effect p-6 rounded-xl shadow-lg hover:shadow-amber-500/20 hover:border-amber-500/50 hover:-translate-y-2 transition-all duration-300 cursor-pointer group">
-                <h3 class="text-2xl font-bold text-amber-400 group-hover:text-white font-orbitron transition-colors duration-300">${cat.name}</h3>
-                <p class="text-gray-400 mt-2">${cat.desc}</p>
-            </div>
-        `).join('');
-        
-        document.querySelectorAll('.category-card').forEach(card => {
-            card.addEventListener('click', () => {
-                currentCategory = card.dataset.category;
-                renderPosts(currentCategory);
-                showView('view-post-list');
-            });
-        });
+        const categories = [{ name: "Card Magic", desc: "Diskusi seputar trik dan teknik sulap kartu." },{ name: "Coin Magic", desc: "Semua tentang manipulasi dan ilusi dengan koin." },{ name: "Mentalism", desc: "Membaca pikiran, prediksi, dan keajaiban psikologis." },{ name: "Everyday Object", desc: "Sulap menggunakan benda-benda sehari-hari." },{ name: "Idea", desc: "Bagikan dan kembangkan ide-ide sulap baru." },{ name: "Magic Market", desc: "Jual beli alat atau lecture sulap." }];
+        document.getElementById('category-list').innerHTML = categories.map(cat => `<div data-category="${cat.name}" class="category-card glass-effect p-6 rounded-xl shadow-lg hover:shadow-amber-500/20 hover:border-amber-500/50 hover:-translate-y-2 transition-all duration-300 cursor-pointer group"><h3 class="text-2xl font-bold text-amber-400 group-hover:text-white font-orbitron transition-colors duration-300">${cat.name}</h3><p class="text-gray-400 mt-2">${cat.desc}</p></div>`).join('');
+        document.querySelectorAll('.category-card').forEach(card => card.addEventListener('click', () => {
+            currentCategory = card.dataset.category;
+            renderPosts(currentCategory);
+            showView('view-post-list');
+        }));
 
         const postListContainer = document.getElementById('post-list-container');
         async function renderPosts(category) {
             document.getElementById('post-list-title').textContent = category;
             if (currentUnsubscribe) currentUnsubscribe();
-
-            // Query diubah: orderBy dihapus untuk menghindari error index
             const q = query(collection(db, "posts"), where("category", "==", category));
-            currentUnsubscribe = onSnapshot(q, (snapshot) => {
-                if (snapshot.empty) {
-                    postListContainer.innerHTML = `<p class="text-center text-gray-500 py-10 font-mono">-- Belum ada postingan di kategori ini. --</p>`;
-                    return;
-                }
-                
-                // Urutkan data di sisi klien (browser)
-                const sortedDocs = snapshot.docs.sort((a, b) => {
-                    const timeA = a.data().createdAt?.toDate() || 0;
-                    const timeB = b.data().createdAt?.toDate() || 0;
-                    return timeB - timeA;
-                });
-
+            currentUnsubscribe = onSnapshot(q, snapshot => {
+                if (snapshot.empty) { postListContainer.innerHTML = `<p class="text-center text-gray-500 py-10 font-mono">-- Belum ada postingan di kategori ini. --</p>`; return; }
+                const sortedDocs = snapshot.docs.sort((a, b) => (b.data().createdAt?.toDate() || 0) - (a.data().createdAt?.toDate() || 0));
                 postListContainer.innerHTML = sortedDocs.map(doc => {
                     const post = doc.data();
                     const postDate = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
-                    return `
-                        <div data-post-id="${doc.id}" class="post-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group">
-                            <div class="flex items-center mb-3">
-                                <img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-8 h-8 rounded-full mr-3 border-2 border-gray-600 group-hover:border-amber-500/50 transition-colors" />
-                                <span class="text-sm text-gray-500 font-mono">${post.authorName} &bull; ${postDate}</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${post.title}</h3>
-                            <div class="flex justify-between items-center text-sm text-gray-500 font-mono">
-                                <div class="flex space-x-4">
-                                    <span>👁️ ${post.viewCount || 0}</span>
-                                    <span>⭐ ${post.likes?.length || 0}</span>
-                                    <span>💬 ${post.commentCount || 0}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    return `<div data-id="${doc.id}" class="post-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group"><div class="flex items-center mb-3"><img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-8 h-8 rounded-full mr-3 border-2 border-gray-600 group-hover:border-amber-500/50 transition-colors" /><span class="text-sm text-gray-500 font-mono">${post.authorName} &bull; ${postDate}</span></div><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${post.title}</h3><div class="flex justify-between items-center text-sm text-gray-500 font-mono"><div class="flex space-x-4"><span>👁️ ${post.viewCount || 0}</span><span>⭐ ${post.likes?.length || 0}</span><span>💬 ${post.commentCount || 0}</span></div></div></div>`;
                 }).join('');
-                document.querySelectorAll('.post-card').forEach(card => card.addEventListener('click', () => renderPostDetail(card.dataset.postId)));
+                document.querySelectorAll('.post-card').forEach(card => card.addEventListener('click', () => renderDetailView('posts', card.dataset.id)));
             });
         }
         
-        document.getElementById('back-to-categories-btn').addEventListener('click', () => showView('view-categories'));
-
-        document.getElementById('search-input').addEventListener('input', (e) => {
+        document.getElementById('back-to-categories-btn').addEventListener('click', () => history.back());
+        document.getElementById('search-input').addEventListener('input', e => {
             const searchTerm = e.target.value.toLowerCase();
-            document.querySelectorAll('.post-card').forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                card.style.display = title.includes(searchTerm) ? 'block' : 'none';
-            });
+            document.querySelectorAll('.post-card').forEach(card => card.style.display = card.querySelector('h3').textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none');
         });
 
-        const postDetailContainer = document.getElementById('post-detail-container');
-        let postDetailUnsubscribe = null;
-        let commentsUnsubscribe = null;
-        
-        async function renderPostDetail(postId) {
-            if (postDetailUnsubscribe) postDetailUnsubscribe();
-            if (commentsUnsubscribe) commentsUnsubscribe();
+        const detailContainer = document.getElementById('detail-container');
+        let detailUnsubscribe = null, commentsUnsubscribe = null;
+        async function renderDetailView(collectionName, docId) {
+            showView('view-detail');
+            if (detailUnsubscribe) detailUnsubscribe(); if (commentsUnsubscribe) commentsUnsubscribe();
+            detailContainer.innerHTML = `<p class="text-center font-mono animate-pulse">Memuat...</p>`;
+            const docRef = doc(db, collectionName, docId);
             
-            showView('view-post-detail');
-            postDetailContainer.innerHTML = `<p class="text-center font-mono animate-pulse">Memuat postingan...</p>`;
+            if(collectionName === 'posts') {
+                try { await updateDoc(docRef, { viewCount: increment(1) }); } catch (e) {}
+            }
 
-            const postRef = doc(db, "posts", postId);
-            await updateDoc(postRef, { viewCount: increment(1) });
-
-            postDetailUnsubscribe = onSnapshot(postRef, (docSnap) => {
-                if (!docSnap.exists()) {
-                    postDetailContainer.innerHTML = `<p class="text-center text-red-500 font-mono">Postingan tidak ditemukan.</p>`;
-                    return;
+            detailUnsubscribe = onSnapshot(docRef, docSnap => {
+                if (!docSnap.exists()) { detailContainer.innerHTML = `<p class="text-center text-red-500 font-mono">Konten tidak ditemukan.</p>`; return; }
+                const item = docSnap.data();
+                const isAuthor = currentUser && currentUser.uid === item.authorId;
+                const isLiked = currentUser && item.likes?.includes(currentUser.uid);
+                const contentHtml = linkify(item.content);
+                const isAnnouncement = collectionName === 'announcements';
+                
+                detailContainer.innerHTML = `<button id="back-to-previous-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button><div class="flex justify-between items-start"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-orbitron">${item.title}</h2>${(isAuthor || (isAnnouncement && ADMIN_UIDS.includes(currentUser?.uid))) ? `<button id="delete-btn" class="bg-red-600/50 border border-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600/80 text-sm">Hapus</button>` : ''}</div><div class="flex items-center mb-4 text-sm text-gray-400"><img src="${item.authorPhotoURL || defaultAvatar}" alt="${item.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" /><div class="font-mono"><p class="font-semibold text-gray-200">${item.authorName}</p><p>${item.createdAt ? new Date(item.createdAt.toDate()).toLocaleString('id-ID') : ''}</p></div></div>${item.imageUrl ? `<img src="${item.imageUrl}" alt="Gambar Konten" class="w-full max-w-lg mx-auto rounded-lg mb-6">` : ''}<p class="text-gray-300 whitespace-pre-wrap leading-relaxed mb-6 text-lg">${contentHtml}</p><div class="flex items-center space-x-6 border-t border-b border-gray-700 py-3 mb-6"><button id="like-btn" class="flex items-center space-x-2 text-lg transition-colors ${isLiked ? 'text-amber-400' : 'text-gray-500 hover:text-white'}"><span>⭐</span><span class="font-semibold font-mono">${item.likes?.length || 0}</span></button>${!isAnnouncement ? `<div class="flex items-center space-x-2 text-lg text-gray-500"><span>👁️</span><span class="font-mono">${item.viewCount || 0}</span></div>` : ''}</div><div id="comment-section"></div>`;
+                renderComments(collectionName, docId);
+                document.getElementById('back-to-previous-btn').addEventListener('click', () => history.back());
+                if (document.getElementById('delete-btn')) {
+                    document.getElementById('delete-btn').addEventListener('click', async () => { if (confirm("Yakin ingin menghapus ini?")) { await deleteDoc(docRef); history.back(); } });
                 }
-                const post = docSnap.data();
-                const isAuthor = currentUser && currentUser.uid === post.authorId;
-                const isLiked = currentUser && post.likes?.includes(currentUser.uid);
-                
-                postDetailContainer.innerHTML = `
-                    <button id="back-to-posts-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali ke Daftar Postingan</button>
-                    <div class="flex justify-between items-start">
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-orbitron">${post.title}</h2>
-                        ${isAuthor ? `<button id="delete-post-btn" data-post-id="${docSnap.id}" class="bg-red-600/50 border border-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600/80 text-sm">Hapus</button>` : ''}
-                    </div>
-                    <div class="flex items-center mb-4 text-sm text-gray-400">
-                        <img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" />
-                        <div class="font-mono">
-                            <p class="font-semibold text-gray-200">${post.authorName}</p>
-                            <p>${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('id-ID') : ''}</p>
-                        </div>
-                    </div>
-                    <p class="text-gray-300 whitespace-pre-wrap leading-relaxed mb-6 text-lg">${post.content}</p>
-                    <div class="flex items-center space-x-6 border-t border-b border-gray-700 py-3 mb-6">
-                        <button id="like-btn" class="flex items-center space-x-2 text-lg transition-colors ${isLiked ? 'text-amber-400' : 'text-gray-500 hover:text-white'}">
-                            <span>⭐</span>
-                            <span class="font-semibold font-mono">${post.likes?.length || 0}</span>
-                        </button>
-                        <div class="flex items-center space-x-2 text-lg text-gray-500"><span>👁️</span><span class="font-mono">${post.viewCount || 0}</span></div>
-                    </div>
-                    <div id="comment-section"></div>
-                `;
-                
-                renderComments(postId);
-                
-                document.getElementById('back-to-posts-btn').addEventListener('click', () => showView('view-post-list'));
-                if (isAuthor) {
-                    document.getElementById('delete-post-btn').addEventListener('click', async (e) => {
-                         if (confirm("Apakah Anda yakin ingin menghapus postingan ini?")) {
-                            await deleteDoc(doc(db, "posts", e.target.dataset.postId));
-                            showView('view-post-list');
-                        }
-                    });
-                }
-                document.getElementById('like-btn').addEventListener('click', async () => {
-                    if (!currentUser) return;
-                    if (isLiked) {
-                        await updateDoc(postRef, { likes: arrayRemove(currentUser.uid) });
-                    } else {
-                        await updateDoc(postRef, { likes: arrayUnion(currentUser.uid) });
-                    }
-                });
+                document.getElementById('like-btn').addEventListener('click', async () => { if (!currentUser) return; await updateDoc(docRef, { likes: isLiked ? arrayRemove(currentUser.uid) : arrayUnion(currentUser.uid) }); });
             });
         }
         
-        function renderComments(postId) {
+        function renderComments(collectionName, docId) {
             const commentSection = document.getElementById('comment-section');
-            const q = query(collection(db, "posts", postId, "comments"), orderBy("createdAt", "asc"));
-            commentsUnsubscribe = onSnapshot(q, (snapshot) => {
+            const q = query(collection(db, collectionName, docId, "comments"), orderBy("createdAt", "asc"));
+            commentsUnsubscribe = onSnapshot(q, snapshot => {
                 const commentsHtml = snapshot.docs.map(doc => {
                     const comment = doc.data();
-                    const repliesHtml = (comment.replies || []).map(reply => `
-                        <div class="flex space-x-3 mt-3"><img src="${reply.authorPhotoURL || defaultAvatar}" alt="${reply.authorName}" class="w-8 h-8 rounded-full mt-1 border-2 border-gray-600"/><div class="flex-grow bg-gray-700/80 p-2 rounded-lg"><p class="font-semibold text-amber-200 text-sm font-mono">${reply.authorName}</p><p class="text-gray-300 text-sm">${reply.text}</p></div></div>`).join('');
-                    return `<div class="flex space-x-3"><img src="${comment.authorPhotoURL || defaultAvatar}" alt="${comment.authorName}" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-700"/><div class="flex-grow"><div class="bg-gray-800/70 p-3 rounded-lg"><p class="font-semibold text-amber-300 font-mono text-sm">${comment.authorName}</p><p class="text-gray-300">${comment.text}</p></div><div class="text-xs text-gray-500 mt-1 flex space-x-3 font-mono"><span>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString('id-ID') : ''}</span><button class="reply-btn font-semibold hover:text-white" data-comment-id="${doc.id}">Balas</button></div><div class="pl-4 border-l-2 border-gray-700 space-y-3 mt-3">${repliesHtml}</div><div id="reply-form-${doc.id}" class="hidden mt-2 pl-4"><form class="reply-form flex space-x-2" data-comment-id="${doc.id}"><input type="text" placeholder="Tulis balasan..." class="flex-grow p-2 bg-gray-700 rounded-md border border-gray-600 text-sm font-mono"/><button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-md text-sm">Kirim</button></form></div></div></div>`;
+                    const commentTextHtml = linkify(comment.text);
+                    const repliesHtml = (comment.replies || []).map(reply => `<div class="flex space-x-3 mt-3"><img src="${reply.authorPhotoURL || defaultAvatar}" alt="${reply.authorName}" class="w-8 h-8 rounded-full mt-1 border-2 border-gray-600"/><div class="flex-grow bg-gray-700/80 p-2 rounded-lg"><p class="font-semibold text-amber-200 text-sm font-mono">${reply.authorName}</p><p class="text-gray-300 text-sm">${linkify(reply.text)}</p></div></div>`).join('');
+                    return `<div class="flex space-x-3"><img src="${comment.authorPhotoURL || defaultAvatar}" alt="${comment.authorName}" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-700"/><div class="flex-grow"><div class="bg-gray-800/70 p-3 rounded-lg"><p class="font-semibold text-amber-300 font-mono text-sm">${comment.authorName}</p><p class="text-gray-300">${commentTextHtml}</p></div><div class="text-xs text-gray-500 mt-1 flex space-x-3 font-mono"><span>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString('id-ID') : ''}</span><button class="reply-btn font-semibold hover:text-white" data-comment-id="${doc.id}">Balas</button></div><div class="pl-4 border-l-2 border-gray-700 space-y-3 mt-3">${repliesHtml}</div><div id="reply-form-${doc.id}" class="hidden mt-2 pl-4"><form class="reply-form flex space-x-2" data-comment-id="${doc.id}"><input type="text" placeholder="Tulis balasan..." class="flex-grow p-2 bg-gray-700 rounded-md border border-gray-600 text-sm font-mono"/><button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-md text-sm">Kirim</button></form></div></div></div>`;
                 }).join('');
-
-                commentSection.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-white font-mono">Komentar (${snapshot.size})</h3><div class="space-y-4 mb-6">${commentsHtml}</div>
-                    ${currentUser ? `<form id="comment-form" class="flex space-x-3 items-start"><img src="${currentUser.photoURL || defaultAvatar}" alt="You" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-600"/><textarea id="comment-input" placeholder="Tulis komentar..." rows="2" class="form-input"></textarea><button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-md h-full">Kirim</button></form>` : ''}`;
-                
-                if (currentUser) {
-                    document.getElementById('comment-form').addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        const commentInput = document.getElementById('comment-input');
-                        if (!commentInput.value.trim()) return;
-                        await addDoc(collection(db, "posts", postId, "comments"), { text: commentInput.value, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), replies: [] });
-                        await updateDoc(doc(db, "posts", postId), { commentCount: increment(1) });
-                        commentInput.value = '';
-                    });
-                }
-                document.querySelectorAll('.reply-btn').forEach(btn => btn.addEventListener('click', (e) => document.getElementById(`reply-form-${e.target.dataset.commentId}`).classList.toggle('hidden')));
-                document.querySelectorAll('.reply-form').forEach(form => form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const commentId = e.target.dataset.commentId;
-                    const replyText = e.target.querySelector('input').value;
-                    if (!replyText.trim()) return;
-                    const newReply = { id: crypto.randomUUID(), text: replyText, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: new Date().toISOString() };
-                    await updateDoc(doc(db, "posts", postId, "comments", commentId), { replies: arrayUnion(newReply) });
-                    e.target.querySelector('input').value = '';
-                    document.getElementById(`reply-form-${commentId}`).classList.add('hidden');
-                }));
+                commentSection.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-white font-mono">Komentar (${snapshot.size})</h3><div class="space-y-4 mb-6">${commentsHtml}</div>${currentUser ? `<form id="comment-form" class="flex space-x-3 items-start"><img src="${currentUser.photoURL || defaultAvatar}" alt="You" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-600"/><textarea id="comment-input" placeholder="Tulis komentar..." rows="2" class="form-input"></textarea><button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-md h-full">Kirim</button></form>` : ''}`;
+                if (currentUser) document.getElementById('comment-form').addEventListener('submit', async e => { e.preventDefault(); const commentInput = document.getElementById('comment-input'); if (!commentInput.value.trim()) return; await addDoc(collection(db, collectionName, docId, "comments"), { text: commentInput.value, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), replies: [] }); await updateDoc(doc(db, collectionName, docId), { commentCount: increment(1) }); commentInput.value = ''; });
+                document.querySelectorAll('.reply-btn').forEach(btn => btn.addEventListener('click', e => document.getElementById(`reply-form-${e.target.dataset.commentId}`).classList.toggle('hidden')));
+                document.querySelectorAll('.reply-form').forEach(form => form.addEventListener('submit', async e => { e.preventDefault(); const commentId = e.target.dataset.commentId, replyText = e.target.querySelector('input').value; if (!replyText.trim()) return; const newReply = { id: crypto.randomUUID(), text: replyText, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: new Date().toISOString() }; await updateDoc(doc(db, collectionName, docId, "comments", commentId), { replies: arrayUnion(newReply) }); e.target.querySelector('input').value = ''; document.getElementById(`reply-form-${commentId}`).classList.add('hidden'); }));
             });
         }
 
         const createPostModal = document.getElementById('create-post-modal');
-        document.getElementById('create-post-btn').addEventListener('click', () => {
-            document.getElementById('create-post-modal-title').textContent = `Postingan Baru di ${currentCategory}`;
-            createPostModal.classList.remove('hidden');
-        });
+        document.getElementById('create-post-btn').addEventListener('click', () => { document.getElementById('create-post-modal-title').textContent = `Postingan Baru di ${currentCategory}`; createPostModal.classList.remove('hidden'); });
         document.getElementById('cancel-post-btn').addEventListener('click', () => createPostModal.classList.add('hidden'));
-        document.getElementById('create-post-form').addEventListener('submit', async (e) => {
+        document.getElementById('create-post-form').addEventListener('submit', e => {
             e.preventDefault();
-            const title = document.getElementById('post-title-input').value;
-            const content = document.getElementById('post-content-input').value;
+            const title = document.getElementById('post-title-input').value, content = document.getElementById('post-content-input').value, file = document.getElementById('post-image-input').files[0], submitBtn = document.getElementById('submit-post-btn');
             if (!title.trim() || !content.trim()) return;
-            await addDoc(collection(db, "posts"), { title, content, category: currentCategory, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), viewCount: 0, likes: [], commentCount: 0 });
-            document.getElementById('create-post-form').reset();
-            createPostModal.classList.add('hidden');
+            submitBtn.disabled = true; submitBtn.textContent = "Mengirim...";
+            if (file) {
+                const progressDiv = document.getElementById('upload-progress'); const progressBar = document.getElementById('upload-progress-bar'); progressDiv.classList.remove('hidden');
+                const storageRef = ref(storage, `posts/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+                uploadTask.on('state_changed', snapshot => { progressBar.style.width = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) + '%'; }, error => { console.error("Upload error:", error); alert("Gagal mengunggah gambar."); submitBtn.disabled = false; submitBtn.textContent = "Kirim"; }, () => { getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => savePost({ title, content, imageUrl: downloadURL })); });
+            } else { savePost({ title, content }); }
+        });
+        async function savePost(postData) {
+            const submitBtn = document.getElementById('submit-post-btn');
+            await addDoc(collection(db, "posts"), { ...postData, category: currentCategory, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), viewCount: 0, likes: [], commentCount: 0 });
+            document.getElementById('create-post-form').reset(); createPostModal.classList.add('hidden');
+            submitBtn.disabled = false; submitBtn.textContent = "Kirim";
+            document.getElementById('upload-progress').classList.add('hidden'); document.getElementById('upload-progress-bar').style.width = '0%';
+        }
+
+        let canExit = false;
+        const toast = document.getElementById('toast');
+        function showToast(message) { toast.textContent = message; toast.classList.remove('hidden'); setTimeout(() => { toast.classList.add('hidden'); }, 2000); }
+        window.addEventListener('popstate', () => {
+            if (viewHistory.length > 1) {
+                viewHistory.pop();
+                const previousView = viewHistory[viewHistory.length - 1];
+                showView(previousView, true);
+            } else {
+                if (canExit) { window.close(); } 
+                else { canExit = true; showToast('Tekan kembali lagi untuk keluar'); history.pushState(null, '', location.href); setTimeout(() => { canExit = false; }, 2000); }
+            }
         });
     </script>
 </body>
