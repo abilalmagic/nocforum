@@ -27,7 +27,7 @@
     <header id="header" class="bg-gray-900/50 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-amber-500/20 py-4">
         <div class="container mx-auto relative flex flex-col md:flex-row md:justify-center items-center px-4">
             <div class="flex flex-col items-center">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRvODLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC Forum Logo" id="logo-img" class="h-12 cursor-pointer"/>
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC Forum Logo" id="logo-img" class="h-12 cursor-pointer"/>
                 <p class="text-amber-400/70 text-sm font-mono mt-1 tracking-widest">magic underground society</p>
             </div>
             <div id="user-info" class="hidden items-center space-x-4 justify-center pt-4 md:pt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2">
@@ -73,13 +73,13 @@
         <div id="view-categories" class="view">
              <div id="announcement-section" class="mb-12">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-3xl font-bold text-white font-orbitron tracking-wider">PENGUMUMAN</h2>
+                    <center><h2 class="text-3xl font-bold text-white font-orbitron tracking-wider">PENGUMUMAN</h2></center>
                     <button id="create-announcement-btn" class="hidden btn-gold text-white font-bold py-2 px-4 rounded-md text-sm">Buat Pengumuman</button>
                 </div>
                 <div id="announcement-container" class="space-y-4"></div>
              </div>
              <hr class="border-amber-500/20 my-8">
-             <h2 class="text-4xl font-bold mb-8 text-center text-white font-orbitron tracking-wider">SELECT_CATEGORY</h2>
+             <h2 class="text-4xl font-bold mb-8 text-center text-white font-orbitron tracking-wider">CATEGORY</h2>
              <div id="category-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
         <div id="view-post-list" class="view">
@@ -247,6 +247,54 @@
         document.getElementById('search-input').addEventListener('input', e => {
             const searchTerm = e.target.value.toLowerCase();
             document.querySelectorAll('.post-card').forEach(card => card.style.display = card.querySelector('h3').textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none');
+        });
+
+        const announcementContainer = document.getElementById('announcement-container');
+        function renderAnnouncements() {
+            const q = query(collection(db, "announcements"));
+            onSnapshot(q, snapshot => {
+                if (snapshot.empty) {
+                    announcementContainer.innerHTML = `<p class="text-center text-gray-500 py-4 font-mono">-- Belum ada pengumuman. --</p>`;
+                    return;
+                }
+                const sortedDocs = snapshot.docs.sort((a, b) => (b.data().createdAt?.toDate() || 0) - (a.data().createdAt?.toDate() || 0));
+                announcementContainer.innerHTML = sortedDocs.map(doc => {
+                    const ann = doc.data();
+                    const date = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
+                    return `
+                        <div data-id="${doc.id}" class="announcement-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group">
+                            <p class="text-sm text-gray-500 font-mono">${ann.authorName || 'Admin'} &bull; ${date}</p>
+                            <h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${ann.title}</h3>
+                            <div class="flex space-x-4 text-sm text-gray-500 font-mono">
+                                <span>⭐ ${ann.likes?.length || 0}</span>
+                                <span>💬 ${ann.commentCount || 0}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                document.querySelectorAll('.announcement-card').forEach(card => card.addEventListener('click', () => renderDetailView('announcements', card.dataset.id)));
+            });
+        }
+        
+        const createAnnouncementModal = document.getElementById('create-announcement-modal');
+        document.getElementById('create-announcement-btn').addEventListener('click', () => createAnnouncementModal.classList.remove('hidden'));
+        document.getElementById('cancel-announcement-btn').addEventListener('click', () => createAnnouncementModal.classList.add('hidden'));
+        document.getElementById('create-announcement-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const title = document.getElementById('announcement-title-input').value;
+            const content = document.getElementById('announcement-content-input').value;
+            if (!title.trim() || !content.trim() || !ADMIN_UIDS.includes(currentUser?.uid)) return;
+
+            await addDoc(collection(db, "announcements"), {
+                title, content,
+                authorId: currentUser.uid,
+                authorName: currentUser.displayName,
+                authorPhotoURL: currentUser.photoURL,
+                createdAt: serverTimestamp(),
+                likes: [], commentCount: 0
+            });
+            document.getElementById('create-announcement-form').reset();
+            createAnnouncementModal.classList.add('hidden');
         });
 
         const detailContainer = document.getElementById('detail-container');
