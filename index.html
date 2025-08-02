@@ -26,6 +26,7 @@
         .emoji-reaction { transition: transform 0.2s; cursor: pointer; }
         .emoji-reaction:hover { transform: scale(1.2); }
         .emoji-reaction.selected { background-color: rgba(245, 158, 11, 0.3); border-radius: 50%; padding: 2px; }
+        .unread-dot { background-color: #ef4444; border-radius: 50%; width: 10px; height: 10px; }
     </style>
 </head>
 <body class="bg-grid-amber-500/10">
@@ -134,6 +135,7 @@
     <button id="chat-fab" class="hidden fixed bottom-6 right-6 btn-gold rounded-full w-16 h-16 flex items-center justify-center shadow-lg z-40">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
         <span id="online-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">0</span>
+        <span id="chat-notification-dot" class="hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-gray-900"></span>
     </button>
 
     <div id="chat-popup" class="hidden fixed bottom-24 right-6 w-[350px] h-[500px] glass-effect rounded-xl shadow-2xl shadow-amber-500/10 flex flex-col z-40">
@@ -143,7 +145,10 @@
         </div>
         <div class="flex flex-1 overflow-hidden">
             <div class="w-1/3 border-r border-amber-500/20 p-2 space-y-2 overflow-y-auto chat-container">
-                <button data-chat-id="group" data-chat-name="Grup Chat" class="chat-tab-btn w-full text-left p-2 rounded-md bg-amber-500/30 text-white font-bold">Grup Chat</button>
+                <button data-chat-id="group" data-chat-name="Grup Chat" class="chat-tab-btn w-full text-left p-2 rounded-md bg-amber-500/30 text-white font-bold relative">
+                    Grup Chat
+                    <span data-chat-id="group" class="unread-dot absolute right-2 top-1/2 -translate-y-1/2 hidden"></span>
+                </button>
                 <h4 class="text-xs font-bold text-gray-400 uppercase pt-2">Online</h4>
                 <div id="online-users-list" class="space-y-1"></div>
             </div>
@@ -166,7 +171,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove, limit, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getDatabase, ref as dbRef, onValue, set, onDisconnect, serverTimestamp as rtdbServerTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         const ADMIN_UIDS = ["Ix3gKNJPNZSnLQj2YTAfQp76IL72"]; 
@@ -189,6 +194,8 @@
         let currentChatId = 'group';
         let currentChatUnsubscribe = null;
         let typingTimeout = null;
+        let unreadChatsUnsubscribe = null;
+        let unreadChats = new Set();
         const EMOJI_REACTIONS = ['👍', '❤️', '🔥', '🤯'];
 
         const views = document.querySelectorAll('.view');
@@ -211,7 +218,7 @@
             });
         }
 
-        const chatFab = document.getElementById('chat-fab'), onlineCount = document.getElementById('online-count'), chatPopup = document.getElementById('chat-popup'), chatMessages = document.getElementById('chat-messages'), onlineUsersList = document.getElementById('online-users-list'), chatTitle = document.getElementById('chat-title'), typingIndicator = document.getElementById('typing-indicator');
+        const chatFab = document.getElementById('chat-fab'), onlineCount = document.getElementById('online-count'), chatPopup = document.getElementById('chat-popup'), chatMessages = document.getElementById('chat-messages'), onlineUsersList = document.getElementById('online-users-list'), chatTitle = document.getElementById('chat-title'), typingIndicator = document.getElementById('typing-indicator'), chatNotificationDot = document.getElementById('chat-notification-dot');
 
         function setupPresence(user) {
             const userStatusRef = dbRef(rtdb, `/status/${user.uid}`);
@@ -231,15 +238,23 @@
                 .filter(([uid, data]) => data.state === 'online' && uid !== currentUser?.uid)
                 .map(([uid, data]) => ({ uid, ...data }));
             onlineCount.textContent = onlineUsers.length + (currentUser ? 1 : 0);
-            onlineUsersList.innerHTML = onlineUsers.map(user => `
-                <button data-chat-id="${user.uid}" data-chat-name="${user.name}" class="chat-tab-btn w-full text-left p-2 rounded-md hover:bg-amber-500/20 text-sm truncate">
-                    <span class="inline-block w-2 h-2 bg-green-400 rounded-full mr-2"></span>${user.name}
+            onlineUsersList.innerHTML = onlineUsers.map(user => {
+                const myUid = currentUser?.uid;
+                if (!myUid) return '';
+                const targetUid = user.uid;
+                const privateChatId = myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`;
+                const hasUnread = unreadChats.has(privateChatId);
+                return `
+                <button data-chat-id="${user.uid}" data-chat-name="${user.name}" class="chat-tab-btn w-full text-left p-2 rounded-md hover:bg-amber-500/20 text-sm truncate relative">
+                    <span class="inline-block w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                    ${user.name}
+                    <span data-chat-id="${privateChatId}" class="unread-dot absolute right-2 top-1/2 -translate-y-1/2 ${hasUnread ? '' : 'hidden'}"></span>
                 </button>
-            `).join('');
+            `}).join('');
             document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.addEventListener('click', () => switchChat(btn)));
         });
         
-        function switchChat(buttonElement) {
+        async function switchChat(buttonElement) {
             const chatId = buttonElement.dataset.chatId;
             const chatName = buttonElement.dataset.chatName;
             document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.classList.remove('bg-amber-500/30', 'text-white', 'font-bold'));
@@ -248,25 +263,31 @@
             typingIndicator.textContent = '';
             if (currentChatUnsubscribe) currentChatUnsubscribe();
             
+            let collectionPath;
+            let finalChatId;
             if (chatId === 'group') {
                 currentChatId = 'group';
+                finalChatId = 'group';
                 chatTitle.textContent = 'Grup Chat';
-                listenToMessages('live-chat');
+                collectionPath = 'live-chat';
             } else {
                 const targetUid = chatId;
                 const myUid = currentUser.uid;
                 currentChatId = myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`;
+                finalChatId = currentChatId;
                 chatTitle.textContent = `Chat dengan ${chatName}`;
-                listenToMessages(`privateChats/${currentChatId}/messages`);
+                collectionPath = `privateChats/${currentChatId}/messages`;
                 
                 onValue(dbRef(rtdb, `/typing/${currentChatId}/${targetUid}`), (snapshot) => {
-                    if (snapshot.val() === true) {
+                    if (snapshot.val() === true && currentChatId === (myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`)) {
                         typingIndicator.textContent = `${chatName} sedang mengetik...`;
                     } else {
                         typingIndicator.textContent = '';
                     }
                 });
             }
+            listenToMessages(collectionPath);
+            await markChatAsRead(finalChatId);
         }
 
         function listenToMessages(collectionPath) {
@@ -288,13 +309,24 @@
             e.preventDefault();
             const input = document.getElementById('chat-input');
             if (!input.value.trim()) return;
-            const collectionPath = currentChatId === 'group' ? 'live-chat' : `privateChats/${currentChatId}/messages`;
-            await addDoc(collection(db, collectionPath), {
+            const isGroup = currentChatId === 'group';
+            const collectionPath = isGroup ? 'live-chat' : `privateChats/${currentChatId}/messages`;
+            
+            const messageData = {
                 text: input.value,
                 uid: currentUser.uid,
                 authorName: currentUser.displayName,
                 createdAt: serverTimestamp()
-            });
+            };
+            await addDoc(collection(db, collectionPath), messageData);
+
+            if (!isGroup) {
+                const recipientId = currentChatId.replace(currentUser.uid, '').replace('_', '');
+                const unreadRef = doc(db, `users/${recipientId}/unreadChats/${currentChatId}`);
+                await setDoc(unreadRef, { lastMessage: serverTimestamp() });
+                const typingRef = dbRef(rtdb, `/typing/${currentChatId}/${currentUser.uid}`);
+                set(typingRef, false);
+            }
             input.value = '';
         });
         
@@ -308,6 +340,26 @@
             }, 3000);
         });
 
+        function listenForUnreadChats(user) {
+            if (unreadChatsUnsubscribe) unreadChatsUnsubscribe();
+            const q = query(collection(db, `users/${user.uid}/unreadChats`));
+            unreadChatsUnsubscribe = onSnapshot(q, (snapshot) => {
+                unreadChats.clear();
+                snapshot.docs.forEach(doc => unreadChats.add(doc.id));
+                chatNotificationDot.classList.toggle('hidden', unreadChats.size === 0);
+                
+                document.querySelectorAll('.chat-tab-btn .unread-dot').forEach(dot => {
+                    dot.classList.toggle('hidden', !unreadChats.has(dot.dataset.chatId));
+                });
+            });
+        }
+
+        async function markChatAsRead(chatId) {
+            if (unreadChats.has(chatId)) {
+                await deleteDoc(doc(db, `users/${currentUser.uid}/unreadChats/${chatId}`));
+            }
+        }
+
         onAuthStateChanged(auth, user => {
             const createAnnouncementBtn = document.getElementById('create-announcement-btn');
             if (user) {
@@ -317,6 +369,7 @@
                 userAvatar.src = user.photoURL || defaultAvatar;
                 chatFab.classList.remove('hidden');
                 setupPresence(user);
+                listenForUnreadChats(user);
                 if (ADMIN_UIDS.includes(user.uid)) createAnnouncementBtn.classList.remove('hidden');
                 else createAnnouncementBtn.classList.add('hidden');
                 renderAnnouncements();
@@ -328,6 +381,7 @@
                 createAnnouncementBtn.classList.add('hidden');
                 chatFab.classList.add('hidden');
                 chatPopup.classList.add('hidden');
+                if (unreadChatsUnsubscribe) unreadChatsUnsubscribe();
                 showView('view-login');
             }
         });
@@ -370,9 +424,19 @@
                 postListContainer.innerHTML = sortedDocs.map(doc => {
                     const post = doc.data();
                     const postDate = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
-                    return `<div data-id="${doc.id}" class="post-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group"><div class="flex items-center mb-3"><img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-8 h-8 rounded-full mr-3 border-2 border-gray-600 group-hover:border-amber-500/50 transition-colors" /><span class="text-sm text-gray-500 font-mono">${post.authorName} &bull; ${postDate}</span></div><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${post.title}</h3><div class="flex justify-between items-center text-sm text-gray-500 font-mono"><div class="flex space-x-4"><span>👁️ ${post.viewCount || 0}</span><span>⭐ ${post.likes?.length || 0}</span><span>💬 ${post.commentCount || 0}</span></div></div></div>`;
+                    const reactionsHtml = EMOJI_REACTIONS.map(emoji => {
+                        const count = Object.values(post.reactions || {}).filter(r => r === emoji).length;
+                        return count > 0 ? `<span class="text-xs">${emoji} ${count}</span>` : '';
+                    }).join(' ');
+                    return `<div data-id="${doc.id}" class="post-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group"><div class="flex items-center mb-3"><img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-8 h-8 rounded-full mr-3 border-2 border-gray-600 group-hover:border-amber-500/50 transition-colors" /><span class="text-sm text-gray-500 font-mono clickable-link" data-user-id="${post.authorId}">${post.authorName}</span> &bull; ${postDate}</div><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${post.title}</h3><div class="flex justify-between items-center text-sm text-gray-500 font-mono"><div class="flex space-x-4">${reactionsHtml}<span>💬 ${post.commentCount || 0}</span></div></div></div>`;
                 }).join('');
-                document.querySelectorAll('.post-card').forEach(card => card.addEventListener('click', () => renderDetailView('posts', card.dataset.id)));
+                document.querySelectorAll('.post-card').forEach(card => card.addEventListener('click', (e) => {
+                    if (e.target.closest('[data-user-id]')) {
+                        renderProfileView(e.target.closest('[data-user-id]').dataset.userId);
+                    } else {
+                        renderDetailView('posts', card.dataset.id);
+                    }
+                }));
             });
         }
         
@@ -390,11 +454,15 @@
                     announcementContainer.innerHTML = `<p class="text-center text-gray-500 py-4 font-mono">-- Belum ada pengumuman. --</p>`;
                     return;
                 }
-                const sortedDocs = snapshot.docs.sort((a, b) => (b.data().createdAt?.toDate() || 0) - (a.data().createdAt?.toDate() || 0));
+                const sortedDocs = snapshot.docs.sort((a,b) => (b.data().isPinned ? 1 : -1) - (a.data().isPinned ? 1 : -1) || (b.data().createdAt?.toDate() || 0) - (a.data().createdAt?.toDate() || 0));
                 announcementContainer.innerHTML = sortedDocs.map(doc => {
                     const ann = doc.data();
                     const date = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
-                    return `<div data-id="${doc.id}" class="announcement-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group"><p class="text-sm text-gray-500 font-mono">${ann.authorName || 'Admin'} &bull; ${date}</p><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${ann.title}</h3><div class="flex space-x-4 text-sm text-gray-500 font-mono"><span>⭐ ${ann.likes?.length || 0}</span><span>💬 ${ann.commentCount || 0}</span></div></div>`;
+                    const reactionsHtml = EMOJI_REACTIONS.map(emoji => {
+                        const count = Object.values(ann.reactions || {}).filter(r => r === emoji).length;
+                        return count > 0 ? `<span class="text-xs">${emoji} ${count}</span>` : '';
+                    }).join(' ');
+                    return `<div data-id="${doc.id}" class="announcement-card glass-effect p-5 rounded-lg transition-all duration-300 cursor-pointer group ${ann.isPinned ? 'pinned' : 'hover:border-amber-500/50'}"><p class="text-sm text-gray-500 font-mono">${ann.authorName || 'Admin'} &bull; ${date}</p><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${ann.title}</h3><div class="flex space-x-4 text-sm text-gray-500 font-mono">${reactionsHtml}<span>💬 ${ann.commentCount || 0}</span></div></div>`;
                 }).join('');
                 document.querySelectorAll('.announcement-card').forEach(card => card.addEventListener('click', () => renderDetailView('announcements', card.dataset.id)));
             });
@@ -408,7 +476,7 @@
             const title = document.getElementById('announcement-title-input').value;
             const content = document.getElementById('announcement-content-input').value;
             if (!title.trim() || !content.trim() || !ADMIN_UIDS.includes(currentUser?.uid)) return;
-            await addDoc(collection(db, "announcements"), { title, content, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), likes: [], commentCount: 0 });
+            await addDoc(collection(db, "announcements"), { title, content, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), reactions: {}, commentCount: 0, isPinned: false });
             document.getElementById('create-announcement-form').reset();
             createAnnouncementModal.classList.add('hidden');
         });
@@ -425,14 +493,33 @@
                 if (!docSnap.exists()) { detailContainer.innerHTML = `<p class="text-center text-red-500 font-mono">Konten tidak ditemukan.</p>`; return; }
                 const item = docSnap.data();
                 const isAuthor = currentUser && currentUser.uid === item.authorId;
-                const isLiked = currentUser && item.likes?.includes(currentUser.uid);
                 const contentHtml = linkify(item.content);
                 const isAnnouncement = collectionName === 'announcements';
-                detailContainer.innerHTML = `<button id="back-to-previous-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button><div class="flex justify-between items-start"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-orbitron">${item.title}</h2>${(isAuthor || (isAnnouncement && ADMIN_UIDS.includes(currentUser?.uid))) ? `<button id="delete-btn" class="bg-red-600/50 border border-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600/80 text-sm">Hapus</button>` : ''}</div><div class="flex items-center mb-4 text-sm text-gray-400"><img src="${item.authorPhotoURL || defaultAvatar}" alt="${item.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" /><div class="font-mono"><p class="font-semibold text-gray-200">${item.authorName}</p><p>${item.createdAt ? new Date(item.createdAt.toDate()).toLocaleString('id-ID') : ''}</p></div></div>${item.imageUrl ? `<img src="${item.imageUrl}" alt="Gambar Konten" class="w-full max-w-lg mx-auto rounded-lg mb-6">` : ''}<p class="text-gray-300 whitespace-pre-wrap leading-relaxed mb-6 text-lg">${contentHtml}</p><div class="flex items-center space-x-6 border-t border-b border-gray-700 py-3 mb-6"><button id="like-btn" class="flex items-center space-x-2 text-lg transition-colors ${isLiked ? 'text-amber-400' : 'text-gray-500 hover:text-white'}"><span>⭐</span><span class="font-semibold font-mono">${item.likes?.length || 0}</span></button>${!isAnnouncement ? `<div class="flex items-center space-x-2 text-lg text-gray-500"><span>👁️</span><span class="font-mono">${item.viewCount || 0}</span></div>` : ''}</div><div id="comment-section"></div>`;
+
+                const reactions = item.reactions || {};
+                const myReaction = reactions[currentUser?.uid];
+                const reactionsHtml = EMOJI_REACTIONS.map(emoji => {
+                    const count = Object.values(reactions).filter(r => r === emoji).length;
+                    return `<button data-emoji="${emoji}" class="emoji-reaction p-1 text-xl ${myReaction === emoji ? 'selected' : ''}">${emoji} <span class="text-sm">${count > 0 ? count : ''}</span></button>`;
+                }).join('');
+
+                detailContainer.innerHTML = `<button id="back-to-previous-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button><div class="flex justify-between items-start"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-orbitron">${item.title}</h2><div class="flex space-x-2">${(isAnnouncement && ADMIN_UIDS.includes(currentUser?.uid)) ? `<button id="pin-btn" class="bg-blue-600/50 border border-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600/80 text-sm">${item.isPinned ? 'Lepas Pin' : 'Sematkan'}</button>` : ''}${(isAuthor || (isAnnouncement && ADMIN_UIDS.includes(currentUser?.uid))) ? `<button id="delete-btn" class="bg-red-600/50 border border-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600/80 text-sm">Hapus</button>` : ''}</div></div><div class="flex items-center mb-4 text-sm text-gray-400"><img src="${item.authorPhotoURL || defaultAvatar}" alt="${item.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" /><div class="font-mono"><p class="font-semibold text-gray-200 clickable-link" data-user-id="${item.authorId}">${item.authorName}</p><p>${item.createdAt ? new Date(item.createdAt.toDate()).toLocaleString('id-ID') : ''}</p></div></div><p class="text-gray-300 whitespace-pre-wrap leading-relaxed mb-6 text-lg">${contentHtml}</p><div class="flex items-center space-x-4 border-t border-b border-gray-700 py-3 mb-6">${reactionsHtml}${!isAnnouncement ? `<div class="flex items-center space-x-2 text-lg text-gray-500"><span>👁️</span><span class="font-mono">${item.viewCount || 0}</span></div>` : ''}</div><div id="comment-section"></div>`;
                 renderComments(collectionName, docId);
                 document.getElementById('back-to-previous-btn').addEventListener('click', () => history.back());
                 if (document.getElementById('delete-btn')) { document.getElementById('delete-btn').addEventListener('click', async () => { if (confirm("Yakin ingin menghapus ini?")) { await deleteDoc(docRef); history.back(); } }); }
-                document.getElementById('like-btn').addEventListener('click', async () => { if (!currentUser) return; await updateDoc(docRef, { likes: isLiked ? arrayRemove(currentUser.uid) : arrayUnion(currentUser.uid) }); });
+                if (document.getElementById('pin-btn')) { document.getElementById('pin-btn').addEventListener('click', async () => { await updateDoc(docRef, { isPinned: !item.isPinned }); }); }
+                document.querySelectorAll('.emoji-reaction').forEach(btn => btn.addEventListener('click', async () => {
+                    if (!currentUser) return;
+                    const emoji = btn.dataset.emoji;
+                    const currentReactions = item.reactions || {};
+                    if (currentReactions[currentUser.uid] === emoji) {
+                        delete currentReactions[currentUser.uid];
+                    } else {
+                        currentReactions[currentUser.uid] = emoji;
+                    }
+                    await updateDoc(docRef, { reactions: currentReactions });
+                }));
+                document.querySelectorAll('[data-user-id]').forEach(el => el.addEventListener('click', (e) => renderProfileView(e.target.dataset.userId)));
             });
         }
         
@@ -443,38 +530,72 @@
                 const commentsHtml = snapshot.docs.map(doc => {
                     const comment = doc.data();
                     const commentTextHtml = linkify(comment.text);
-                    const repliesHtml = (comment.replies || []).map(reply => `<div class="flex space-x-3 mt-3"><img src="${reply.authorPhotoURL || defaultAvatar}" alt="${reply.authorName}" class="w-8 h-8 rounded-full mt-1 border-2 border-gray-600"/><div class="flex-grow bg-gray-700/80 p-2 rounded-lg"><p class="font-semibold text-amber-200 text-sm font-mono">${reply.authorName}</p><p class="text-gray-300 text-sm">${linkify(reply.text)}</p></div></div>`).join('');
-                    return `<div class="flex space-x-3"><img src="${comment.authorPhotoURL || defaultAvatar}" alt="${comment.authorName}" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-700"/><div class="flex-grow"><div class="bg-gray-800/70 p-3 rounded-lg"><p class="font-semibold text-amber-300 font-mono text-sm">${comment.authorName}</p><p class="text-gray-300">${commentTextHtml}</p></div><div class="text-xs text-gray-500 mt-1 flex space-x-3 font-mono"><span>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString('id-ID') : ''}</span><button class="reply-btn font-semibold hover:text-white" data-comment-id="${doc.id}">Balas</button></div><div class="pl-4 border-l-2 border-gray-700 space-y-3 mt-3">${repliesHtml}</div><div id="reply-form-${doc.id}" class="hidden mt-2 pl-4"><form class="reply-form flex space-x-2" data-comment-id="${doc.id}"><input type="text" placeholder="Tulis balasan..." class="flex-grow p-2 bg-gray-700 rounded-md border border-gray-600 text-sm font-mono"/><button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-md text-sm">Kirim</button></form></div></div></div>`;
+                    const repliesHtml = (comment.replies || []).map(reply => `<div class="flex space-x-3 mt-3"><img src="${reply.authorPhotoURL || defaultAvatar}" alt="${reply.authorName}" class="w-8 h-8 rounded-full mt-1 border-2 border-gray-600"/><div class="flex-grow bg-gray-700/80 p-2 rounded-lg"><p class="font-semibold text-amber-200 text-sm font-mono clickable-link" data-user-id="${reply.authorId}">${reply.authorName}</p><p class="text-gray-300 text-sm">${linkify(reply.text)}</p></div></div>`).join('');
+                    return `<div class="flex space-x-3"><img src="${comment.authorPhotoURL || defaultAvatar}" alt="${comment.authorName}" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-700"/><div class="flex-grow"><div class="bg-gray-800/70 p-3 rounded-lg"><p class="font-semibold text-amber-300 font-mono text-sm clickable-link" data-user-id="${comment.authorId}">${comment.authorName}</p><p class="text-gray-300">${commentTextHtml}</p></div><div class="text-xs text-gray-500 mt-1 flex space-x-3 font-mono"><span>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString('id-ID') : ''}</span><button class="reply-btn font-semibold hover:text-white" data-comment-id="${doc.id}">Balas</button></div><div class="pl-4 border-l-2 border-gray-700 space-y-3 mt-3">${repliesHtml}</div><div id="reply-form-${doc.id}" class="hidden mt-2 pl-4"><form class="reply-form flex space-x-2" data-comment-id="${doc.id}"><input type="text" placeholder="Tulis balasan..." class="flex-grow p-2 bg-gray-700 rounded-md border border-gray-600 text-sm font-mono"/><button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-md text-sm">Kirim</button></form></div></div></div>`;
                 }).join('');
                 commentSection.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-white font-mono">Komentar (${snapshot.size})</h3><div class="space-y-4 mb-6">${commentsHtml}</div>${currentUser ? `<form id="comment-form" class="flex space-x-3 items-start"><img src="${currentUser.photoURL || defaultAvatar}" alt="You" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-600"/><textarea id="comment-input" placeholder="Tulis komentar..." rows="2" class="form-input"></textarea><button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-md h-full">Kirim</button></form>` : ''}`;
                 if (currentUser) document.getElementById('comment-form').addEventListener('submit', async e => { e.preventDefault(); const commentInput = document.getElementById('comment-input'); if (!commentInput.value.trim()) return; await addDoc(collection(db, collectionName, docId, "comments"), { text: commentInput.value, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), replies: [] }); await updateDoc(doc(db, collectionName, docId), { commentCount: increment(1) }); commentInput.value = ''; });
                 document.querySelectorAll('.reply-btn').forEach(btn => btn.addEventListener('click', e => document.getElementById(`reply-form-${e.target.dataset.commentId}`).classList.toggle('hidden')));
                 document.querySelectorAll('.reply-form').forEach(form => form.addEventListener('submit', async e => { e.preventDefault(); const commentId = e.target.dataset.commentId, replyText = e.target.querySelector('input').value; if (!replyText.trim()) return; const newReply = { id: crypto.randomUUID(), text: replyText, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: new Date().toISOString() }; await updateDoc(doc(db, collectionName, docId, "comments", commentId), { replies: arrayUnion(newReply) }); e.target.querySelector('input').value = ''; document.getElementById(`reply-form-${commentId}`).classList.add('hidden'); }));
+                document.querySelectorAll('[data-user-id]').forEach(el => el.addEventListener('click', (e) => renderProfileView(e.target.dataset.userId)));
             });
         }
 
         const createPostModal = document.getElementById('create-post-modal');
         document.getElementById('create-post-btn').addEventListener('click', () => { document.getElementById('create-post-modal-title').textContent = `Postingan Baru di ${currentCategory}`; createPostModal.classList.remove('hidden'); });
         document.getElementById('cancel-post-btn').addEventListener('click', () => createPostModal.classList.add('hidden'));
-        document.getElementById('create-post-form').addEventListener('submit', e => {
+        document.getElementById('create-post-form').addEventListener('submit', async e => {
             e.preventDefault();
-            const title = document.getElementById('post-title-input').value, content = document.getElementById('post-content-input').value, file = document.getElementById('post-image-input').files[0], submitBtn = document.getElementById('submit-post-btn');
+            const title = document.getElementById('post-title-input').value, content = document.getElementById('post-content-input').value;
             if (!title.trim() || !content.trim()) return;
-            submitBtn.disabled = true; submitBtn.textContent = "Mengirim...";
-            if (file) {
-                const progressDiv = document.getElementById('upload-progress'); const progressBar = document.getElementById('upload-progress-bar'); progressDiv.classList.remove('hidden');
-                const storageRef = ref(storage, `posts/${Date.now()}_${file.name}`);
-                const uploadTask = uploadBytesResumable(storageRef, file);
-                uploadTask.on('state_changed', snapshot => { progressBar.style.width = ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) + '%'; }, error => { console.error("Upload error:", error); alert("Gagal mengunggah gambar."); submitBtn.disabled = false; submitBtn.textContent = "Kirim"; }, () => { getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => savePost({ title, content, imageUrl: downloadURL })); });
-            } else { savePost({ title, content }); }
+            await savePost({ title, content });
         });
         async function savePost(postData) {
-            const submitBtn = document.getElementById('submit-post-btn');
-            await addDoc(collection(db, "posts"), { ...postData, category: currentCategory, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), viewCount: 0, likes: [], commentCount: 0 });
+            await addDoc(collection(db, "posts"), { ...postData, category: currentCategory, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), viewCount: 0, reactions: {}, commentCount: 0 });
             document.getElementById('create-post-form').reset(); createPostModal.classList.add('hidden');
-            submitBtn.disabled = false; submitBtn.textContent = "Kirim";
-            document.getElementById('upload-progress').classList.add('hidden'); document.getElementById('upload-progress-bar').style.width = '0%';
         }
+        
+        async function renderProfileView(userId) {
+            showView('view-profile');
+            const profileContainer = document.getElementById('profile-container');
+            profileContainer.innerHTML = `<p class="text-center font-mono animate-pulse">Memuat profil...</p>`;
+            
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (!userDoc.exists()) {
+                profileContainer.innerHTML = `<p class="text-center text-red-500 font-mono">Profil tidak ditemukan.</p>`;
+                return;
+            }
+            const userData = userDoc.data();
+            
+            const postsQuery = query(collection(db, "posts"), where("authorId", "==", userId), orderBy("createdAt", "desc"));
+            const postsSnapshot = await getDocs(postsQuery);
+            const userPostsHtml = postsSnapshot.docs.map(doc => {
+                const post = doc.data();
+                return `<div class="p-3 border-b border-amber-500/10">${post.title}</div>`;
+            }).join('') || '<p class="text-gray-500">Belum ada postingan.</p>';
+            
+            profileContainer.innerHTML = `
+                <button id="back-from-profile-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button>
+                <div class="flex items-center space-x-4 mb-6">
+                    <img src="${userData.photoURL || defaultAvatar}" alt="${userData.displayName}" class="w-20 h-20 rounded-full border-4 border-amber-500/50">
+                    <div>
+                        <h2 class="text-3xl font-bold font-orbitron">${userData.displayName}</h2>
+                        <p class="text-gray-400">${userData.email}</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div><strong class="text-amber-400">Pengalaman Sulap:</strong> ${userData.magicExperience}</div>
+                    <div><strong class="text-amber-400">Aliran Favorit:</strong> ${userData.magicGenre}</div>
+                </div>
+                <hr class="border-amber-500/20 my-6">
+                <h3 class="text-2xl font-bold font-orbitron mb-4">Postingan oleh ${userData.displayName}</h3>
+                <div class="space-y-2">${userPostsHtml}</div>
+            `;
+            document.getElementById('back-from-profile-btn').addEventListener('click', () => history.back());
+        }
+        
+        document.getElementById('user-display-name').addEventListener('click', () => renderProfileView(currentUser.uid));
+        document.getElementById('user-avatar').addEventListener('click', () => renderProfileView(currentUser.uid));
 
         let canExit = false;
         const toast = document.getElementById('toast');
