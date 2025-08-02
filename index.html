@@ -18,14 +18,14 @@
         .btn-gold:hover { background-color: rgba(251, 191, 36, 1); box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
         .form-input { background-color: #1f2937; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.75rem; width: 100%; color: #d1d5db; }
         .form-input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5); }
-        .clickable-link { color: #fbbf24; text-decoration: underline; }
+        .clickable-link { color: #fbbf24; text-decoration: underline; cursor: pointer; }
         .clickable-link:hover { color: #f59e0b; }
         .chat-container::-webkit-scrollbar { width: 4px; }
         .chat-container::-webkit-scrollbar-thumb { background-color: #f59e0b; border-radius: 20px; }
-        .pinned { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
-        .emoji-reaction { transition: transform 0.2s; }
+        .pinned { border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.05); }
+        .emoji-reaction { transition: transform 0.2s; cursor: pointer; }
         .emoji-reaction:hover { transform: scale(1.2); }
-        .emoji-reaction.selected { background-color: rgba(245, 158, 11, 0.3); border-radius: 50%; }
+        .emoji-reaction.selected { background-color: rgba(245, 158, 11, 0.3); border-radius: 50%; padding: 2px; }
     </style>
 </head>
 <body class="bg-grid-amber-500/10">
@@ -37,8 +37,8 @@
                 <p class="text-amber-400/70 text-sm font-mono mt-1 tracking-widest">magic underground society</p>
             </div>
             <div id="user-info" class="hidden items-center space-x-4 justify-center pt-4 md:pt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2">
-                <span id="user-display-name" class="hidden md:inline text-sm text-gray-400 font-mono"></span>
-                <img id="user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-400/50" />
+                <span id="user-display-name" class="hidden md:inline text-sm text-gray-400 font-mono clickable-link"></span>
+                <img id="user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-400/50 clickable-link" />
                 <button id="logout-btn" class="bg-amber-600/50 border border-amber-500 text-white font-bold py-2 px-4 rounded-md hover:bg-amber-600/80 hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all duration-300">Keluar</button>
             </div>
         </div>
