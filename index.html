@@ -20,6 +20,8 @@
         .form-input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5); }
         .clickable-link { color: #fbbf24; text-decoration: underline; }
         .clickable-link:hover { color: #f59e0b; }
+        .chat-container::-webkit-scrollbar { width: 4px; }
+        .chat-container::-webkit-scrollbar-thumb { background-color: #f59e0b; border-radius: 20px; }
     </style>
 </head>
 <body class="bg-grid-amber-500/10">
@@ -73,7 +75,7 @@
         <div id="view-categories" class="view">
              <div id="announcement-section" class="mb-12">
                 <div class="flex justify-between items-center mb-4">
-                    <center><h2 class="text-3xl font-bold text-white font-orbitron tracking-wider">PENGUMUMAN</h2></center>
+                    <h2 class="text-3xl font-bold text-white font-orbitron tracking-wider">PENGUMUMAN</h2>
                     <button id="create-announcement-btn" class="hidden btn-gold text-white font-bold py-2 px-4 rounded-md text-sm">Buat Pengumuman</button>
                 </div>
                 <div id="announcement-container" class="space-y-4"></div>
@@ -129,33 +131,68 @@
         </div>
     </div>
     
+    <!-- Tombol Chat Melayang -->
+    <button id="chat-fab" class="hidden fixed bottom-6 right-6 btn-gold rounded-full w-16 h-16 flex items-center justify-center shadow-lg z-40">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+        <span id="online-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">0</span>
+    </button>
+
+    <!-- Jendela Chat Popup Terpadu -->
+    <div id="chat-popup" class="hidden fixed bottom-24 right-6 w-[350px] h-[500px] glass-effect rounded-xl shadow-2xl shadow-amber-500/10 flex flex-col z-40">
+        <div class="p-3 border-b border-amber-500/20 flex justify-between items-center">
+            <h3 id="chat-title" class="font-bold text-white truncate">Live Chat</h3>
+            <button id="close-chat-btn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Sidebar Pengguna Online -->
+            <div class="w-1/3 border-r border-amber-500/20 p-2 space-y-2 overflow-y-auto chat-container">
+                <button data-chat-id="group" data-chat-name="Grup Chat" class="chat-tab-btn w-full text-left p-2 rounded-md bg-amber-500/30 text-white font-bold">Grup Chat</button>
+                <h4 class="text-xs font-bold text-gray-400 uppercase pt-2">Online</h4>
+                <div id="online-users-list" class="space-y-1"></div>
+            </div>
+            <!-- Area Pesan -->
+            <div class="w-2/3 flex flex-col">
+                <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-3 chat-container"></div>
+                <div class="p-3 border-t border-amber-500/20">
+                    <form id="chat-form" class="flex space-x-2">
+                        <input type="text" id="chat-input" placeholder="Ketik pesan..." class="form-input !p-2 text-sm" required>
+                        <button type="submit" class="btn-gold rounded-lg px-4 text-white">Kirim</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <footer class="text-center py-6 mt-10 border-t border-amber-500/10"><p class="text-gray-600 text-sm font-mono">&copy; 2024 NOC_FORUM // Data stream secured.</p></footer>
     <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg text-sm z-50"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+        import { getDatabase, ref as dbRef, onValue, set, onDisconnect, serverTimestamp as rtdbServerTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-        // --- PENTING: Ganti dengan User ID Admin Anda ---
         const ADMIN_UIDS = ["Ix3gKNJPNZSnLQj2YTAfQp76IL72"]; 
-
         const firebaseConfig = {
             apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
             authDomain: "magicnoc-125b6.firebaseapp.com",
             projectId: "magicnoc-125b6",
             storageBucket: "magicnoc-125b6.appspot.com",
             messagingSenderId: "321388594743",
-            appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
+            appId: "1:321388594743:web:0dfc8f24d5201f138a21b2",
+            databaseURL: "https://magicnoc-125b6-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
+        const rtdb = getDatabase(app);
 
         let currentUser = null, currentCategory = null, currentUnsubscribe = null, viewHistory = [];
+        let currentChatId = 'group';
+        let currentChatUnsubscribe = null;
         const views = document.querySelectorAll('.view'), userInfo = document.getElementById('user-info'), userDisplayName = document.getElementById('user-display-name'), userAvatar = document.getElementById('user-avatar');
         const defaultAvatar = "https://placehold.co/100x100/1f2937/d1d5db?text=NOC";
         
@@ -175,6 +212,87 @@
             });
         }
 
+        const chatFab = document.getElementById('chat-fab');
+        const onlineCount = document.getElementById('online-count');
+        const chatPopup = document.getElementById('chat-popup');
+        const chatMessages = document.getElementById('chat-messages');
+        const onlineUsersList = document.getElementById('online-users-list');
+        const chatTitle = document.getElementById('chat-title');
+
+        function setupPresence(user) {
+            const userStatusRef = dbRef(rtdb, `/status/${user.uid}`);
+            const isOnline = { state: 'online', name: user.displayName, last_changed: rtdbServerTimestamp() };
+            const isOffline = { state: 'offline', name: user.displayName, last_changed: rtdbServerTimestamp() };
+            onValue(dbRef(rtdb, '.info/connected'), (snapshot) => {
+                if (snapshot.val() === false) return;
+                onDisconnect(userStatusRef).set(isOffline).then(() => {
+                    set(userStatusRef, isOnline);
+                });
+            });
+        }
+
+        onValue(dbRef(rtdb, '/status'), (snapshot) => {
+            const statuses = snapshot.val() || {};
+            const onlineUsers = Object.entries(statuses)
+                .filter(([uid, data]) => data.state === 'online' && uid !== currentUser?.uid)
+                .map(([uid, data]) => ({ uid, ...data }));
+            onlineCount.textContent = onlineUsers.length + (currentUser ? 1 : 0);
+            onlineUsersList.innerHTML = onlineUsers.map(user => `
+                <button data-chat-id="${user.uid}" data-chat-name="${user.name}" class="chat-tab-btn w-full text-left p-2 rounded-md hover:bg-amber-500/20 text-sm truncate">
+                    <span class="inline-block w-2 h-2 bg-green-400 rounded-full mr-2"></span>${user.name}
+                </button>
+            `).join('');
+            document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.addEventListener('click', () => switchChat(btn)));
+        });
+        
+        function switchChat(buttonElement) {
+            const chatId = buttonElement.dataset.chatId;
+            const chatName = buttonElement.dataset.chatName;
+            document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.classList.remove('bg-amber-500/30', 'text-white', 'font-bold'));
+            buttonElement.classList.add('bg-amber-500/30', 'text-white', 'font-bold');
+            
+            if (chatId === 'group') {
+                currentChatId = 'group';
+                chatTitle.textContent = 'Grup Chat';
+                listenToMessages('live-chat');
+            } else {
+                const targetUid = chatId;
+                const myUid = currentUser.uid;
+                currentChatId = myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`;
+                chatTitle.textContent = `Chat dengan ${chatName}`;
+                listenToMessages(`privateChats/${currentChatId}/messages`);
+            }
+        }
+
+        function listenToMessages(collectionPath) {
+            if (currentChatUnsubscribe) currentChatUnsubscribe();
+            const q = query(collection(db, collectionPath), orderBy("createdAt", "desc"), limit(50));
+            currentChatUnsubscribe = onSnapshot(q, snapshot => {
+                chatMessages.innerHTML = snapshot.docs.reverse().map(doc => {
+                    const msg = doc.data();
+                    const isMe = msg.uid === currentUser?.uid;
+                    return `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="${isMe ? 'bg-amber-600' : 'bg-gray-700'} rounded-lg p-2 max-w-xs"><p class="text-xs font-bold ${isMe ? 'hidden' : 'text-amber-300'}">${msg.authorName}</p><p class="text-sm text-white">${linkify(msg.text)}</p></div></div>`;
+                }).join('');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        chatFab.addEventListener('click', () => chatPopup.classList.toggle('hidden'));
+        document.getElementById('close-chat-btn').addEventListener('click', () => chatPopup.classList.add('hidden'));
+        document.getElementById('chat-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            if (!input.value.trim()) return;
+            const collectionPath = currentChatId === 'group' ? 'live-chat' : `privateChats/${currentChatId}/messages`;
+            await addDoc(collection(db, collectionPath), {
+                text: input.value,
+                uid: currentUser.uid,
+                authorName: currentUser.displayName,
+                createdAt: serverTimestamp()
+            });
+            input.value = '';
+        });
+
         onAuthStateChanged(auth, user => {
             const createAnnouncementBtn = document.getElementById('create-announcement-btn');
             if (user) {
@@ -182,19 +300,19 @@
                 userInfo.classList.remove('hidden'); userInfo.classList.add('flex');
                 userDisplayName.textContent = user.displayName;
                 userAvatar.src = user.photoURL || defaultAvatar;
-
-                if (ADMIN_UIDS.includes(user.uid)) {
-                    createAnnouncementBtn.classList.remove('hidden');
-                } else {
-                    createAnnouncementBtn.classList.add('hidden');
-                }
-                
+                chatFab.classList.remove('hidden');
+                setupPresence(user);
+                if (ADMIN_UIDS.includes(user.uid)) createAnnouncementBtn.classList.remove('hidden');
+                else createAnnouncementBtn.classList.add('hidden');
                 renderAnnouncements();
                 showView('view-categories');
+                switchChat(document.querySelector('[data-chat-id="group"]'));
             } else {
                 currentUser = null;
                 userInfo.classList.add('hidden'); userInfo.classList.remove('flex');
                 createAnnouncementBtn.classList.add('hidden');
+                chatFab.classList.add('hidden');
+                chatPopup.classList.add('hidden');
                 showView('view-login');
             }
         });
@@ -261,16 +379,7 @@
                 announcementContainer.innerHTML = sortedDocs.map(doc => {
                     const ann = doc.data();
                     const date = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
-                    return `
-                        <div data-id="${doc.id}" class="announcement-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group">
-                            <p class="text-sm text-gray-500 font-mono">${ann.authorName || 'Admin'} &bull; ${date}</p>
-                            <h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${ann.title}</h3>
-                            <div class="flex space-x-4 text-sm text-gray-500 font-mono">
-                                <span>⭐ ${ann.likes?.length || 0}</span>
-                                <span>💬 ${ann.commentCount || 0}</span>
-                            </div>
-                        </div>
-                    `;
+                    return `<div data-id="${doc.id}" class="announcement-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group"><p class="text-sm text-gray-500 font-mono">${ann.authorName || 'Admin'} &bull; ${date}</p><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${ann.title}</h3><div class="flex space-x-4 text-sm text-gray-500 font-mono"><span>⭐ ${ann.likes?.length || 0}</span><span>💬 ${ann.commentCount || 0}</span></div></div>`;
                 }).join('');
                 document.querySelectorAll('.announcement-card').forEach(card => card.addEventListener('click', () => renderDetailView('announcements', card.dataset.id)));
             });
@@ -284,15 +393,7 @@
             const title = document.getElementById('announcement-title-input').value;
             const content = document.getElementById('announcement-content-input').value;
             if (!title.trim() || !content.trim() || !ADMIN_UIDS.includes(currentUser?.uid)) return;
-
-            await addDoc(collection(db, "announcements"), {
-                title, content,
-                authorId: currentUser.uid,
-                authorName: currentUser.displayName,
-                authorPhotoURL: currentUser.photoURL,
-                createdAt: serverTimestamp(),
-                likes: [], commentCount: 0
-            });
+            await addDoc(collection(db, "announcements"), { title, content, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), likes: [], commentCount: 0 });
             document.getElementById('create-announcement-form').reset();
             createAnnouncementModal.classList.add('hidden');
         });
@@ -304,11 +405,7 @@
             if (detailUnsubscribe) detailUnsubscribe(); if (commentsUnsubscribe) commentsUnsubscribe();
             detailContainer.innerHTML = `<p class="text-center font-mono animate-pulse">Memuat...</p>`;
             const docRef = doc(db, collectionName, docId);
-            
-            if(collectionName === 'posts') {
-                try { await updateDoc(docRef, { viewCount: increment(1) }); } catch (e) {}
-            }
-
+            if(collectionName === 'posts') { try { await updateDoc(docRef, { viewCount: increment(1) }); } catch (e) {} }
             detailUnsubscribe = onSnapshot(docRef, docSnap => {
                 if (!docSnap.exists()) { detailContainer.innerHTML = `<p class="text-center text-red-500 font-mono">Konten tidak ditemukan.</p>`; return; }
                 const item = docSnap.data();
@@ -316,13 +413,10 @@
                 const isLiked = currentUser && item.likes?.includes(currentUser.uid);
                 const contentHtml = linkify(item.content);
                 const isAnnouncement = collectionName === 'announcements';
-                
                 detailContainer.innerHTML = `<button id="back-to-previous-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button><div class="flex justify-between items-start"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-orbitron">${item.title}</h2>${(isAuthor || (isAnnouncement && ADMIN_UIDS.includes(currentUser?.uid))) ? `<button id="delete-btn" class="bg-red-600/50 border border-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600/80 text-sm">Hapus</button>` : ''}</div><div class="flex items-center mb-4 text-sm text-gray-400"><img src="${item.authorPhotoURL || defaultAvatar}" alt="${item.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" /><div class="font-mono"><p class="font-semibold text-gray-200">${item.authorName}</p><p>${item.createdAt ? new Date(item.createdAt.toDate()).toLocaleString('id-ID') : ''}</p></div></div>${item.imageUrl ? `<img src="${item.imageUrl}" alt="Gambar Konten" class="w-full max-w-lg mx-auto rounded-lg mb-6">` : ''}<p class="text-gray-300 whitespace-pre-wrap leading-relaxed mb-6 text-lg">${contentHtml}</p><div class="flex items-center space-x-6 border-t border-b border-gray-700 py-3 mb-6"><button id="like-btn" class="flex items-center space-x-2 text-lg transition-colors ${isLiked ? 'text-amber-400' : 'text-gray-500 hover:text-white'}"><span>⭐</span><span class="font-semibold font-mono">${item.likes?.length || 0}</span></button>${!isAnnouncement ? `<div class="flex items-center space-x-2 text-lg text-gray-500"><span>👁️</span><span class="font-mono">${item.viewCount || 0}</span></div>` : ''}</div><div id="comment-section"></div>`;
                 renderComments(collectionName, docId);
                 document.getElementById('back-to-previous-btn').addEventListener('click', () => history.back());
-                if (document.getElementById('delete-btn')) {
-                    document.getElementById('delete-btn').addEventListener('click', async () => { if (confirm("Yakin ingin menghapus ini?")) { await deleteDoc(docRef); history.back(); } });
-                }
+                if (document.getElementById('delete-btn')) { document.getElementById('delete-btn').addEventListener('click', async () => { if (confirm("Yakin ingin menghapus ini?")) { await deleteDoc(docRef); history.back(); } }); }
                 document.getElementById('like-btn').addEventListener('click', async () => { if (!currentUser) return; await updateDoc(docRef, { likes: isLiked ? arrayRemove(currentUser.uid) : arrayUnion(currentUser.uid) }); });
             });
         }
