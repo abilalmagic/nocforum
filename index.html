@@ -22,6 +22,10 @@
         .clickable-link:hover { color: #f59e0b; }
         .chat-container::-webkit-scrollbar { width: 4px; }
         .chat-container::-webkit-scrollbar-thumb { background-color: #f59e0b; border-radius: 20px; }
+        .pinned { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+        .emoji-reaction { transition: transform 0.2s; }
+        .emoji-reaction:hover { transform: scale(1.2); }
+        .emoji-reaction.selected { background-color: rgba(245, 158, 11, 0.3); border-radius: 50%; }
     </style>
 </head>
 <body class="bg-grid-amber-500/10">
@@ -96,6 +100,7 @@
             <div id="post-list-container" class="space-y-4"></div>
         </div>
         <div id="view-detail" class="view"><div id="detail-container" class="glass-effect p-4 md:p-8 rounded-xl"></div></div>
+        <div id="view-profile" class="view"><div id="profile-container" class="glass-effect p-4 md:p-8 rounded-xl"></div></div>
     </main>
     
     <div id="create-post-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60] p-4">
@@ -131,28 +136,25 @@
         </div>
     </div>
     
-    <!-- Tombol Chat Melayang -->
     <button id="chat-fab" class="hidden fixed bottom-6 right-6 btn-gold rounded-full w-16 h-16 flex items-center justify-center shadow-lg z-40">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
         <span id="online-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">0</span>
     </button>
 
-    <!-- Jendela Chat Popup Terpadu -->
     <div id="chat-popup" class="hidden fixed bottom-24 right-6 w-[350px] h-[500px] glass-effect rounded-xl shadow-2xl shadow-amber-500/10 flex flex-col z-40">
         <div class="p-3 border-b border-amber-500/20 flex justify-between items-center">
             <h3 id="chat-title" class="font-bold text-white truncate">Live Chat</h3>
             <button id="close-chat-btn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
         </div>
         <div class="flex flex-1 overflow-hidden">
-            <!-- Sidebar Pengguna Online -->
             <div class="w-1/3 border-r border-amber-500/20 p-2 space-y-2 overflow-y-auto chat-container">
                 <button data-chat-id="group" data-chat-name="Grup Chat" class="chat-tab-btn w-full text-left p-2 rounded-md bg-amber-500/30 text-white font-bold">Grup Chat</button>
                 <h4 class="text-xs font-bold text-gray-400 uppercase pt-2">Online</h4>
                 <div id="online-users-list" class="space-y-1"></div>
             </div>
-            <!-- Area Pesan -->
             <div class="w-2/3 flex flex-col">
                 <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-3 chat-container"></div>
+                <div id="typing-indicator" class="h-5 px-3 text-xs text-gray-400 italic"></div>
                 <div class="p-3 border-t border-amber-500/20">
                     <form id="chat-form" class="flex space-x-2">
                         <input type="text" id="chat-input" placeholder="Ketik pesan..." class="form-input !p-2 text-sm" required>
@@ -169,7 +171,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
         import { getDatabase, ref as dbRef, onValue, set, onDisconnect, serverTimestamp as rtdbServerTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -193,11 +195,15 @@
         let currentUser = null, currentCategory = null, currentUnsubscribe = null, viewHistory = [];
         let currentChatId = 'group';
         let currentChatUnsubscribe = null;
-        const views = document.querySelectorAll('.view'), userInfo = document.getElementById('user-info'), userDisplayName = document.getElementById('user-display-name'), userAvatar = document.getElementById('user-avatar');
+        let typingTimeout = null;
+        const EMOJI_REACTIONS = ['👍', '❤️', '🔥', '🤯'];
+
+        const views = document.querySelectorAll('.view');
         const defaultAvatar = "https://placehold.co/100x100/1f2937/d1d5db?text=NOC";
+        const userInfo = document.getElementById('user-info'), userDisplayName = document.getElementById('user-display-name'), userAvatar = document.getElementById('user-avatar');
         
         function showView(viewId, isNavigatingBack = false) {
-            views.forEach(view => view.classList.toggle('active', view.id === viewId));
+            document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === viewId));
             if (!isNavigatingBack) {
                 history.pushState({ view: viewId }, '', `#${viewId}`);
                 if (viewHistory[viewHistory.length - 1] !== viewId) viewHistory.push(viewId);
@@ -212,12 +218,7 @@
             });
         }
 
-        const chatFab = document.getElementById('chat-fab');
-        const onlineCount = document.getElementById('online-count');
-        const chatPopup = document.getElementById('chat-popup');
-        const chatMessages = document.getElementById('chat-messages');
-        const onlineUsersList = document.getElementById('online-users-list');
-        const chatTitle = document.getElementById('chat-title');
+        const chatFab = document.getElementById('chat-fab'), onlineCount = document.getElementById('online-count'), chatPopup = document.getElementById('chat-popup'), chatMessages = document.getElementById('chat-messages'), onlineUsersList = document.getElementById('online-users-list'), chatTitle = document.getElementById('chat-title'), typingIndicator = document.getElementById('typing-indicator');
 
         function setupPresence(user) {
             const userStatusRef = dbRef(rtdb, `/status/${user.uid}`);
@@ -251,6 +252,9 @@
             document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.classList.remove('bg-amber-500/30', 'text-white', 'font-bold'));
             buttonElement.classList.add('bg-amber-500/30', 'text-white', 'font-bold');
             
+            typingIndicator.textContent = '';
+            if (currentChatUnsubscribe) currentChatUnsubscribe();
+            
             if (chatId === 'group') {
                 currentChatId = 'group';
                 chatTitle.textContent = 'Grup Chat';
@@ -261,6 +265,14 @@
                 currentChatId = myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`;
                 chatTitle.textContent = `Chat dengan ${chatName}`;
                 listenToMessages(`privateChats/${currentChatId}/messages`);
+                
+                onValue(dbRef(rtdb, `/typing/${currentChatId}/${targetUid}`), (snapshot) => {
+                    if (snapshot.val() === true) {
+                        typingIndicator.textContent = `${chatName} sedang mengetik...`;
+                    } else {
+                        typingIndicator.textContent = '';
+                    }
+                });
             }
         }
 
@@ -291,6 +303,16 @@
                 createdAt: serverTimestamp()
             });
             input.value = '';
+        });
+        
+        document.getElementById('chat-input').addEventListener('input', () => {
+            if (currentChatId === 'group') return;
+            const typingRef = dbRef(rtdb, `/typing/${currentChatId}/${currentUser.uid}`);
+            set(typingRef, true);
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                set(typingRef, false);
+            }, 3000);
         });
 
         onAuthStateChanged(auth, user => {
