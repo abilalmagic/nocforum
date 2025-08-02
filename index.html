@@ -109,11 +109,6 @@
             <form id="create-post-form" class="space-y-4">
                 <input type="text" id="post-title-input" placeholder="Judul..." class="form-input" required />
                 <textarea id="post-content-input" placeholder="Isi postingan..." rows="6" class="form-input" required></textarea>
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-400">Unggah Gambar (Opsional)</label>
-                    <input id="post-image-input" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30" type="file" accept="image/*">
-                </div>
-                <div id="upload-progress" class="hidden w-full bg-gray-700 rounded-full h-2.5"><div id="upload-progress-bar" class="bg-amber-500 h-2.5 rounded-full" style="width: 0%"></div></div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" id="cancel-post-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
                     <button type="submit" id="submit-post-btn" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Kirim</button>
@@ -172,7 +167,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
         import { getDatabase, ref as dbRef, onValue, set, onDisconnect, serverTimestamp as rtdbServerTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         const ADMIN_UIDS = ["Ix3gKNJPNZSnLQj2YTAfQp76IL72"]; 
@@ -189,7 +183,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
         const rtdb = getDatabase(app);
 
         let currentUser = null, currentCategory = null, currentUnsubscribe = null, viewHistory = [];
