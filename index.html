@@ -152,6 +152,26 @@
             </form>
         </div>
     </div>
+
+    <div id="edit-profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60] p-4">
+        <div class="bg-gray-900 border border-amber-500/30 p-6 rounded-lg shadow-2xl shadow-amber-500/10 w-full max-w-2xl">
+            <h3 class="text-2xl font-bold mb-4 text-white font-mono">Edit Profil</h3>
+            <form id="edit-profile-form" class="space-y-4">
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-200 font-mono">About Me</label>
+                    <textarea id="edit-about-input" placeholder="Ceritakan tentang diri Anda..." rows="4" class="form-input"></textarea>
+                </div>
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-200 font-mono">Hobi</label>
+                    <input type="text" id="edit-hobi-input" placeholder="Hobi Anda..." class="form-input" />
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancel-edit-profile-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
+                    <button type="submit" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
     
     <button id="chat-fab" class="hidden fixed bottom-6 right-6 btn-gold rounded-full w-16 h-16 flex items-center justify-center shadow-lg z-40">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
@@ -632,7 +652,10 @@
             }).join('') || '<p class="text-gray-500">Belum ada postingan.</p>';
             
             profileContainer.innerHTML = `
-                <button id="back-from-profile-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button>
+                <div class="flex justify-between items-start">
+                    <button id="back-from-profile-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button>
+                    ${currentUser?.uid === userId ? `<button id="edit-profile-btn" class="btn-gold text-white text-sm font-bold py-2 px-4 rounded-md">Edit Profil</button>` : ''}
+                </div>
                 <div class="flex items-center space-x-4 mb-6">
                     <img src="${userData.photoURL || defaultAvatar}" alt="${userData.displayName}" class="w-20 h-20 rounded-full border-4 border-amber-500/50">
                     <div>
@@ -641,6 +664,8 @@
                     </div>
                 </div>
                 <div class="space-y-4">
+                    <div><strong class="text-amber-400">About:</strong> <p class="whitespace-pre-wrap">${userData.about || 'Belum diisi.'}</p></div>
+                    <div><strong class="text-amber-400">Hobi:</strong> <p>${userData.hobi || 'Belum diisi.'}</p></div>
                     <div><strong class="text-amber-400">Pengalaman Sulap:</strong> ${userData.magicExperience}</div>
                     <div><strong class="text-amber-400">Aliran Favorit:</strong> ${userData.magicGenre}</div>
                 </div>
@@ -649,6 +674,13 @@
                 <div class="space-y-2">${userPostsHtml}</div>
             `;
             document.getElementById('back-from-profile-btn').addEventListener('click', () => history.back());
+            if (document.getElementById('edit-profile-btn')) {
+                document.getElementById('edit-profile-btn').addEventListener('click', () => {
+                    document.getElementById('edit-about-input').value = userData.about || '';
+                    document.getElementById('edit-hobi-input').value = userData.hobi || '';
+                    document.getElementById('edit-profile-modal').classList.remove('hidden');
+                });
+            }
         }
         
         document.getElementById('user-display-name').addEventListener('click', () => renderProfileView(currentUser.uid));
@@ -663,6 +695,21 @@
             if (!dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && !avatar.contains(e.target)) {
                 dropdown.classList.add('hidden');
             }
+        });
+        
+        const editProfileModal = document.getElementById('edit-profile-modal');
+        document.getElementById('cancel-edit-profile-btn').addEventListener('click', () => editProfileModal.classList.add('hidden'));
+        document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const about = document.getElementById('edit-about-input').value;
+            const hobi = document.getElementById('edit-hobi-input').value;
+            
+            const userRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userRef, { about, hobi });
+            
+            editProfileModal.classList.add('hidden');
+            renderProfileView(currentUser.uid);
+            showToast("Profil berhasil diperbarui!");
         });
 
         let canExit = false;
