@@ -53,11 +53,18 @@
                 <p class="text-amber-400/70 text-sm font-mono mt-1 tracking-widest hidden md:block">magic underground society</p>
             </div>
             
-            <!-- User Info Section -->
-            <div id="user-info" class="w-1/3 hidden items-center justify-end space-x-4">
-                <span id="user-display-name" class="hidden lg:inline text-sm text-gray-400 font-mono clickable-link"></span>
-                <img id="user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-400/50 clickable-link" />
-                <button id="logout-btn" class="bg-amber-600/50 border border-amber-500 text-white font-bold py-2 px-4 rounded-md hover:bg-amber-600/80 hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-all duration-300">Keluar</button>
+            <!-- User Info Section with Dropdown -->
+            <div id="user-info-container" class="w-1/3 flex justify-end">
+                <div id="user-info" class="hidden relative">
+                    <img id="user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-400/50 cursor-pointer" />
+                    <div id="user-dropdown" class="hidden absolute top-12 right-0 w-48 glass-effect rounded-md shadow-lg z-50">
+                        <div class="p-2">
+                            <p id="user-display-name" class="px-3 py-2 text-sm text-gray-300 font-bold truncate clickable-link"></p>
+                            <hr class="border-gray-700 my-1">
+                            <button id="logout-btn" class="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-amber-500/10 rounded-md">Keluar</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -268,7 +275,7 @@
                 const unreadCount = unreadCounts[privateChatId] || 0;
                 return `
                 <button data-chat-id="${user.uid}" data-chat-name="${user.name}" class="chat-tab-btn w-full text-left p-2 rounded-md hover:bg-amber-500/20 text-sm truncate relative flex items-center justify-between">
-                    <span class="truncate"><span class="status-indicator online mr-2"></span>${user.name}</span>
+                    <span class="truncate flex items-center"><span class="status-indicator online mr-2"></span>${user.name}</span>
                     <span data-chat-id="${privateChatId}" class="unread-badge ${unreadCount > 0 ? '' : 'hidden'}">${unreadCount}</span>
                 </button>
             `}).join('');
@@ -648,7 +655,18 @@
         }
         
         document.getElementById('user-display-name').addEventListener('click', () => renderProfileView(currentUser.uid));
-        document.getElementById('user-avatar').addEventListener('click', () => renderProfileView(currentUser.uid));
+        document.getElementById('user-avatar').addEventListener('click', () => {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('hidden');
+        });
+        
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('user-dropdown');
+            const avatar = document.getElementById('user-avatar');
+            if (!dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && !avatar.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
 
         let canExit = false;
         const toast = document.getElementById('toast');
