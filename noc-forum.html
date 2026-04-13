@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOC FORUM — NOCFAMS Magic Community</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:      #080808;
+            --bg-card: #111111;
+            --bg-ele:  #161616;
+            --border:  #242424;
+            --accent:  #c41e3a;
+            --glow:    rgba(196,30,58,0.35);
+            --gold:    #c8a94a;
+            --txt:     #ddd8cc;
+            --txt2:    #777;
+            --txt3:    #444;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            background: var(--bg);
+            color: var(--txt);
+            font-size: 17px;
+            line-height: 1.72;
+            min-height: 100vh;
+        }
+
+        /* Grain overlay */
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 0; opacity: 0.4;
+        }
+
+        /* ── Typography ─────────────────── */
+        .cinzel { font-family: 'Cinzel', serif; }
+        .mono   { font-family: 'JetBrains Mono', monospace; }
+
+        /* ── Cards ──────────────────────── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            position: relative;
+            transition: border-color .3s, box-shadow .3s;
+        }
+        .card::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 3px; height: 0;
+            background: var(--accent);
+            transition: height .35s ease;
+        }
+        .card:hover { border-color: var(--accent); box-shadow: 0 0 24px var(--glow), 0 4px 32px rgba(0,0,0,.5); }
+        .card:hover::before { height: 100%; }
+        .card.no-hover:hover { border-color: var(--border); box-shadow: none; }
+        .card.no-hover::before { display: none; }
+
+        /* ── Inputs ─────────────────────── */
+        .inp {
+            display: block; width: 100%;
+            background: #0c0c0c;
+            border: 1px solid #2a2a2a;
+            color: var(--txt);
+            font-family: 'Crimson Pro', serif; font-size: 16px;
+            padding: .75rem 1rem;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .inp:focus { border-color: var(--accent); box-shadow: 0 0 14px var(--glow); }
+        .inp::placeholder { color: var(--txt3); }
+        .inp.search-inp { padding-left: 2.8rem; }
+        select.inp {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 1rem center;
+            padding-right: 2.5rem; cursor: pointer;
+        }
+
+        /* ── Buttons ────────────────────── */
+        .btn {
+            font-family: 'Cinzel', serif; font-size: .72rem;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            border: none; cursor: pointer;
+            transition: background .2s, box-shadow .2s, transform .1s;
+            display: inline-flex; align-items: center; gap: .4rem;
+        }
+        .btn:active { transform: scale(.97); }
+        .btn-pri  { background: var(--accent); color: #fff; padding: .7rem 1.8rem; }
+        .btn-pri:hover  { background: #e0233f; box-shadow: 0 0 20px var(--glow); }
+        .btn-pri:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
+        .btn-ghost { background: transparent; color: var(--txt2); border: 1px solid #2a2a2a; padding: .6rem 1.4rem; }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-icon  { background: transparent; border: none; color: var(--txt2); font-family: 'Crimson Pro', serif; font-size: .9rem; padding: .35rem .5rem; cursor: pointer; transition: color .2s; display: inline-flex; align-items: center; gap: .35rem; }
+        .btn-icon:hover { color: var(--accent); }
+        .btn-icon.liked { color: var(--accent); }
+
+        /* ── Badges ─────────────────────── */
+        .badge {
+            font-family: 'Cinzel', serif; font-size: .6rem; letter-spacing: 1px;
+            text-transform: uppercase; padding: .18rem .55rem; display: inline-block; white-space: nowrap;
+        }
+        .b-red  { background: rgba(196,30,58,.12); color: #f87171; border: 1px solid rgba(196,30,58,.25); }
+        .b-gold { background: rgba(200,169,74,.12); color: var(--gold);  border: 1px solid rgba(200,169,74,.25); }
+        .b-gray { background: rgba(255,255,255,.04); color: #555; border: 1px solid #2a2a2a; }
+
+        /* ── Navbar ─────────────────────── */
+        .navbar {
+            position: sticky; top: 0; z-index: 200;
+            background: rgba(8,8,8,.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .navbar-inner {
+            max-width: 980px; margin: 0 auto;
+            padding: 0 1.25rem;
+            height: 54px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        /* ── Breadcrumb ─────────────────── */
+        .crumbs {
+            font-family: 'Cinzel', serif; font-size: .65rem;
+            letter-spacing: 1px; text-transform: uppercase;
+            color: var(--txt3); display: flex; align-items: center;
+            gap: .45rem; flex-wrap: wrap;
+        }
+        .crumbs .crumb { cursor: pointer; transition: color .2s; }
+        .crumbs .crumb:hover { color: var(--accent); }
+        .crumbs .sep { color: #2a2a2a; }
+        .crumbs .cur { color: var(--txt); cursor: default; }
+
+        /* ── Back btn ───────────────────── */
+        .back-btn {
+            font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: 1px;
+            text-transform: uppercase; color: var(--txt2);
+            background: transparent; border: none; cursor: pointer;
+            display: flex; align-items: center; gap: .4rem;
+            transition: color .2s; padding: .4rem 0;
+        }
+        .back-btn:hover { color: var(--accent); }
+
+        /* ── Toast ──────────────────────── */
+        #toasts {
+            position: fixed; bottom: 1.75rem; right: 1.75rem;
+            z-index: 9999; display: flex; flex-direction: column; gap: .6rem;
+        }
+        .toast {
+            font-family: 'Crimson Pro', serif; font-size: 1rem;
+            padding: .85rem 1.4rem; border-left: 3px solid;
+            box-shadow: 0 4px 24px rgba(0,0,0,.7);
+            animation: tIn .3s ease, tOut .3s ease 2.8s forwards;
+            max-width: 320px; backdrop-filter: blur(10px);
+        }
+        .t-ok  { background: rgba(10,30,15,.95); border-color: #4ade80; color: #86efac; }
+        .t-err { background: rgba(30,8,8,.95);   border-color: var(--accent); color: #fca5a5; }
+        .t-inf { background: rgba(8,12,30,.95);  border-color: #60a5fa; color: #93c5fd; }
+        @keyframes tIn  { from { opacity:0; transform:translateX(18px) } to { opacity:1; transform:translateX(0) } }
+        @keyframes tOut { from { opacity:1 } to { opacity:0; transform:translateX(18px) } }
+
+        /* ── Modal ──────────────────────── */
+        .overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.87);
+            z-index: 1000; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+            animation: mIn .2s ease;
+        }
+        @keyframes mIn { from { opacity:0 } to { opacity:1 } }
+        .modal {
+            background: var(--bg-ele);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--accent);
+            max-width: 640px; width: 90%;
+            max-height: 90vh; overflow-y: auto;
+            animation: mScale .22s ease;
+        }
+        @keyframes mScale { from { transform:scale(.94); opacity:0 } to { transform:scale(1); opacity:1 } }
+        .modal-body { padding: 2rem; }
+
+        /* ── Skeleton ───────────────────── */
+        .sk {
+            background: linear-gradient(90deg, #161616 25%, #1e1e1e 50%, #161616 75%);
+            background-size: 200% 100%;
+            animation: sk 1.6s infinite;
+        }
+        @keyframes sk { 0% { background-position: 200% 0 } 100% { background-position:-200% 0 } }
+
+        /* ── Page transition ────────────── */
+        .page { animation: pg .3s cubic-bezier(.4,0,.2,1); }
+        @keyframes pg { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+
+        /* ── Misc ───────────────────────── */
+        .ornament {
+            display: flex; align-items: center; gap: .9rem; color: var(--txt3);
+        }
+        .ornament::before, .ornament::after {
+            content:''; flex:1; height:1px; background: var(--border);
+        }
+        .online-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #4ade80; box-shadow: 0 0 6px #4ade80;
+            display: inline-block;
+        }
+        .glow { text-shadow: 0 0 28px rgba(196,30,58,.55); }
+        .char-c { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--txt3); }
+        .char-c.warn   { color: #f59e0b; }
+        .char-c.danger { color: var(--accent); }
+        .divider { border:none; border-top:1px solid var(--border); margin: 1.4rem 0; }
+        .hero-bg {
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(196,30,58,.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(200,169,74,.045) 0%, transparent 55%);
+        }
+        .reaction-btn {
+            font-family: 'Crimson Pro', serif; font-size: .9rem;
+            padding: .3rem .85rem; border: 1px solid #222; border-radius: 20px;
+            background: transparent; color: var(--txt2); cursor: pointer; transition: all .2s;
+        }
+        .reaction-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(196,30,58,.06); }
+        .reaction-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(196,30,58,.1); }
+        .tab-btn {
+            font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: 1px;
+            text-transform: uppercase; padding: .55rem 1.2rem;
+            border: none; background: transparent; color: var(--txt3);
+            cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s;
+        }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .post-content strong { color: #f0ece4; font-weight: 600; }
+        .post-content em { font-style: italic; color: #bbb; }
+        .post-content code { font-family: 'JetBrains Mono', monospace; font-size: .82em; background: #1a1a1a; padding: .1em .4em; color: var(--gold); }
+        .stat-num { font-family: 'Cinzel', serif; font-size: 1.6rem; color: var(--accent); }
+        .stat-lbl { font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--txt3); margin-top: .2rem; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ── Toast container ───────────────────────── -->
+<div id="toasts"></div>
+
+<!-- ── Navbar ────────────────────────────────── -->
+<nav class="navbar">
+    <div class="navbar-inner">
+        <button id="nav-logo" style="background:transparent;border:none;cursor:pointer;display:flex;align-items:center;gap:.6rem">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC" style="height:28px;width:auto">
+        </button>
+        <div id="nav-user" style="display:flex;align-items:center;gap:.75rem"></div>
+    </div>
+</nav>
+
+<!-- ── App ───────────────────────────────────── -->
+<div style="max-width:980px;margin:0 auto;padding:2rem 1.25rem;position:relative;z-index:1">
+    <div id="app"></div>
+</div>
+
+<!-- ── Footer ────────────────────────────────── -->
+<footer style="border-top:1px solid #111;padding:2rem 1.25rem;text-align:center;position:relative;z-index:1;margin-top:4rem">
+    <p class="cinzel" style="font-size:.65rem;letter-spacing:2px;color:#333;text-transform:uppercase">NOC FORUM — NOCFAMS 2025</p>
+    <p style="color:#2a2a2a;font-size:.85rem;margin-top:.4rem">dibuat untuk happy, kalo ga happy pergi — Prof.Z</p>
+    <p style="color:#222;font-size:.75rem;margin-top:.2rem">join whatsapp nocfams? hubungi prof.Z, mudahan dia lagi mood :)</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+// ════════════════════════════════════════
+//  CONFIG
+// ════════════════════════════════════════
+const API = {
+    users:    'https://sheetdb.io/api/v1/67fxvegoz5vwr',
+    posts:    'https://sheetdb.io/api/v1/jr0axsb12cm2d',
+    comments: 'https://sheetdb.io/api/v1/w82ciud9gjh7h',
+    likes:    'https://sheetdb.io/api/v1/znglqyvdspjji',
+    views:    'https://sheetdb.io/api/v1/4f3baaa6iju7a',
+};
+
+const CATS = [
+    { id:'cardmagic',     name:'Card Magic',      icon:'🃏', desc:'Teknik dan trik kartu' },
+    { id:'coinmagic',     name:'Coin Magic',       icon:'🪙', desc:'Manipulasi koin dan uang' },
+    { id:'mentalism',     name:'Mentalism',        icon:'🔮', desc:'Baca pikiran & ilusi mental' },
+    { id:'everydayobject',name:'Everyday Object',  icon:'📦', desc:'Sulap benda sehari-hari' },
+    { id:'idea',          name:'Idea',             icon:'💡', desc:'Gagasan, konsep, kreativitas' },
+    { id:'market',        name:'Market Magic',     icon:'🛒', desc:'Jual beli & rekomendasi produk' },
+];
+
+// ════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════
+const S = {
+    user: null,
+    db: { posts:[], comments:[], likes:[], views:[] },
+    cat: null,
+    postId: null,
+    search: '',
+    sort: 'newest',
+};
+
+// ════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════
+const app  = document.getElementById('app');
+const $    = (s, c = document) => c.querySelector(s);
+const $$   = (s, c = document) => [...c.querySelectorAll(s)];
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+function timeAgo(d) {
+    const s = Math.floor((Date.now() - new Date(d)) / 1000);
+    if (s < 60)      return 'baru saja';
+    if (s < 3600)    return Math.floor(s/60) + ' menit lalu';
+    if (s < 86400)   return Math.floor(s/3600) + ' jam lalu';
+    if (s < 2592000) return Math.floor(s/86400) + ' hari lalu';
+    return new Date(d).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+}
+
+function initials(n='') { return n.slice(0,2).toUpperCase(); }
+
+function avatarColor(n='') {
+    const c = ['#c41e3a','#7c3aed','#0369a1','#0f766e','#b45309','#be185d','#4338ca'];
+    return c[(n.charCodeAt(0)||0) % c.length];
+}
+
+function avatar(n='', sz=32) {
+    const fs = Math.round(sz * .36);
+    return `<div style="min-width:${sz}px;width:${sz}px;height:${sz}px;border-radius:50%;background:${avatarColor(n)};display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:${fs}px;color:#fff;font-weight:700">${initials(n)}</div>`;
+}
+
+function toast(msg, type='inf') {
+    const el = document.createElement('div');
+    el.className = `toast t-${type}`;
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(() => el.remove(), 3300);
+}
+
+function md(t = '') {
+    return String(t)
+        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g,'<em>$1</em>')
+        .replace(/`(.*?)`/g,'<code>$1</code>')
+        .replace(/\n/g,'<br>');
+}
+
+function charCounter(taId, cId, max) {
+    const ta = document.getElementById(taId);
+    const c  = document.getElementById(cId);
+    if (!ta || !c) return;
+    const upd = () => {
+        const n = ta.value.length;
+        c.textContent = `${n}/${max}`;
+        c.className = 'char-c' + (n > max*.95 ? ' danger' : n > max*.8 ? ' warn' : '');
+    };
+    ta.addEventListener('input', () => { upd(); ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; });
+    upd();
+}
+
+function openModal(html, onClose) {
+    const ov = document.createElement('div');
+    ov.className = 'overlay';
+    ov.innerHTML = `<div class="modal"><div class="modal-body">${html}</div></div>`;
+    document.body.appendChild(ov);
+    ov.addEventListener('click', e => { if (e.target === ov) { ov.remove(); onClose?.(); } });
+    return ov;
+}
+
+// ════════════════════════════════════════
+//  API
+// ════════════════════════════════════════
+async function api(url, opts={}) {
+    const r = await fetch(url, opts);
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+}
+
+async function loadAll() {
+    const cb = '?_='+Date.now();
+    const [posts, comments, likes, views] = await Promise.all([
+        api(API.posts+cb), api(API.comments+cb), api(API.likes+cb), api(API.views+cb)
+    ]);
+    S.db = {
+        posts:    Array.isArray(posts)    ? posts    : [],
+        comments: Array.isArray(comments) ? comments : [],
+        likes:    Array.isArray(likes)    ? likes    : [],
+        views:    Array.isArray(views)    ? views    : [],
+    };
+}
+
+// ════════════════════════════════════════
+//  NAV
+// ════════════════════════════════════════
+function renderNav() {
+    const nu = $('#nav-user');
+    if (!S.user) { nu.innerHTML=''; return; }
+    nu.innerHTML = `
+        <span class="online-dot"></span>
+        <span class="cinzel" style="font-size:.7rem;letter-spacing:1px;color:#777">${S.user.username}</span>
+        <button id="btn-logout" class="btn btn-ghost" style="padding:.3rem .9rem;font-size:.62rem">Keluar</button>
+    `;
+    $('#btn-logout').onclick = A.logout;
+    $('#nav-logo').onclick = () => { S.cat=null; S.postId=null; S.search=''; V.categories(); };
+}
+
+// ════════════════════════════════════════
+//  VIEWS  (V.*)
+// ════════════════════════════════════════
+const V = {
+
+    skeleton() {
+        app.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:1rem">
+            ${[...Array(5)].map(()=>`
+            <div class="card" style="padding:1.5rem">
+                <div class="sk" style="height:18px;width:60%;margin-bottom:.9rem"></div>
+                <div class="sk" style="height:12px;width:30%;margin-bottom:1rem"></div>
+                <div class="sk" style="height:12px;width:100%;margin-bottom:.5rem"></div>
+                <div class="sk" style="height:12px;width:80%"></div>
+            </div>`).join('')}
+        </div>`;
+    },
+
+    auth() {
+        app.innerHTML = `
+        <div class="hero-bg" style="min-height:65vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 0">
+            <div style="text-align:center;margin-bottom:2.5rem">
+                <p class="cinzel" style="font-size:.65rem;letter-spacing:2.5px;color:#3a3a3a;text-transform:uppercase;margin-bottom:1rem">Selamat Datang di</p>
+                <h1 class="cinzel glow" style="font-size:clamp(2.8rem,8vw,4.5rem);color:var(--accent);letter-spacing:4px;line-height:1">NOC FORUM</h1>
+                <div class="ornament" style="margin:.9rem 0;max-width:280px;margin-left:auto;margin-right:auto">
+                    <span class="cinzel" style="font-size:.6rem;letter-spacing:2px;color:#333">NOCFAMS MAGIC COMMUNITY</span>
+                </div>
+                <p style="color:#3a3a3a;font-size:1.05rem;max-width:380px;margin:0 auto">Ruang diskusi eksklusif untuk para praktisi seni sulap</p>
+            </div>
+
+            <div class="card" style="width:100%;max-width:430px;padding:2rem 2.2rem">
+                <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:2rem">
+                    <button class="tab-btn active" id="tab-in">Login</button>
+                    <button class="tab-btn" id="tab-up">Daftar</button>
+                </div>
+
+                <!-- LOGIN -->
+                <form id="form-in" style="display:flex;flex-direction:column;gap:1.2rem">
+                    <div>
+                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Username</label>
+                        <input id="in-user" class="inp" type="text" placeholder="masukkan username" autocomplete="username" required>
+                    </div>
+                    <div>
+                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Password</label>
+                        <input id="in-pass" class="inp" type="password" placeholder="••••••••" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-pri" style="margin-top:.4rem;justify-content:center">Masuk ke Forum</button>
+                    <p style="text-align:center;font-size:.85rem;color:#333">Belum punya akun? <span id="goto-up" style="color:var(--accent);cursor:pointer">Daftar sekarang</span></p>
+                </form>
+
+                <!-- SIGNUP -->
+                <form id="form-up" class="hidden" style="display:flex;flex-direction:column;gap:1.2rem">
+                    <div>
+                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Username</label>
+                        <input id="up-user" class="inp" type="text" placeholder="pilih username unik" autocomplete="username" required>
+                    </div>
+                    <div>
+                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Password</label>
+                        <input id="up-pass" class="inp" type="password" placeholder="buat password kuat" autocomplete="new-password" required>
+                    </div>
+                    <div>
+                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Lama Bermain Sulap</label>
+                        <select id="up-lama" class="inp">
+                            <option>Kurang dari 1 tahun</option>
+                            <option>1–3 tahun</option>
+                            <option>3–5 tahun</option>
+                            <option>Sudah 5 tahun</option>
+                            <option>Lama sekali (legenda!)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Aliran Sulap</label>
+                        <select id="up-aliran" class="inp">
+                            <option>Mentalism</option><option>Sleight of Hand</option>
+                            <option>Illusionism</option><option>Escapology</option>
+                            <option>Bizarre Magic</option><option>Comedy Magic</option>
+                            <option>Mathemagics</option><option>Storytelling Magic</option>
+                            <option>Neo-Experimental Magic</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-pri" style="margin-top:.4rem;justify-content:center">Buat Akun</button>
+                    <p style="text-align:center;font-size:.85rem;color:#333">Sudah punya akun? <span id="goto-in" style="color:var(--accent);cursor:pointer">Login di sini</span></p>
+                </form>
+            </div>
+        </div>`;
+
+        const showLogin  = () => { $('#tab-in').classList.add('active');    $('#tab-up').classList.remove('active');    $('#form-in').classList.remove('hidden'); $('#form-up').classList.add('hidden'); };
+        const showSignup = () => { $('#tab-up').classList.add('active');    $('#tab-in').classList.remove('active');    $('#form-up').classList.remove('hidden'); $('#form-in').classList.add('hidden'); };
+        $('#tab-in').onclick = showLogin;  $('#goto-in').onclick = showLogin;
+        $('#tab-up').onclick = showSignup; $('#goto-up').onclick = showSignup;
+        $('#form-in').onsubmit = A.login;
+        $('#form-up').onsubmit = A.signup;
+    },
+
+    categories() {
+        const { posts, comments, likes, views } = S.db;
+
+        const recent = [...posts].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,6);
+        const weekAgo = Date.now() - 7*86400000;
+        const hot = [...posts]
+            .filter(p => new Date(p.timestamp) > weekAgo)
+            .map(p => ({...p, score: likes.filter(l=>l.postid===p.postid).length*2 + views.filter(v=>v.postid===p.postid).length}))
+            .sort((a,b)=>b.score-a.score).slice(0,4);
+
+        app.innerHTML = `
+        <div class="page">
+            <!-- Hero -->
+            <div class="hero-bg" style="text-align:center;padding:3.5rem 0 3rem">
+                <p class="cinzel" style="font-size:.6rem;letter-spacing:3px;color:#333;text-transform:uppercase;margin-bottom:.8rem">Community Forum</p>
+                <h1 class="cinzel glow" style="font-size:clamp(2.5rem,7vw,4rem);color:var(--accent);letter-spacing:3px">NOC FORUM</h1>
+                <p style="color:#3d3d3d;margin-top:.9rem;max-width:420px;margin-left:auto;margin-right:auto;font-size:1.05rem">Tempat berbagi ilmu, trik, dan diskusi seputar dunia sulap bersama NOCFAMS</p>
+                <div style="display:flex;justify-content:center;gap:3rem;margin-top:2rem">
+                    <div><div class="stat-num">${posts.length}</div><div class="stat-lbl">Thread</div></div>
+                    <div><div class="stat-num">${comments.length}</div><div class="stat-lbl">Komentar</div></div>
+                    <div><div class="stat-num">${CATS.length}</div><div class="stat-lbl">Kategori</div></div>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div style="position:relative;margin:2rem 0">
+                <svg style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#444" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input id="gsearch" class="inp search-inp" type="search" placeholder="Cari thread di semua kategori...">
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr;gap:2.5rem">
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem">
+                    ${CATS.map(cat=>{
+                        const n = posts.filter(p=>p.category===cat.id).length;
+                        const last = [...posts].filter(p=>p.category===cat.id).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
+                        return `
+                        <div class="card" style="padding:1.4rem;cursor:pointer;transition:all .3s" data-cat="${cat.id}">
+                            <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:.8rem">
+                                <span style="font-size:1.8rem">${cat.icon}</span>
+                                <span class="badge b-gray">${n} thread</span>
+                            </div>
+                            <h3 class="cinzel" style="font-size:1.05rem;color:#e57;margin-bottom:.3rem">${cat.name}</h3>
+                            <p style="font-size:.85rem;color:var(--txt3);margin-bottom:.7rem">${cat.desc}</p>
+                            ${last ? `<p style="font-size:.75rem;color:#333;font-family:'Cinzel',serif;letter-spacing:.5px">Terakhir: ${timeAgo(last.timestamp)}</p>` : ''}
+                        </div>`;
+                    }).join('')}
+                </div>
+
+                <!-- Sidebar -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+                    ${hot.length ? `
+                    <div>
+                        <h2 class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:1rem">🔥 Trending Minggu Ini</h2>
+                        <div style="display:flex;flex-direction:column;gap:.9rem">
+                            ${hot.map((p,i)=>`
+                            <div style="display:flex;gap:.7rem;cursor:pointer;align-items:flex-start" class="trending" data-pid="${p.postid}">
+                                <span class="cinzel" style="font-size:.7rem;color:#2a2a2a;min-width:1.1rem;padding-top:.15rem">${i+1}.</span>
+                                <div>
+                                    <p style="font-size:.9rem;color:#666;line-height:1.35;transition:color .2s" class="tr-title">${p.title}</p>
+                                    <p style="font-size:.75rem;color:#2d2d2d;margin-top:.25rem">${p.username} · ${timeAgo(p.timestamp)}</p>
+                                </div>
+                            </div>`).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    <div>
+                        <h2 class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:1rem">🕐 Thread Terbaru</h2>
+                        <div style="display:flex;flex-direction:column;gap:.8rem">
+                            ${recent.map(p=>{
+                                const cat = CATS.find(c=>c.id===p.category);
+                                return `
+                                <div style="cursor:pointer;padding-bottom:.8rem;border-bottom:1px solid #111" class="recent-item" data-pid="${p.postid}">
+                                    <p style="font-size:.9rem;color:#555;line-height:1.35;margin-bottom:.3rem;transition:color .2s" class="ri-title">${p.title}</p>
+                                    <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+                                        <span class="badge b-red">${cat?.icon||''} ${cat?.name||p.category}</span>
+                                        <span style="font-size:.75rem;color:#2d2d2d">${timeAgo(p.timestamp)}</span>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        $$('[data-cat]').forEach(el => {
+            el.addEventListener('mouseenter', () => el.style.transform='translateY(-3px)');
+            el.addEventListener('mouseleave', () => el.style.transform='');
+            el.onclick = () => { S.cat = el.dataset.cat; S.search=''; V.posts(); };
+        });
+        $$('.trending').forEach(el => {
+            el.onmouseenter = () => el.querySelector('.tr-title').style.color='var(--accent)';
+            el.onmouseleave = () => el.querySelector('.tr-title').style.color='#666';
+            el.onclick = () => { const p = S.db.posts.find(x=>x.postid===el.dataset.pid); if(p){S.cat=p.category;A.viewPost(p.postid);} };
+        });
+        $$('.recent-item').forEach(el => {
+            el.onmouseenter = () => el.querySelector('.ri-title').style.color='var(--accent)';
+            el.onmouseleave = () => el.querySelector('.ri-title').style.color='#555';
+            el.onclick = () => { const p = S.db.posts.find(x=>x.postid===el.dataset.pid); if(p){S.cat=p.category;A.viewPost(p.postid);} };
+        });
+
+        let deb;
+        $('#gsearch').oninput = e => {
+            clearTimeout(deb);
+            deb = setTimeout(() => {
+                const kw = e.target.value.trim();
+                if (kw.length >= 2) { S.search=kw; S.cat=null; V.posts(); }
+            }, 380);
+        };
+        $('#gsearch').onkeydown = e => { if(e.key==='Enter') $('#gsearch').dispatchEvent(new Event('input')); };
+    },
+
+    posts() {
+        const { posts, comments, likes, views } = S.db;
+        const cat = CATS.find(c=>c.id===S.cat);
+
+        let list = [...posts];
+        if (S.cat)    list = list.filter(p=>p.category===S.cat);
+        if (S.search) {
+            const kw = S.search.toLowerCase();
+            list = posts.filter(p=>p.title.toLowerCase().includes(kw)||p.content.toLowerCase().includes(kw));
+        }
+        if (S.sort==='newest')  list.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+        if (S.sort==='popular') list.sort((a,b)=>likes.filter(l=>l.postid===b.postid).length - likes.filter(l=>l.postid===a.postid).length);
+        if (S.sort==='views')   list.sort((a,b)=>views.filter(v=>v.postid===b.postid).length - views.filter(v=>v.postid===a.postid).length);
+
+        const title = S.search ? `Pencarian: "${S.search}"` : (cat?.name||'Semua Thread');
+        const icon  = cat?.icon||'🔍';
+
+        app.innerHTML = `
+        <div class="page">
+            <div class="crumbs" style="margin-bottom:1.25rem">
+                <span class="crumb" id="bc-home">Forum</span>
+                <span class="sep">›</span>
+                <span class="cur">${title}</span>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem">
+                <div style="display:flex;align-items:center;gap:.8rem">
+                    <button class="back-btn" id="btn-back">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+                        Kembali
+                    </button>
+                    <div style="height:16px;width:1px;background:var(--border)"></div>
+                    <h2 class="cinzel" style="font-size:1.1rem;color:#ccc">${icon} ${title}</h2>
+                    <span class="badge b-gray">${list.length}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:.7rem">
+                    <select id="sort-sel" class="inp" style="padding:.4rem .8rem;font-size:.68rem;font-family:'Cinzel',serif;letter-spacing:.8px;width:auto">
+                        <option value="newest"  ${S.sort==='newest'?'selected':''}>Terbaru</option>
+                        <option value="popular" ${S.sort==='popular'?'selected':''}>Terpopuler</option>
+                        <option value="views"   ${S.sort==='views'?'selected':''}>Banyak Dilihat</option>
+                    </select>
+                    ${S.cat ? `<button class="btn btn-pri" id="btn-new" style="padding:.48rem 1.1rem;font-size:.65rem">+ Thread Baru</button>` : ''}
+                </div>
+            </div>
+
+            ${S.cat ? `
+            <div style="position:relative;margin-bottom:1.5rem">
+                <svg style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#444" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input id="cat-search" class="inp search-inp" type="search" placeholder="Cari di kategori ini..." value="${S.search}">
+            </div>` : ''}
+
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+                ${list.length===0 ? `
+                <div style="text-align:center;padding:5rem 0">
+                    <p style="font-size:2.5rem">🌙</p>
+                    <p class="cinzel" style="color:var(--txt3);letter-spacing:2px;text-transform:uppercase;font-size:.75rem;margin-top:1.2rem">Belum ada thread</p>
+                    <p style="color:#2a2a2a;font-size:.95rem;margin-top:.4rem">Jadilah yang pertama memulai diskusi!</p>
+                </div>
+                ` : list.map(post => {
+                    const cc = comments.filter(c=>c.postid===post.postid).length;
+                    const lc = likes.filter(l=>l.postid===post.postid).length;
+                    const vc = views.filter(v=>v.postid===post.postid).length;
+                    const pc = CATS.find(c=>c.id===post.category);
+                    const preview = post.content.replace(/\*\*/g,'').replace(/\*/g,'').replace(/`/g,'').slice(0,130)+(post.content.length>130?'…':'');
+                    return `
+                    <div class="card" style="padding:1.25rem 1.4rem;cursor:pointer" data-pid="${post.postid}">
+                        <div style="display:flex;gap:.9rem;align-items:flex-start">
+                            ${avatar(post.username,36)}
+                            <div style="flex:1;min-width:0">
+                                <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.4rem;align-items:center">
+                                    ${!S.cat ? `<span class="badge b-red">${pc?.icon||''} ${pc?.name||post.category}</span>` : ''}
+                                    ${lc>4 ? `<span class="badge b-gold">🔥 Hot</span>` : ''}
+                                </div>
+                                <h3 class="cinzel" style="font-size:.95rem;color:#d0ccc5;margin-bottom:.3rem;line-height:1.35">${post.title}</h3>
+                                <p style="font-size:.88rem;color:#3d3d3d;margin-bottom:.7rem;line-height:1.5">${preview}</p>
+                                <div style="display:flex;flex-wrap:wrap;gap:.9rem;font-size:.78rem;color:#333;font-family:'Cinzel',serif;letter-spacing:.3px">
+                                    <span>${post.username}</span>
+                                    <span>${timeAgo(post.timestamp)}</span>
+                                    <span>👁 ${vc}</span>
+                                    <span>💬 ${cc}</span>
+                                    <span>❤ ${lc}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+
+        $('#btn-back').onclick = V.categories;
+        $('#bc-home').onclick  = V.categories;
+        $$('[data-pid]').forEach(el => el.onclick = () => A.viewPost(el.dataset.pid));
+        if ($('#btn-new')) $('#btn-new').onclick = V.newPostModal;
+        if ($('#sort-sel')) $('#sort-sel').onchange = e => { S.sort=e.target.value; V.posts(); };
+        if ($('#cat-search')) {
+            let d;
+            $('#cat-search').oninput = e => { clearTimeout(d); d=setTimeout(()=>{ S.search=e.target.value.trim(); V.posts(); },350); };
+        }
+    },
+
+    newPostModal() {
+        const cat = CATS.find(c=>c.id===S.cat);
+        const ov = openModal(`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+            <h2 class="cinzel" style="font-size:1.2rem;color:#ccc">Thread Baru</h2>
+            <button class="btn-icon" id="mc">✕</button>
+        </div>
+        <div class="ornament" style="margin-bottom:1.5rem">
+            <span class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:#333">${cat?.icon} ${cat?.name}</span>
+        </div>
+        <form id="form-post" style="display:flex;flex-direction:column;gap:1.2rem">
+            <div>
+                <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Judul Thread</label>
+                <input id="pt" class="inp" type="text" placeholder="Judul yang menarik dan jelas…" maxlength="120" required>
+                <div style="text-align:right;margin-top:.25rem"><span id="ptc" class="char-c">0/120</span></div>
+            </div>
+            <div>
+                <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.4rem">Isi Thread</label>
+                <p style="font-size:.78rem;color:#333;margin-bottom:.5rem">Tip: **tebal**, *miring*, \`kode\`</p>
+                <textarea id="pc" class="inp" rows="6" placeholder="Tulis isi thread Anda di sini…" maxlength="5000" required style="resize:none;min-height:130px"></textarea>
+                <div style="text-align:right;margin-top:.25rem"><span id="pcc" class="char-c">0/5000</span></div>
+            </div>
+            <div style="display:flex;gap:.8rem;padding-top:.5rem">
+                <button type="button" class="btn btn-ghost" style="flex:1;justify-content:center" id="mc2">Batal</button>
+                <button type="submit" class="btn btn-pri" style="flex:1;justify-content:center">Kirim Thread</button>
+            </div>
+        </form>`);
+        $('#mc').onclick = $('#mc2').onclick = () => ov.remove();
+        $('#form-post').onsubmit = async e => { ov.remove(); await A.createPost(e); };
+        charCounter('pt','ptc',120);
+        charCounter('pc','pcc',5000);
+    },
+
+    postDetail() {
+        const { posts, comments, likes, views } = S.db;
+        const post = posts.find(p=>p.postid===S.postId);
+        if (!post) { toast('Thread tidak ditemukan','err'); V.posts(); return; }
+
+        const cat   = CATS.find(c=>c.id===post.category);
+        const lc    = likes.filter(l=>l.postid===post.postid).length;
+        const vc    = views.filter(v=>v.postid===post.postid).length;
+        const liked = likes.some(l=>l.postid===post.postid&&l.userid===S.user.userid);
+        const pComm = comments.filter(c=>c.postid===post.postid);
+        const isOwn = post.userid===S.user.userid;
+
+        app.innerHTML = `
+        <div class="page">
+            <div class="crumbs" style="margin-bottom:1.25rem">
+                <span class="crumb" id="bc-h">Forum</span>
+                <span class="sep">›</span>
+                <span class="crumb" id="bc-c">${cat?.name||post.category}</span>
+                <span class="sep">›</span>
+                <span class="cur" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${post.title}</span>
+            </div>
+
+            <button class="back-btn" id="btn-back" style="margin-bottom:1.5rem">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
+                Kembali ke Daftar Thread
+            </button>
+
+            <!-- Post card -->
+            <div class="card no-hover" style="padding:1.8rem 2rem;margin-bottom:1.5rem">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.2rem">
+                    <div style="display:flex;align-items:center;gap:.8rem">
+                        ${avatar(post.username,42)}
+                        <div>
+                            <p class="cinzel" style="font-size:.82rem;color:#bbb">${post.username}</p>
+                            <div style="display:flex;gap:.5rem;align-items:center;margin-top:.2rem">
+                                <span class="badge b-red">${cat?.icon||''} ${cat?.name||post.category}</span>
+                                <span style="font-size:.75rem;color:#333">${timeAgo(post.timestamp)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${isOwn ? `
+                    <button class="btn-icon" id="btn-del" title="Hapus thread" style="font-size:.8rem">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="m19,6-.867,12.142A2,2,0,0,1,16.138,20H7.862a2,2,0,0,1-1.995-1.858L5,6m5,0V4a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1v2"/></svg>
+                        Hapus
+                    </button>` : ''}
+                </div>
+
+                <h1 class="cinzel" style="font-size:clamp(1.4rem,4vw,2rem);color:#ddd8cc;margin-bottom:1.2rem;line-height:1.3">${post.title}</h1>
+                <div class="post-content" style="color:#8a8580;line-height:1.82">${md(post.content)}</div>
+
+                <hr class="divider">
+
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:.9rem">
+                    <button class="reaction-btn ${liked?'active':''}" id="btn-like">
+                        ❤ ${lc} Suka${liked?' (disukai)':''}
+                    </button>
+                    <span style="font-size:.88rem;color:#333">👁 ${vc} dilihat</span>
+                    <span style="font-size:.88rem;color:#333">💬 ${pComm.length} komentar</span>
+                    <button class="btn-icon" id="btn-share" style="margin-left:auto">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Bagikan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comment form -->
+            <div class="card no-hover" style="padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+                <div style="display:flex;gap:.8rem;align-items:flex-start">
+                    ${avatar(S.user.username,32)}
+                    <div style="flex:1">
+                        <form id="form-cmt">
+                            <textarea id="cmt-inp" class="inp" rows="2" placeholder="Bagikan pemikiran Anda…" maxlength="1000" required style="resize:none;min-height:68px"></textarea>
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.4rem">
+                                <span id="cmt-c" class="char-c">0/1000</span>
+                                <button type="submit" class="btn btn-pri" style="padding:.42rem 1.2rem;font-size:.65rem">Kirim Komentar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <h3 class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:1.2rem">
+                Komentar — ${pComm.length}
+            </h3>
+            <div id="cmt-tree" style="display:flex;flex-direction:column;gap:.65rem">
+                ${buildTree(pComm)}
+            </div>
+        </div>`;
+
+        $('#bc-h').onclick = V.categories;
+        $('#bc-c').onclick = V.posts;
+        $('#btn-back').onclick = V.posts;
+        $('#btn-like').onclick = () => A.likePost(post.postid);
+        $('#btn-share').onclick = () => {
+            navigator.clipboard?.writeText(location.href+'#'+post.postid).then(()=>toast('Link disalin! 🔗','ok')).catch(()=>toast('Gagal menyalin','err'));
+        };
+        if (isOwn) $('#btn-del').onclick = () => A.confirmDel(post.postid);
+        $('#form-cmt').onsubmit = e => A.createComment(e, post.postid, 'root');
+        charCounter('cmt-inp','cmt-c',1000);
+
+        attachCommentEvents(post.postid);
+    },
+};
+
+// ════════════════════════════════════════
+//  COMMENT TREE BUILDER
+// ════════════════════════════════════════
+function buildTree(comments, parentId='root', depth=0) {
+    const children = comments
+        .filter(c=>c.parent_comment_id===parentId)
+        .sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+    if (!children.length) return '';
+    return children.map(c => {
+        const replies = buildTree(comments, c.commentid, depth+1);
+        const isMe = c.userid === S.user?.userid;
+        return `
+        <div style="${depth>0?'margin-left:clamp(.5rem,3vw,2rem);border-left:2px solid #161616;padding-left:clamp(.5rem,2vw,1.25rem);':''}">
+            <div class="card no-hover" style="padding:1rem 1.2rem;background:${depth===0?'var(--bg-card)':'#0e0e0e'}">
+                <div style="display:flex;gap:.7rem;align-items:flex-start">
+                    ${avatar(c.username,28)}
+                    <div style="flex:1;min-width:0">
+                        <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.45rem">
+                            <span class="cinzel" style="font-size:.72rem;color:#999">${c.username}</span>
+                            ${isMe?`<span class="badge b-gold" style="font-size:.55rem">Anda</span>`:''}
+                            <span style="font-size:.72rem;color:#2d2d2d">${timeAgo(c.timestamp)}</span>
+                        </div>
+                        <div class="post-content" style="font-size:.93rem;color:#666;line-height:1.6">${md(c.content)}</div>
+                        ${depth<3?`
+                        <div style="margin-top:.6rem">
+                            <button class="btn-icon reply-tog" data-cid="${c.commentid}" style="font-size:.78rem">↩ Balas</button>
+                            <form id="rf-${c.commentid}" class="hidden" data-pid="${c.commentid}" style="margin-top:.7rem">
+                                <div style="display:flex;gap:.55rem;align-items:flex-start">
+                                    ${avatar(S.user?.username||'?',24)}
+                                    <div style="flex:1">
+                                        <textarea id="ri-${c.commentid}" class="inp" rows="2" placeholder="Balas komentar…" maxlength="500" required style="resize:none;font-size:.9rem;min-height:58px"></textarea>
+                                        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.3rem">
+                                            <span id="rc-${c.commentid}" class="char-c">0/500</span>
+                                            <div style="display:flex;gap:.5rem">
+                                                <button type="button" class="btn btn-ghost cancel-rf" data-cid="${c.commentid}" style="padding:.28rem .7rem;font-size:.6rem">Batal</button>
+                                                <button type="submit" class="btn btn-pri" style="padding:.28rem .7rem;font-size:.6rem">Kirim</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>` : ''}
+                    </div>
+                </div>
+            </div>
+            ${replies}
+        </div>`;
+    }).join('');
+}
+
+function attachCommentEvents(postId) {
+    $$('.reply-tog').forEach(btn => {
+        btn.onclick = () => {
+            const cid = btn.dataset.cid;
+            $$('.rf-form').forEach(f => { if(f.id!=='rf-'+cid) f.classList.add('hidden'); });
+            const form = $('#rf-'+cid);
+            if (form) {
+                form.classList.toggle('hidden');
+                if (!form.classList.contains('hidden')) {
+                    form.querySelector('textarea')?.focus();
+                    charCounter('ri-'+cid,'rc-'+cid,500);
+                }
+            }
+        };
+    });
+    $$('.cancel-rf').forEach(btn => {
+        btn.onclick = () => { const f=$('#rf-'+btn.dataset.cid); if(f)f.classList.add('hidden'); };
+    });
+    $$('[id^="rf-"]').forEach(form => {
+        if (form.tagName==='FORM') form.onsubmit = e => A.createComment(e, postId, form.dataset.pid);
+    });
+}
+
+// ════════════════════════════════════════
+//  ACTIONS  (A.*)
+// ════════════════════════════════════════
+const A = {
+
+    async login(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('[type=submit]');
+        btn.disabled=true; btn.textContent='Memeriksa…';
+        try {
+            const u = $('#in-user').value.trim();
+            const p = $('#in-pass').value;
+            const res = await api(`${API.users}/search?username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
+            if (res?.length>0) {
+                S.user = res[0];
+                sessionStorage.setItem('noc_u', JSON.stringify(S.user));
+                await A.boot(true);
+                toast(`Selamat datang, ${S.user.username}! 🎩`,'ok');
+            } else {
+                toast('Username atau password salah','err');
+                btn.disabled=false; btn.textContent='Masuk ke Forum';
+            }
+        } catch {
+            toast('Gagal terhubung ke server','err');
+            btn.disabled=false; btn.textContent='Masuk ke Forum';
+        }
+    },
+
+    async signup(e) {
+        e.preventDefault();
+        const u = $('#up-user').value.trim();
+        const p = $('#up-pass').value;
+        if (u.length<3) { toast('Username minimal 3 karakter','err'); return; }
+        if (p.length<4) { toast('Password minimal 4 karakter','err'); return; }
+        const btn = e.target.querySelector('[type=submit]');
+        btn.disabled=true; btn.textContent='Mendaftarkan…';
+        try {
+            const ex = await api(`${API.users}/search?username=${encodeURIComponent(u)}`);
+            if (ex?.length>0) { toast('Username sudah digunakan','err'); btn.disabled=false; btn.textContent='Buat Akun'; return; }
+            await api(API.users, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({data:{userid:Date.now().toString(),username:u,password:p,lama_sulap:$('#up-lama').value,aliran_sulap:$('#up-aliran').value}})
+            });
+            toast('Akun berhasil dibuat! Silakan login 🎉','ok');
+            V.auth();
+        } catch { toast('Gagal mendaftar, coba lagi','err'); btn.disabled=false; btn.textContent='Buat Akun'; }
+    },
+
+    logout() {
+        S.user=null; sessionStorage.removeItem('noc_u');
+        renderNav(); V.auth();
+        toast('Sampai jumpa! 👋','inf');
+    },
+
+    async createPost(e) {
+        e.preventDefault();
+        const title   = document.getElementById('pt')?.value?.trim();
+        const content = document.getElementById('pc')?.value?.trim();
+        if (!title||!content) { toast('Judul dan isi harus diisi','err'); return; }
+        V.skeleton();
+        try {
+            await api(API.posts, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({data:{postid:Date.now().toString(),userid:S.user.userid,username:S.user.username,title,content,timestamp:new Date().toISOString(),category:S.cat,views:'0'}})
+            });
+            await wait(1800); await loadAll(); V.posts();
+            toast('Thread berhasil dibuat! ✨','ok');
+        } catch { toast('Gagal membuat thread','err'); V.posts(); }
+    },
+
+    async viewPost(postId) {
+        S.postId = postId;
+        if (!S.db.views.some(v=>v.postid===postId&&v.userid===S.user.userid)) {
+            const nv = {viewid:Date.now().toString(),postid:postId,userid:S.user.userid};
+            S.db.views.push(nv);
+            api(API.views,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:nv})}).catch(()=>{});
+        }
+        V.postDetail();
+    },
+
+    async createComment(e, postId, parentId='root') {
+        e.preventDefault();
+        const inpId = parentId==='root' ? 'cmt-inp' : 'ri-'+parentId;
+        const inp   = document.getElementById(inpId);
+        const txt   = inp?.value?.trim();
+        if (!txt) return;
+        V.skeleton();
+        try {
+            await api(API.comments, {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({data:{commentid:Date.now().toString(),postid:postId,userid:S.user.userid,username:S.user.username,content:txt,timestamp:new Date().toISOString(),parent_comment_id:parentId}})
+            });
+            await wait(1400); await loadAll(); V.postDetail();
+            toast('Komentar terkirim!','ok');
+        } catch { toast('Gagal mengirim komentar','err'); V.postDetail(); }
+    },
+
+    async likePost(postId) {
+        if (S.db.likes.some(l=>l.postid===postId&&l.userid===S.user.userid)) {
+            toast('Kamu sudah menyukai thread ini','inf'); return;
+        }
+        const nl = {likeid:Date.now().toString(),postid:postId,userid:S.user.userid};
+        S.db.likes.push(nl);
+        try {
+            await api(API.likes,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:nl})});
+            V.postDetail(); toast('Disukai! ❤','ok');
+        } catch { toast('Gagal menyukai thread','err'); }
+    },
+
+    confirmDel(postId) {
+        const ov = openModal(`
+        <div style="text-align:center">
+            <p style="font-size:2.5rem;margin-bottom:.9rem">🗑️</p>
+            <h3 class="cinzel" style="font-size:1.1rem;color:#ccc;margin-bottom:.6rem">Hapus Thread?</h3>
+            <p style="color:#444;font-size:.95rem;margin-bottom:1.6rem;max-width:320px;margin-left:auto;margin-right:auto">Tindakan ini permanen. Thread beserta semua komentarnya akan hilang.</p>
+            <div style="display:flex;gap:.8rem;justify-content:center">
+                <button class="btn btn-ghost" id="c-del">Batal</button>
+                <button class="btn btn-pri" id="ok-del" style="background:#7f1d1d">Ya, Hapus</button>
+            </div>
+        </div>`);
+        $('#c-del').onclick  = () => ov.remove();
+        $('#ok-del').onclick = async () => { ov.remove(); await A.deletePost(postId); };
+    },
+
+    async deletePost(postId) {
+        V.skeleton();
+        try {
+            await api(`${API.posts}/postid/${postId}`,{method:'DELETE'});
+            await wait(2000); await loadAll(); V.posts();
+            toast('Thread dihapus','inf');
+        } catch { toast('Gagal menghapus','err'); V.posts(); }
+    },
+
+    async boot(skipSaved=false) {
+        if (!skipSaved) {
+            const saved = sessionStorage.getItem('noc_u');
+            if (saved) S.user = JSON.parse(saved);
+        }
+        if (!S.user) { V.auth(); return; }
+        renderNav(); V.skeleton();
+        try { await loadAll(); V.categories(); }
+        catch {
+            app.innerHTML = `
+            <div style="text-align:center;padding:6rem 0">
+                <p style="font-size:2.5rem">⚡</p>
+                <h3 class="cinzel" style="color:var(--txt3);font-size:.8rem;letter-spacing:2px;text-transform:uppercase;margin:1.2rem 0 .5rem">Koneksi Bermasalah</h3>
+                <p style="color:#2a2a2a;font-size:.95rem">Gagal memuat data forum. Periksa koneksi internet.</p>
+                <button class="btn btn-pri" style="margin-top:1.5rem" onclick="A.boot()">Coba Lagi</button>
+            </div>`;
+        }
+    },
+};
+
+// expose for onclick attributes
+window.A = A;
+window.V = V;
+
+// ── INIT ──
+A.boot();
+});
+</script>
+</body>
+</html>
