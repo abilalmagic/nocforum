@@ -18,12 +18,15 @@
       --bg-primary: #0b0f19;
       --bg-secondary: #111827;
       --bg-card: #1a202c;
+      --bg-hover: #242b3d;
       --border: #2d3748;
       --text-primary: #f7fafc;
       --text-secondary: #a0aec0;
       --text-muted: #718096;
       --accent: #3b82f6;
       --accent-hover: #2563eb;
+      --success: #10b981;
+      --error: #ef4444;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,12 +39,17 @@
     }
 
     h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
     
     .container { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; }
+    .grid { display: grid; gap: 1.5rem; }
     .flex { display: flex; align-items: center; }
     .flex-between { justify-content: space-between; }
-    .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; }
+    .flex-center { justify-content: center; align-items: center; }
+    .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
     .py-6 { padding: 1.5rem 0; }
+    .mt-4 { margin-top: 1rem; } .mb-4 { margin-bottom: 1rem; }
     
     .navbar {
       position: sticky; top: 0; z-index: 50;
@@ -69,11 +77,13 @@
       transition: all 0.2s;
     }
     .nav-link:hover, .nav-link.active { color: var(--text-primary); }
+    .nav-link.active { border-bottom: 2px solid var(--accent); }
     
     .btn {
       padding: 0.6rem 1.2rem; 
       border-radius: 8px; 
       font-weight: 500; 
+      font-size: 0.875rem;
       cursor: pointer; 
       border: none; 
       transition: all 0.2s;
@@ -82,17 +92,21 @@
       gap: 0.5rem;
     }
     .btn-primary { background: var(--accent); color: white; }
-    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
     .btn-ghost { background: transparent; color: var(--text-muted); padding: 0.5rem; }
-    .btn-ghost:hover { color: var(--text-primary); background: var(--bg-card); }
+    .btn-ghost:hover { color: var(--text-primary); background: var(--bg-hover); }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
     
     .card {
       background: var(--bg-card); 
       border: 1px solid var(--border); 
       border-radius: 12px;
       padding: 1.25rem;
+      transition: all 0.2s;
     }
+    .card:hover { border-color: #4a5568; }
     
     .avatar {
       width: 40px; height: 40px; 
@@ -100,7 +114,9 @@
       background: linear-gradient(135deg, var(--accent), #8b5cf6);
       display: grid; place-items: center; 
       font-weight: 600; color: white;
+      flex-shrink: 0;
     }
+    .avatar-lg { width: 80px; height: 80px; font-size: 1.5rem; }
     
     .badge {
       display: inline-flex; 
@@ -120,11 +136,14 @@
       padding: 0.75rem 1rem; 
       border-radius: 8px;
       margin-bottom: 1rem;
+      font-family: inherit;
     }
-    .form-input:focus, .form-textarea:focus {
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
       outline: none; 
       border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
     }
+    .form-textarea { resize: vertical; min-height: 120px; }
     
     .modal-overlay {
       position: fixed; inset: 0; 
@@ -140,36 +159,56 @@
       background: var(--bg-card); 
       border: 1px solid var(--border); 
       border-radius: 12px;
-      width: 100%; max-width: 500px; 
+      width: 100%; max-width: 600px; 
+      max-height: 90vh;
+      overflow-y: auto;
       padding: 1.5rem;
+      animation: modalIn 0.2s ease;
     }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 200; }
+    #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 200; display: flex; flex-direction: column; gap: 0.5rem; }
     .toast { 
       padding: 0.75rem 1rem; 
       border-radius: 8px; 
       background: var(--bg-card); 
       border-left: 4px solid var(--accent); 
-      margin-bottom: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       animation: slideIn 0.3s ease;
+      max-width: 350px;
     }
-    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--error); }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     
     .hidden { display: none !important; }
     .text-accent { color: var(--accent); }
     .text-muted { color: var(--text-muted); }
-    .mb-4 { margin-bottom: 1rem; }
-    .mt-4 { margin-top: 1rem; }
+    .text-success { color: var(--success); }
+    .text-error { color: var(--error); }
     
-    .thread-item { cursor: pointer; border-left: 3px solid transparent; padding: 1rem; }
+    .thread-item { cursor: pointer; border-left: 3px solid transparent; }
     .thread-item:hover { border-left-color: var(--accent); background: rgba(59,130,246,0.05); }
+    .thread-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .thread-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 1rem; flex-wrap: wrap; }
     
-    .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+    .comment { border-left: 2px solid var(--border); padding-left: 1rem; margin-top: 1rem; }
+    .comment.nested { margin-left: 2rem; border-left-color: #4a5568; }
+    .comment-author { color: var(--accent); font-weight: 500; cursor: pointer; }
+    .comment-author:hover { text-decoration: underline; }
+    
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
     .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 { margin: 1rem 0 0.5rem; }
+    .markdown-content p { margin-bottom: 0.75rem; }
+    .markdown-content code { background: var(--bg-secondary); padding: 0.2rem 0.4rem; border-radius: 4px; }
+    .markdown-content blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--text-secondary); font-style: italic; }
     
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .hide-mobile { display: none; }
+      .grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -180,7 +219,7 @@
       <div class="nav-brand">
         <div class="nav-logo">🎩</div>
         <div>
-          <div style="font-family:'Playfair Display'; font-weight:700;">NOC FORUM</div>
+          <div style="font-family:'Playfair Display'; font-weight:700; font-size:1.1rem;">NOC FORUM</div>
           <div style="font-size:0.75rem; color:var(--text-muted);">Ars Magica Community</div>
         </div>
       </div>
@@ -198,25 +237,22 @@
         </div>
         
         <div id="user-menu" class="hidden flex gap-3">
-          <button class="btn btn-ghost"><i class="fa-solid fa-bell"></i></button>
-          <div class="flex items-center gap-2" style="cursor:pointer;" onclick="App.router.go('profile')">
-            <div id="user-avatar" class="avatar" style="width:32px;height:32px;font-size:0.8rem;"></div>
-            <span id="user-name" class="hide-mobile"></span>
-          </div>
-          <button class="btn btn-ghost text-red-400" onclick="App.auth.logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+          <button class="btn btn-ghost" onclick="App.router.go('profile')"><i class="fa-solid fa-user"></i> <span class="hide-mobile">Profil</span></button>
+          <button class="btn btn-ghost text-red-400" onclick="App.auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> <span class="hide-mobile">Logout</span></button>
         </div>
       </div>
     </div>
   </nav>
 
   <main id="app-content" class="container py-6" style="min-height:60vh;">
-    <!-- Content will be rendered here -->
+    <!-- Dynamic Content -->
   </main>
 
-  <footer style="border-top:1px solid var(--border); padding:2rem 0; text-align:center; color:var(--text-muted); font-size:0.85rem;">
+  <footer style="border-top:1px solid var(--border); padding:2rem 0; text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:3rem;">
     <div class="container">
       <div style="color:var(--accent); font-weight:600; margin-bottom:0.5rem;">✦ NOC FORUM ✦</div>
       <p>dibuat untuk happy, kalo ga happy pergi by Prof.Z — nocfams 2025</p>
+      <p class="mt-2">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
     </div>
   </footer>
 
@@ -230,37 +266,67 @@
       <form id="auth-form">
         <div id="username-field" class="hidden">
           <label class="block text-sm text-gray-400 mb-1">Username</label>
-          <input type="text" id="auth-username" class="form-input" required>
+          <input type="text" id="auth-username" class="form-input" required minlength="3">
         </div>
         <label class="block text-sm text-gray-400 mb-1">Email</label>
         <input type="email" id="auth-email" class="form-input" required>
-        
         <label class="block text-sm text-gray-400 mb-1">Password</label>
-        <input type="password" id="auth-password" class="form-input" required>
-        
+        <input type="password" id="auth-password" class="form-input" required minlength="6">
         <div id="profile-fields" class="hidden">
           <label class="block text-sm text-gray-400 mb-1">Lama Main Sulap</label>
           <select id="auth-lama" class="form-select">
+            <option value="">Pilih...</option>
             <option value="< 1 Tahun">&lt; 1 Tahun</option>
             <option value="1-3 Tahun">1-3 Tahun</option>
             <option value="3-5 Tahun">3-5 Tahun</option>
             <option value="5+ Tahun">5+ Tahun</option>
           </select>
-          
           <label class="block text-sm text-gray-400 mb-1">Aliran Sulap</label>
           <select id="auth-aliran" class="form-select">
+            <option value="">Pilih...</option>
             <option value="Mentalism">Mentalism</option>
             <option value="Sleight of Hand">Sleight of Hand</option>
+            <option value="Illusionism">Illusionism</option>
             <option value="Close-up">Close-up Magic</option>
+            <option value="Stage">Stage Magic</option>
           </select>
         </div>
-        
         <button type="submit" class="btn btn-primary w-full mt-4" style="justify-content:center;">Masuk</button>
       </form>
       <p class="mt-4 text-center text-sm text-muted">
         <span id="auth-switch-text">Belum punya akun?</span>
         <span class="text-accent" style="cursor:pointer;margin-left:0.25rem;" onclick="App.ui.toggleAuthMode()">Daftar</span>
       </p>
+    </div>
+  </div>
+
+  <!-- Create Thread Modal -->
+  <div id="thread-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="flex flex-between mb-4">
+        <h2 style="font-size:1.5rem;">Buat Thread Baru</h2>
+        <button class="btn btn-ghost" onclick="App.ui.closeModal('thread')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="thread-form">
+        <label class="block text-sm text-gray-400 mb-1">Kategori</label>
+        <select id="thread-category" class="form-select" required>
+          <option value="">Pilih Kategori</option>
+          <option value="Card Magic">Card Magic</option>
+          <option value="Coin Magic">Coin Magic</option>
+          <option value="Mentalism">Mentalism</option>
+          <option value="Everyday Object">Everyday Object</option>
+          <option value="Idea & Theory">Idea & Theory</option>
+          <option value="Market & Gear">Market & Gear</option>
+        </select>
+        <label class="block text-sm text-gray-400 mb-1">Judul</label>
+        <input type="text" id="thread-title" class="form-input" required maxlength="120" placeholder="Contoh: Teknik Advanced Palm untuk Coin Magic">
+        <label class="block text-sm text-gray-400 mb-1">Konten</label>
+        <textarea id="thread-content" class="form-textarea" required placeholder="Tulis thread Anda... (Gunakan **bold** untuk tebal, *italic* untuk miring)"></textarea>
+        <div class="flex justify-end gap-3 mt-4">
+          <button type="button" class="btn btn-outline" onclick="App.ui.closeModal('thread')">Batal</button>
+          <button type="submit" class="btn btn-primary">Publikasi Thread</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -277,154 +343,140 @@
       appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
     };
 
-    // Initialize Firebase
     try {
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-    } catch (e) {
-      console.error('Firebase init error:', e);
-    }
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    } catch (e) { console.error('Firebase error:', e); }
 
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // App State
     const App = {
-      state: {
-        user: null,
-        threads: [],
-        users: new Map(),
-        currentView: 'home'
-      },
+      state: { user: null, threads: [], comments: {}, users: new Map(), currentView: 'home', currentThreadId: null },
 
       init() {
-        console.log('App initializing...');
         this.auth.init();
         this.router.init();
-        this.ui.setupEventListeners();
-        console.log('App initialized');
+        this.ui.setupEvents();
       },
 
       auth: {
-        user: null,
-        
         init() {
           auth.onAuthStateChanged(async (user) => {
-            console.log('Auth state changed:', user?.email);
             if (user) {
               try {
                 const doc = await db.collection('users').doc(user.uid).get();
-                if (doc.exists) {
-                  App.state.user = { uid: user.uid, ...doc.data() };
-                  App.auth.user = App.state.user;
-                  App.ui.updateAuthUI();
-                  App.data.loadThreads();
-                }
-              } catch (e) {
-                console.error('Error loading user:', e);
-              }
+                App.state.user = { uid: user.uid, ...doc.data() };
+                App.ui.updateAuthUI();
+                App.data.loadThreads();
+              } catch (e) { console.error('Load user error:', e); }
             } else {
               App.state.user = null;
-              App.auth.user = null;
               App.ui.updateAuthUI();
               App.data.loadThreads();
             }
           });
         },
-
-        async login(email, password) {
+        async login(email, pass) {
           try {
-            await auth.signInWithEmailAndPassword(email, password);
+            await auth.signInWithEmailAndPassword(email, pass);
             App.ui.toast('Login berhasil!', 'success');
             App.ui.closeModal('auth');
-          } catch (e) {
-            App.ui.toast('Login gagal: ' + e.message, 'error');
-          }
+          } catch (e) { App.ui.toast('Login gagal: ' + e.message, 'error'); }
         },
-
-        async register(email, password, username, lama, aliran) {
+        async register(email, pass, username, lama, aliran) {
           try {
-            const cred = await auth.createUserWithEmailAndPassword(email, password);
+            const cred = await auth.createUserWithEmailAndPassword(email, pass);
             await db.collection('users').doc(cred.user.uid).set({
               username, email, lama_sulap: lama, aliran_sulap: aliran,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+              bio: '', createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             App.ui.toast('Akun dibuat! Silakan login.', 'success');
-            setTimeout(() => {
-              auth.signOut();
-              App.ui.toggleAuthMode();
-            }, 1500);
-          } catch (e) {
-            App.ui.toast('Registrasi gagal: ' + e.message, 'error');
-          }
+            setTimeout(() => { auth.signOut(); App.ui.toggleAuthMode(); }, 1500);
+          } catch (e) { App.ui.toast('Registrasi gagal: ' + e.message, 'error'); }
         },
-
-        async logout() {
-          await auth.signOut();
-          App.ui.toast('Logout berhasil', 'info');
-        }
+        async logout() { await auth.signOut(); App.ui.toast('Logout berhasil', 'info'); }
       },
 
       data: {
         async loadThreads() {
           try {
-            const snapshot = await db.collection('threads').orderBy('createdAt', 'desc').limit(20).get();
-            App.state.threads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const snap = await db.collection('threads').orderBy('createdAt', 'desc').limit(20).get();
+            App.state.threads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             App.router.render();
-          } catch (e) {
-            console.error('Error loading threads:', e);
-            App.ui.toast('Gagal memuat thread', 'error');
-          }
+          } catch (e) { console.error('Load threads:', e); App.ui.toast('Gagal memuat thread', 'error'); }
         },
-
         async createThread(title, content, category) {
-          if (!App.auth.user) {
-            App.ui.toast('Login untuk membuat thread', 'error');
-            return;
-          }
+          if (!App.state.user) return App.ui.toast('Login untuk membuat thread', 'error');
           try {
             await db.collection('threads').add({
               title, content, category,
-              authorId: App.auth.user.uid,
-              authorName: App.auth.user.username,
+              authorId: App.state.user.uid,
+              authorName: App.state.user.username,
               createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-              likeCount: 0,
-              commentCount: 0
+              likeCount: 0, commentCount: 0
             });
             App.ui.toast('Thread dipublikasi!', 'success');
             App.ui.closeModal('thread');
             App.data.loadThreads();
-          } catch (e) {
-            App.ui.toast('Gagal membuat thread: ' + e.message, 'error');
-          }
+          } catch (e) { App.ui.toast('Gagal: ' + e.message, 'error'); }
+        },
+        async loadComments(threadId) {
+          try {
+            const snap = await db.collection('comments').where('threadId', '==', threadId).orderBy('createdAt', 'asc').get();
+            App.state.comments[threadId] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            App.router.render();
+          } catch (e) { console.error('Load comments:', e); }
+        },
+        async addComment(threadId, content) {
+          if (!App.state.user) return;
+          try {
+            await db.collection('comments').add({
+              threadId, content,
+              authorId: App.state.user.uid,
+              authorName: App.state.user.username,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            await db.collection('threads').doc(threadId).update({ commentCount: firebase.firestore.FieldValue.increment(1) });
+            App.data.loadComments(threadId);
+            App.ui.toast('Komentar terkirim', 'success');
+          } catch (e) { App.ui.toast('Gagal kirim komentar', 'error'); }
+        },
+        async toggleLike(threadId) {
+          if (!App.state.user) return App.ui.toast('Login untuk menyukai', 'error');
+          try {
+            const q = await db.collection('likes').where('userId', '==', App.state.user.uid).where('threadId', '==', threadId).limit(1).get();
+            if (!q.empty) {
+              await q.docs[0].ref.delete();
+              await db.collection('threads').doc(threadId).update({ likeCount: firebase.firestore.FieldValue.increment(-1) });
+            } else {
+              await db.collection('likes').add({ userId: App.state.user.uid, threadId });
+              await db.collection('threads').doc(threadId).update({ likeCount: firebase.firestore.FieldValue.increment(1) });
+            }
+            App.data.loadThreads();
+            if (App.state.currentView === 'thread') App.data.loadThreadDetail(threadId);
+          } catch (e) { console.error('Like error:', e); }
+        },
+        async loadThreadDetail(threadId) {
+          try {
+            const doc = await db.collection('threads').doc(threadId).get();
+            if (doc.exists) {
+              App.state.currentThread = { id: doc.id, ...doc.data() };
+              App.data.loadComments(threadId);
+            }
+          } catch (e) { console.error('Load thread:', e); }
         }
       },
 
       ui: {
         toast(msg, type = 'info') {
-          const container = document.getElementById('toast-container');
           const div = document.createElement('div');
-          div.className = 'toast';
-          div.style.borderLeftColor = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : 'var(--accent)';
+          div.className = 'toast ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
           div.textContent = msg;
-          container.appendChild(div);
+          document.getElementById('toast-container').appendChild(div);
           setTimeout(() => div.remove(), 3500);
         },
-
-        openModal(type) {
-          document.getElementById('auth-modal').classList.add('active');
-          if (type === 'register') {
-            document.getElementById('auth-title').textContent = 'Daftar Akun';
-            document.getElementById('username-field').classList.remove('hidden');
-            document.getElementById('profile-fields').classList.remove('hidden');
-          }
-        },
-
-        closeModal(type) {
-          document.getElementById('auth-modal').classList.remove('active');
-        },
-
+        openModal(type) { document.getElementById(type + '-modal').classList.add('active'); },
+        closeModal(type) { document.getElementById(type + '-modal').classList.remove('active'); },
         toggleAuthMode() {
           const isLogin = document.getElementById('auth-title').textContent === 'Login';
           document.getElementById('auth-title').textContent = isLogin ? 'Daftar Akun' : 'Login';
@@ -432,33 +484,31 @@
           document.getElementById('profile-fields').classList.toggle('hidden', isLogin);
           document.getElementById('auth-switch-text').textContent = isLogin ? 'Sudah punya akun?' : 'Belum punya akun?';
         },
-
         updateAuthUI() {
           const user = App.state.user;
           document.getElementById('auth-buttons').classList.toggle('hidden', !!user);
           document.getElementById('user-menu').classList.toggle('hidden', !user);
           if (user) {
             document.getElementById('user-name').textContent = user.username;
-            document.getElementById('user-avatar').textContent = user.username.charAt(0).toUpperCase();
           }
         },
-
-        setupEventListeners() {
-          document.getElementById('auth-form').addEventListener('submit', (e) => {
+        setupEvents() {
+          document.getElementById('auth-form').addEventListener('submit', e => {
             e.preventDefault();
             const mode = document.getElementById('auth-title').textContent;
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-password').value;
-            
-            if (mode === 'Login') {
-              App.auth.login(email, pass);
-            } else {
-              const username = document.getElementById('auth-username').value;
-              const lama = document.getElementById('auth-lama').value;
-              const aliran = document.getElementById('auth-aliran').value;
-              App.auth.register(email, pass, username, lama, aliran);
-            }
+            if (mode === 'Login') App.auth.login(email, pass);
+            else App.auth.register(email, pass, document.getElementById('auth-username').value, document.getElementById('auth-lama').value, document.getElementById('auth-aliran').value);
           });
+          document.getElementById('thread-form').addEventListener('submit', e => {
+            e.preventDefault();
+            App.data.createThread(document.getElementById('thread-title').value, document.getElementById('thread-content').value, document.getElementById('thread-category').value);
+          });
+        },
+        parseMarkdown(text) {
+          if (!text) return '';
+          return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
         }
       },
 
@@ -467,84 +517,112 @@
           window.addEventListener('hashchange', () => this.render());
           this.render();
         },
-
-        go(route) {
-          location.hash = route;
+        go(route, param) {
+          location.hash = param ? route + '/' + param : route;
         },
-
         render() {
           const hash = location.hash.slice(1) || 'home';
-          App.state.currentView = hash;
-          const main = document.getElementById('app-content');
+          const [route, param] = hash.split('/');
+          App.state.currentView = route;
+          if (route === 'thread' && param) {
+            App.state.currentThreadId = param;
+            App.data.loadThreadDetail(param);
+          }
           
-          // Update nav active state
-          document.querySelectorAll('.nav-link').forEach(el => {
-            el.classList.toggle('active', el.textContent.toLowerCase().includes(hash));
-          });
-
+          const main = document.getElementById('app-content');
+          document.querySelectorAll('.nav-link').forEach(el => el.classList.toggle('active', el.textContent.toLowerCase().includes(route)));
+          
           try {
-            switch(hash) {
-              case 'home':
-                main.innerHTML = this.renderHome();
-                break;
-              case 'trending':
-                main.innerHTML = '<div class="card"><h2>Trending</h2><p>Fitur coming soon</p></div>';
-                break;
-              case 'search':
-                main.innerHTML = '<div class="card"><h2>Cari</h2><p>Fitur coming soon</p></div>';
-                break;
-              default:
-                main.innerHTML = this.renderHome();
+            switch(route) {
+              case 'home': main.innerHTML = this.views.home(); break;
+              case 'trending': main.innerHTML = this.views.trending(); break;
+              case 'search': main.innerHTML = this.views.search(); break;
+              case 'thread': main.innerHTML = this.views.thread(); break;
+              case 'profile': main.innerHTML = this.views.profile(); break;
+              default: main.innerHTML = this.views.home();
             }
           } catch (e) {
             console.error('Render error:', e);
             main.innerHTML = '<div class="empty-state"><i class="fa-solid fa-circle-exclamation"></i><h3>Error</h3><p>' + e.message + '</p></div>';
           }
         },
-
-        renderHome() {
-          const user = App.state.user;
-          const threads = App.state.threads;
-          
-          if (!threads.length) {
+        views: {
+          home() {
+            const user = App.state.user;
+            const threads = App.state.threads;
             return `
-              <div class="empty-state card">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <h3>Belum ada thread</h3>
-                <p>Jadilah yang pertama memulai diskusi!</p>
-                ${user ? `<button class="btn btn-primary mt-4" onclick="alert('Fitur create thread')">+ Buat Thread</button>` : ''}
+              <div class="flex flex-between mb-6">
+                <h2 style="font-size:1.5rem;">Diskusi Terbaru</h2>
+                ${user ? `<button class="btn btn-primary" onclick="App.ui.openModal('thread')"><i class="fa-solid fa-plus"></i> <span class="hide-mobile">Thread</span></button>` : ''}
+              </div>
+              ${!threads.length ? '<div class="empty-state card"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Belum ada thread</h3><p>Jadilah yang pertama!</p></div>' : 
+                `<div class="grid">${threads.map(t => App.ui.views.threadCard(t)).join('')}</div>`}
+            `;
+          },
+          trending() {
+            const trending = [...App.state.threads].sort((a,b) => (b.likeCount||0) - (a.likeCount||0)).slice(0, 10);
+            return `<h2 style="font-size:1.5rem;margin-bottom:1.5rem;">🔥 Trending</h2>${trending.length ? `<div class="grid">${trending.map(t => App.ui.views.threadCard(t)).join('')}</div>` : '<div class="empty-state card"><p>Belum ada trending</p></div>'}`;
+          },
+          search() {
+            return `<h2 style="font-size:1.5rem;margin-bottom:1.5rem;">🔍 Cari Thread</h2><div class="card"><input type="text" class="form-input" placeholder="Ketik untuk mencari..." id="search-input"><div id="search-results" class="mt-4"></div></div>`;
+          },
+          thread() {
+            const thread = App.state.currentThread;
+            if (!thread) return '<div class="empty-state">Loading...</div>';
+            const comments = App.state.comments[thread.id] || [];
+            return `
+              <button class="btn btn-ghost mb-4" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+              <div class="card mb-4">
+                <div class="mb-3"><span class="badge">${thread.category}</span></div>
+                <h1 style="font-size:1.8rem;margin-bottom:1rem;">${thread.title}</h1>
+                <div class="flex gap-3 mb-4 pb-4 border-b" style="border-color:var(--border);">
+                  <div class="avatar">${thread.authorName?.charAt(0)||'?'}</div>
+                  <div><div style="font-weight:500;color:var(--accent);">${thread.authorName}</div><div class="text-sm text-muted">${thread.createdAt ? new Date(thread.createdAt.toDate()).toLocaleString('id-ID') : '-'}</div></div>
+                </div>
+                <div class="markdown-content mb-6" style="line-height:1.8;">${App.ui.parseMarkdown(thread.content)}</div>
+                <div class="flex gap-4">
+                  <button class="btn btn-outline" onclick="App.data.toggleLike('${thread.id}')"><i class="fa-solid fa-heart"></i> ${thread.likeCount||0} Suka</button>
+                  <span class="text-muted"><i class="fa-solid fa-comment"></i> ${comments.length} Komentar</span>
+                </div>
+              </div>
+              <div class="card">
+                <h3 style="margin-bottom:1rem;">💬 Komentar (${comments.length})</h3>
+                ${App.state.user ? `<div class="mb-4"><textarea id="comment-input" class="form-textarea" placeholder="Tulis komentar..." rows="2"></textarea><button class="btn btn-primary btn-sm" onclick="App.data.addComment('${thread.id}', document.getElementById('comment-input').value)">Kirim</button></div>` : '<p class="text-muted mb-4">Login untuk berkomentar</p>'}
+                <div>${comments.length ? comments.map(c => App.ui.views.comment(c)).join('') : '<p class="text-muted text-center py-4">Belum ada komentar</p>'}</div>
               </div>
             `;
-          }
-          
-          return `
-            <div class="flex flex-between mb-4">
-              <h2 style="font-size:1.5rem;">Diskusi Terbaru</h2>
-              ${user ? `<button class="btn btn-primary" onclick="alert('Fitur create thread')"><i class="fa-solid fa-plus"></i> <span class="hide-mobile">Thread</span></button>` : ''}
-            </div>
-            <div class="space-y-3">
-              ${threads.map(t => `
-                <div class="card thread-item" onclick="alert('Detail thread: ${t.title}')">
-                  <div class="mb-2"><span class="badge">${t.category || 'Umum'}</span></div>
-                  <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">${t.title}</h3>
-                  <div class="text-muted text-sm">
-                    <span>oleh ${t.authorName || 'Anon'}</span>
-                    <span class="mx-2">•</span>
-                    <span>${t.createdAt ? new Date(t.createdAt.toDate ? t.createdAt.toDate() : t.createdAt).toLocaleDateString('id-ID') : '-'}</span>
-                  </div>
+          },
+          profile() {
+            const user = App.state.user;
+            if (!user) return '<div class="empty-state"><p>Silakan login</p></div>';
+            const threads = App.state.threads.filter(t => t.authorId === user.uid);
+            return `
+              <div class="card mb-6">
+                <div class="flex gap-4 mb-4">
+                  <div class="avatar avatar-lg">${user.username?.charAt(0)||'?'}</div>
+                  <div><h2 style="font-size:1.5rem;">${user.username}</h2><p class="text-muted">${user.email}</p></div>
                 </div>
-              `).join('')}
-            </div>
-          `;
+                <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:1rem;">
+                  <div class="card text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--accent);">${threads.length}</div><div class="text-sm text-muted">Thread</div></div>
+                  <div class="card text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--accent);">${user.lama_sulap||'-'}</div><div class="text-sm text-muted">Lama Main</div></div>
+                  <div class="card text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--accent);">${user.aliran_sulap||'-'}</div><div class="text-sm text-muted">Aliran</div></div>
+                </div>
+              </div>
+              <h3 style="margin-bottom:1rem;">Thread Saya</h3>
+              ${threads.length ? `<div class="grid">${threads.map(t => App.ui.views.threadCard(t)).join('')}</div>` : '<p class="text-muted">Belum ada thread</p>'}
+            `;
+          },
+          threadCard(t) {
+            return `<div class="card thread-item" onclick="App.router.go('thread','${t.id}')"><div class="mb-2"><span class="badge">${t.category||'Umum'}</span></div><div class="thread-title">${t.title}</div><div class="thread-meta"><span><i class="fa-solid fa-user"></i> ${t.authorName||'Anon'}</span><span><i class="fa-solid fa-clock"></i> ${t.createdAt ? new Date(t.createdAt.toDate ? t.createdAt.toDate() : t.createdAt).toLocaleDateString('id-ID') : '-'}</span><span><i class="fa-solid fa-heart"></i> ${t.likeCount||0}</span><span><i class="fa-solid fa-comment"></i> ${t.commentCount||0}</span></div></div>`;
+          },
+          comment(c) {
+            return `<div class="comment"><div class="comment-author">${c.authorName||'Anon'}</div><div class="text-sm mt-1">${App.ui.parseMarkdown(c.content)}</div><div class="text-xs text-muted mt-1">${c.createdAt ? new Date(c.createdAt.toDate()).toLocaleString('id-ID') : ''}</div></div>`;
+          }
         }
       }
     };
 
-    // Start App
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM loaded, starting app...');
-      App.init();
-    });
+    document.addEventListener('DOMContentLoaded', () => App.init());
   </script>
 </body>
 </html>
