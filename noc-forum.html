@@ -3,1093 +3,1946 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOC FORUM — NOCFAMS Magic Community</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>NOC FORUM • Professional Magic Community</title>
+    
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        gothic: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        navy: { 50: '#f8fafc', 100: '#f1f5f9', 800: '#1e293b', 900: '#0f172a' },
+                        magic: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        accent: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'fade-in': 'fadeIn 0.4s ease-out'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        :root {
-            --bg:      #080808;
-            --bg-card: #111111;
-            --bg-ele:  #161616;
-            --border:  #242424;
-            --accent:  #c41e3a;
-            --glow:    rgba(196,30,58,0.35);
-            --gold:    #c8a94a;
-            --txt:     #ddd8cc;
-            --txt2:    #777;
-            --txt3:    #444;
-        }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Crimson Pro', Georgia, serif;
-            background: var(--bg);
-            color: var(--txt);
-            font-size: 17px;
-            line-height: 1.72;
+        /* === BASE STYLES === */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
             min-height: 100vh;
+            line-height: 1.6;
         }
-
-        /* Grain overlay */
-        body::after {
-            content: '';
-            position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 0; opacity: 0.4;
+        
+        /* === CUSTOM SCROLLBAR === */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+        
+        /* === FORM ELEMENTS === */
+        .form-input, .form-select, .form-textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #475569;
+            color: #f1f5f9;
+            padding: 0.75rem 0;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 1rem;
         }
-
-        /* ── Typography ─────────────────── */
-        .cinzel { font-family: 'Cinzel', serif; }
-        .mono   { font-family: 'JetBrains Mono', monospace; }
-
-        /* ── Cards ──────────────────────── */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            position: relative;
-            transition: border-color .3s, box-shadow .3s;
-        }
-        .card::before {
-            content: '';
-            position: absolute; top: 0; left: 0;
-            width: 3px; height: 0;
-            background: var(--accent);
-            transition: height .35s ease;
-        }
-        .card:hover { border-color: var(--accent); box-shadow: 0 0 24px var(--glow), 0 4px 32px rgba(0,0,0,.5); }
-        .card:hover::before { height: 100%; }
-        .card.no-hover:hover { border-color: var(--border); box-shadow: none; }
-        .card.no-hover::before { display: none; }
-
-        /* ── Inputs ─────────────────────── */
-        .inp {
-            display: block; width: 100%;
-            background: #0c0c0c;
-            border: 1px solid #2a2a2a;
-            color: var(--txt);
-            font-family: 'Crimson Pro', serif; font-size: 16px;
-            padding: .75rem 1rem;
-            transition: border-color .2s, box-shadow .2s;
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
+            border-bottom-color: #3b82f6;
+            box-shadow: 0 1px 0 0 #3b82f6;
         }
-        .inp:focus { border-color: var(--accent); box-shadow: 0 0 14px var(--glow); }
-        .inp::placeholder { color: var(--txt3); }
-        .inp.search-inp { padding-left: 2.8rem; }
-        select.inp {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 1rem center;
-            padding-right: 2.5rem; cursor: pointer;
-        }
-
-        /* ── Buttons ────────────────────── */
+        .form-input::placeholder, .form-textarea::placeholder { color: #64748b; }
+        
+        /* === BUTTONS === */
         .btn {
-            font-family: 'Cinzel', serif; font-size: .72rem;
-            letter-spacing: 1.5px; text-transform: uppercase;
-            border: none; cursor: pointer;
-            transition: background .2s, box-shadow .2s, transform .1s;
-            display: inline-flex; align-items: center; gap: .4rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
         }
-        .btn:active { transform: scale(.97); }
-        .btn-pri  { background: var(--accent); color: #fff; padding: .7rem 1.8rem; }
-        .btn-pri:hover  { background: #e0233f; box-shadow: 0 0 20px var(--glow); }
-        .btn-pri:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
-        .btn-ghost { background: transparent; color: var(--txt2); border: 1px solid #2a2a2a; padding: .6rem 1.4rem; }
-        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-        .btn-icon  { background: transparent; border: none; color: var(--txt2); font-family: 'Crimson Pro', serif; font-size: .9rem; padding: .35rem .5rem; cursor: pointer; transition: color .2s; display: inline-flex; align-items: center; gap: .35rem; }
-        .btn-icon:hover { color: var(--accent); }
-        .btn-icon.liked { color: var(--accent); }
-
-        /* ── Badges ─────────────────────── */
-        .badge {
-            font-family: 'Cinzel', serif; font-size: .6rem; letter-spacing: 1px;
-            text-transform: uppercase; padding: .18rem .55rem; display: inline-block; white-space: nowrap;
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
         }
-        .b-red  { background: rgba(196,30,58,.12); color: #f87171; border: 1px solid rgba(196,30,58,.25); }
-        .b-gold { background: rgba(200,169,74,.12); color: var(--gold);  border: 1px solid rgba(200,169,74,.25); }
-        .b-gray { background: rgba(255,255,255,.04); color: #555; border: 1px solid #2a2a2a; }
-
-        /* ── Navbar ─────────────────────── */
-        .navbar {
-            position: sticky; top: 0; z-index: 200;
-            background: rgba(8,8,8,.96);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+        .btn-outline:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: #94a3b8;
+            padding: 0.5rem;
+        }
+        .btn-ghost:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .btn-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+            border-radius: 50%;
+        }
+        
+        /* === CARDS === */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            animation: float 6s ease-in-out infinite;
         }
-        .navbar-inner {
-            max-width: 980px; margin: 0 auto;
-            padding: 0 1.25rem;
-            height: 54px;
-            display: flex; align-items: center; justify-content: space-between;
+        .card:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.2);
+            transform: translateY(-4px);
         }
-
-        /* ── Breadcrumb ─────────────────── */
-        .crumbs {
-            font-family: 'Cinzel', serif; font-size: .65rem;
-            letter-spacing: 1px; text-transform: uppercase;
-            color: var(--txt3); display: flex; align-items: center;
-            gap: .45rem; flex-wrap: wrap;
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
         }
-        .crumbs .crumb { cursor: pointer; transition: color .2s; }
-        .crumbs .crumb:hover { color: var(--accent); }
-        .crumbs .sep { color: #2a2a2a; }
-        .crumbs .cur { color: var(--txt); cursor: default; }
-
-        /* ── Back btn ───────────────────── */
-        .back-btn {
-            font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: 1px;
-            text-transform: uppercase; color: var(--txt2);
-            background: transparent; border: none; cursor: pointer;
-            display: flex; align-items: center; gap: .4rem;
-            transition: color .2s; padding: .4rem 0;
+        .card-body { padding: 1.5rem; }
+        .card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
         }
-        .back-btn:hover { color: var(--accent); }
-
-        /* ── Toast ──────────────────────── */
-        #toasts {
-            position: fixed; bottom: 1.75rem; right: 1.75rem;
-            z-index: 9999; display: flex; flex-direction: column; gap: .6rem;
+        
+        /* === CATEGORY CARDS === */
+        .category-card {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .category-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+        .category-card:hover::before { opacity: 1; }
+        .category-card .icon {
+            font-size: 2rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .category-card:hover .icon { transform: scale(1.1); }
+        
+        /* === POST ITEMS === */
+        .post-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .post-item:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        .post-stats {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        .post-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        /* === COMMENTS === */
+        .comment {
+            border-left: 3px solid #3b82f6;
+            padding-left: 1rem;
+            margin-left: 0.5rem;
+        }
+        .comment.nested {
+            margin-left: 2.5rem;
+            border-left-color: #60a5fa;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .comment-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: white;
+        }
+        
+        /* === PROFILE === */
+        .profile-header {
+            position: relative;
+            padding: 2rem;
+            text-align: center;
+        }
+        .profile-cover {
+            height: 120px;
+            background: linear-gradient(135deg, #1e293b, #3b82f6);
+            border-radius: 1.5rem 1.5rem 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #1e293b;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            margin: -50px auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1rem;
+            text-align: center;
+        }
+        .profile-stat {
+            padding: 0.75rem;
+            border-radius: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .profile-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .profile-stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* === BADGES & TAGS === */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-primary { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .badge-accent { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            color: #93c5fd;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .tag:hover {
+            background: rgba(59, 130, 246, 0.3);
+            color: #dbeafe;
+        }
+        
+        /* === NAVIGATION === */
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            color: #94a3b8;
+            transition: color 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #3b82f6;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 2px;
+            background: #3b82f6;
+            border-radius: 9999px;
+        }
+        
+        /* === TOAST NOTIFICATIONS === */
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 350px;
         }
         .toast {
-            font-family: 'Crimson Pro', serif; font-size: 1rem;
-            padding: .85rem 1.4rem; border-left: 3px solid;
-            box-shadow: 0 4px 24px rgba(0,0,0,.7);
-            animation: tIn .3s ease, tOut .3s ease 2.8s forwards;
-            max-width: 320px; backdrop-filter: blur(10px);
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slide-in 0.3s ease-out;
         }
-        .t-ok  { background: rgba(10,30,15,.95); border-color: #4ade80; color: #86efac; }
-        .t-err { background: rgba(30,8,8,.95);   border-color: var(--accent); color: #fca5a5; }
-        .t-inf { background: rgba(8,12,30,.95);  border-color: #60a5fa; color: #93c5fd; }
-        @keyframes tIn  { from { opacity:0; transform:translateX(18px) } to { opacity:1; transform:translateX(0) } }
-        @keyframes tOut { from { opacity:1 } to { opacity:0; transform:translateX(18px) } }
-
-        /* ── Modal ──────────────────────── */
-        .overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,.87);
-            z-index: 1000; display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(4px);
-            animation: mIn .2s ease;
-        }
-        @keyframes mIn { from { opacity:0 } to { opacity:1 } }
-        .modal {
-            background: var(--bg-ele);
-            border: 1px solid var(--border);
-            border-top: 3px solid var(--accent);
-            max-width: 640px; width: 90%;
-            max-height: 90vh; overflow-y: auto;
-            animation: mScale .22s ease;
-        }
-        @keyframes mScale { from { transform:scale(.94); opacity:0 } to { transform:scale(1); opacity:1 } }
-        .modal-body { padding: 2rem; }
-
-        /* ── Skeleton ───────────────────── */
-        .sk {
-            background: linear-gradient(90deg, #161616 25%, #1e1e1e 50%, #161616 75%);
-            background-size: 200% 100%;
-            animation: sk 1.6s infinite;
-        }
-        @keyframes sk { 0% { background-position: 200% 0 } 100% { background-position:-200% 0 } }
-
-        /* ── Page transition ────────────── */
-        .page { animation: pg .3s cubic-bezier(.4,0,.2,1); }
-        @keyframes pg { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
-
-        /* ── Misc ───────────────────────── */
-        .ornament {
-            display: flex; align-items: center; gap: .9rem; color: var(--txt3);
-        }
-        .ornament::before, .ornament::after {
-            content:''; flex:1; height:1px; background: var(--border);
-        }
-        .online-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: #4ade80; box-shadow: 0 0 6px #4ade80;
-            display: inline-block;
-        }
-        .glow { text-shadow: 0 0 28px rgba(196,30,58,.55); }
-        .char-c { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--txt3); }
-        .char-c.warn   { color: #f59e0b; }
-        .char-c.danger { color: var(--accent); }
-        .divider { border:none; border-top:1px solid var(--border); margin: 1.4rem 0; }
-        .hero-bg {
-            background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(196,30,58,.07) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(200,169,74,.045) 0%, transparent 55%);
-        }
-        .reaction-btn {
-            font-family: 'Crimson Pro', serif; font-size: .9rem;
-            padding: .3rem .85rem; border: 1px solid #222; border-radius: 20px;
-            background: transparent; color: var(--txt2); cursor: pointer; transition: all .2s;
-        }
-        .reaction-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(196,30,58,.06); }
-        .reaction-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(196,30,58,.1); }
-        .tab-btn {
-            font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: 1px;
-            text-transform: uppercase; padding: .55rem 1.2rem;
-            border: none; background: transparent; color: var(--txt3);
-            cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s;
-        }
-        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-        .post-content strong { color: #f0ece4; font-weight: 600; }
-        .post-content em { font-style: italic; color: #bbb; }
-        .post-content code { font-family: 'JetBrains Mono', monospace; font-size: .82em; background: #1a1a1a; padding: .1em .4em; color: var(--gold); }
-        .stat-num { font-family: 'Cinzel', serif; font-size: 1.6rem; color: var(--accent); }
-        .stat-lbl { font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--txt3); margin-top: .2rem; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+        .toast.success { border-left: 4px solid #22c55e; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.info { border-left: 4px solid #3b82f6; }
+        .toast.warning { border-left: 4px solid #f59e0b; }
+        
+        /* === UTILITIES === */
         .hidden { display: none !important; }
+        .animate-fade-in { animation: fade-in 0.4s ease-out; }
+        .text-gradient {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.3), transparent);
+            margin: 1.5rem 0;
+        }
+        
+        /* === LOADING STATES === */
+        .skeleton {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 0.5rem;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .profile-stats { grid-template-columns: 1fr; }
+            .post-stats { flex-wrap: wrap; gap: 0.75rem; }
+            .nav-desktop { display: none; }
+        }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-<!-- ── Toast container ───────────────────────── -->
-<div id="toasts"></div>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
 
-<!-- ── Navbar ────────────────────────────────── -->
-<nav class="navbar">
-    <div class="navbar-inner">
-        <button id="nav-logo" style="background:transparent;border:none;cursor:pointer;display:flex;align-items:center;gap:.6rem">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC" style="height:28px;width:auto">
-        </button>
-        <div id="nav-user" style="display:flex;align-items:center;gap:.75rem"></div>
-    </div>
-</nav>
-
-<!-- ── App ───────────────────────────────────── -->
-<div style="max-width:980px;margin:0 auto;padding:2rem 1.25rem;position:relative;z-index:1">
-    <div id="app"></div>
-</div>
-
-<!-- ── Footer ────────────────────────────────── -->
-<footer style="border-top:1px solid #111;padding:2rem 1.25rem;text-align:center;position:relative;z-index:1;margin-top:4rem">
-    <p class="cinzel" style="font-size:.65rem;letter-spacing:2px;color:#333;text-transform:uppercase">NOC FORUM — NOCFAMS 2025</p>
-    <p style="color:#2a2a2a;font-size:.85rem;margin-top:.4rem">dibuat untuk happy, kalo ga happy pergi — Prof.Z</p>
-    <p style="color:#222;font-size:.75rem;margin-top:.2rem">join whatsapp nocfams? hubungi prof.Z, mudahan dia lagi mood :)</p>
-</footer>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-// ════════════════════════════════════════
-//  CONFIG
-// ════════════════════════════════════════
-const API = {
-    users:    'https://sheetdb.io/api/v1/67fxvegoz5vwr',
-    posts:    'https://sheetdb.io/api/v1/jr0axsb12cm2d',
-    comments: 'https://sheetdb.io/api/v1/w82ciud9gjh7h',
-    likes:    'https://sheetdb.io/api/v1/znglqyvdspjji',
-    views:    'https://sheetdb.io/api/v1/4f3baaa6iju7a',
-};
-
-const CATS = [
-    { id:'cardmagic',     name:'Card Magic',      icon:'🃏', desc:'Teknik dan trik kartu' },
-    { id:'coinmagic',     name:'Coin Magic',       icon:'🪙', desc:'Manipulasi koin dan uang' },
-    { id:'mentalism',     name:'Mentalism',        icon:'🔮', desc:'Baca pikiran & ilusi mental' },
-    { id:'everydayobject',name:'Everyday Object',  icon:'📦', desc:'Sulap benda sehari-hari' },
-    { id:'idea',          name:'Idea',             icon:'💡', desc:'Gagasan, konsep, kreativitas' },
-    { id:'market',        name:'Market Magic',     icon:'🛒', desc:'Jual beli & rekomendasi produk' },
-];
-
-// ════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════
-const S = {
-    user: null,
-    db: { posts:[], comments:[], likes:[], views:[] },
-    cat: null,
-    postId: null,
-    search: '',
-    sort: 'newest',
-};
-
-// ════════════════════════════════════════
-//  UTILS
-// ════════════════════════════════════════
-const app  = document.getElementById('app');
-const $    = (s, c = document) => c.querySelector(s);
-const $$   = (s, c = document) => [...c.querySelectorAll(s)];
-const wait = ms => new Promise(r => setTimeout(r, ms));
-
-function timeAgo(d) {
-    const s = Math.floor((Date.now() - new Date(d)) / 1000);
-    if (s < 60)      return 'baru saja';
-    if (s < 3600)    return Math.floor(s/60) + ' menit lalu';
-    if (s < 86400)   return Math.floor(s/3600) + ' jam lalu';
-    if (s < 2592000) return Math.floor(s/86400) + ' hari lalu';
-    return new Date(d).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
-}
-
-function initials(n='') { return n.slice(0,2).toUpperCase(); }
-
-function avatarColor(n='') {
-    const c = ['#c41e3a','#7c3aed','#0369a1','#0f766e','#b45309','#be185d','#4338ca'];
-    return c[(n.charCodeAt(0)||0) % c.length];
-}
-
-function avatar(n='', sz=32) {
-    const fs = Math.round(sz * .36);
-    return `<div style="min-width:${sz}px;width:${sz}px;height:${sz}px;border-radius:50%;background:${avatarColor(n)};display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:${fs}px;color:#fff;font-weight:700">${initials(n)}</div>`;
-}
-
-function toast(msg, type='inf') {
-    const el = document.createElement('div');
-    el.className = `toast t-${type}`;
-    el.textContent = msg;
-    $('#toasts').appendChild(el);
-    setTimeout(() => el.remove(), 3300);
-}
-
-function md(t = '') {
-    return String(t)
-        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g,'<em>$1</em>')
-        .replace(/`(.*?)`/g,'<code>$1</code>')
-        .replace(/\n/g,'<br>');
-}
-
-function charCounter(taId, cId, max) {
-    const ta = document.getElementById(taId);
-    const c  = document.getElementById(cId);
-    if (!ta || !c) return;
-    const upd = () => {
-        const n = ta.value.length;
-        c.textContent = `${n}/${max}`;
-        c.className = 'char-c' + (n > max*.95 ? ' danger' : n > max*.8 ? ' warn' : '');
-    };
-    ta.addEventListener('input', () => { upd(); ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; });
-    upd();
-}
-
-function openModal(html, onClose) {
-    const ov = document.createElement('div');
-    ov.className = 'overlay';
-    ov.innerHTML = `<div class="modal"><div class="modal-body">${html}</div></div>`;
-    document.body.appendChild(ov);
-    ov.addEventListener('click', e => { if (e.target === ov) { ov.remove(); onClose?.(); } });
-    return ov;
-}
-
-// ════════════════════════════════════════
-//  API
-// ════════════════════════════════════════
-async function api(url, opts={}) {
-    const r = await fetch(url, opts);
-    if (!r.ok) throw new Error(r.status);
-    return r.json();
-}
-
-async function loadAll() {
-    const cb = '?_='+Date.now();
-    const [posts, comments, likes, views] = await Promise.all([
-        api(API.posts+cb), api(API.comments+cb), api(API.likes+cb), api(API.views+cb)
-    ]);
-    S.db = {
-        posts:    Array.isArray(posts)    ? posts    : [],
-        comments: Array.isArray(comments) ? comments : [],
-        likes:    Array.isArray(likes)    ? likes    : [],
-        views:    Array.isArray(views)    ? views    : [],
-    };
-}
-
-// ════════════════════════════════════════
-//  NAV
-// ════════════════════════════════════════
-function renderNav() {
-    const nu = $('#nav-user');
-    if (!S.user) { nu.innerHTML=''; return; }
-    nu.innerHTML = `
-        <span class="online-dot"></span>
-        <span class="cinzel" style="font-size:.7rem;letter-spacing:1px;color:#777">${S.user.username}</span>
-        <button id="btn-logout" class="btn btn-ghost" style="padding:.3rem .9rem;font-size:.62rem">Keluar</button>
-    `;
-    $('#btn-logout').onclick = A.logout;
-    $('#nav-logo').onclick = () => { S.cat=null; S.postId=null; S.search=''; V.categories(); };
-}
-
-// ════════════════════════════════════════
-//  VIEWS  (V.*)
-// ════════════════════════════════════════
-const V = {
-
-    skeleton() {
-        app.innerHTML = `
-        <div style="display:flex;flex-direction:column;gap:1rem">
-            ${[...Array(5)].map(()=>`
-            <div class="card" style="padding:1.5rem">
-                <div class="sk" style="height:18px;width:60%;margin-bottom:.9rem"></div>
-                <div class="sk" style="height:12px;width:30%;margin-bottom:1rem"></div>
-                <div class="sk" style="height:12px;width:100%;margin-bottom:.5rem"></div>
-                <div class="sk" style="height:12px;width:80%"></div>
-            </div>`).join('')}
-        </div>`;
-    },
-
-    auth() {
-        app.innerHTML = `
-        <div class="hero-bg" style="min-height:65vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 0">
-            <div style="text-align:center;margin-bottom:2.5rem">
-                <p class="cinzel" style="font-size:.65rem;letter-spacing:2.5px;color:#3a3a3a;text-transform:uppercase;margin-bottom:1rem">Selamat Datang di</p>
-                <h1 class="cinzel glow" style="font-size:clamp(2.8rem,8vw,4.5rem);color:var(--accent);letter-spacing:4px;line-height:1">NOC FORUM</h1>
-                <div class="ornament" style="margin:.9rem 0;max-width:280px;margin-left:auto;margin-right:auto">
-                    <span class="cinzel" style="font-size:.6rem;letter-spacing:2px;color:#333">NOCFAMS MAGIC COMMUNITY</span>
-                </div>
-                <p style="color:#3a3a3a;font-size:1.05rem;max-width:380px;margin:0 auto">Ruang diskusi eksklusif untuk para praktisi seni sulap</p>
-            </div>
-
-            <div class="card" style="width:100%;max-width:430px;padding:2rem 2.2rem">
-                <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:2rem">
-                    <button class="tab-btn active" id="tab-in">Login</button>
-                    <button class="tab-btn" id="tab-up">Daftar</button>
-                </div>
-
-                <!-- LOGIN -->
-                <form id="form-in" style="display:flex;flex-direction:column;gap:1.2rem">
-                    <div>
-                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Username</label>
-                        <input id="in-user" class="inp" type="text" placeholder="masukkan username" autocomplete="username" required>
-                    </div>
-                    <div>
-                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Password</label>
-                        <input id="in-pass" class="inp" type="password" placeholder="••••••••" autocomplete="current-password" required>
-                    </div>
-                    <button type="submit" class="btn btn-pri" style="margin-top:.4rem;justify-content:center">Masuk ke Forum</button>
-                    <p style="text-align:center;font-size:.85rem;color:#333">Belum punya akun? <span id="goto-up" style="color:var(--accent);cursor:pointer">Daftar sekarang</span></p>
-                </form>
-
-                <!-- SIGNUP -->
-                <form id="form-up" class="hidden" style="display:flex;flex-direction:column;gap:1.2rem">
-                    <div>
-                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Username</label>
-                        <input id="up-user" class="inp" type="text" placeholder="pilih username unik" autocomplete="username" required>
-                    </div>
-                    <div>
-                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Password</label>
-                        <input id="up-pass" class="inp" type="password" placeholder="buat password kuat" autocomplete="new-password" required>
-                    </div>
-                    <div>
-                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Lama Bermain Sulap</label>
-                        <select id="up-lama" class="inp">
-                            <option>Kurang dari 1 tahun</option>
-                            <option>1–3 tahun</option>
-                            <option>3–5 tahun</option>
-                            <option>Sudah 5 tahun</option>
-                            <option>Lama sekali (legenda!)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Aliran Sulap</label>
-                        <select id="up-aliran" class="inp">
-                            <option>Mentalism</option><option>Sleight of Hand</option>
-                            <option>Illusionism</option><option>Escapology</option>
-                            <option>Bizarre Magic</option><option>Comedy Magic</option>
-                            <option>Mathemagics</option><option>Storytelling Magic</option>
-                            <option>Neo-Experimental Magic</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-pri" style="margin-top:.4rem;justify-content:center">Buat Akun</button>
-                    <p style="text-align:center;font-size:.85rem;color:#333">Sudah punya akun? <span id="goto-in" style="color:var(--accent);cursor:pointer">Login di sini</span></p>
-                </form>
-            </div>
-        </div>`;
-
-        const showLogin  = () => { $('#tab-in').classList.add('active');    $('#tab-up').classList.remove('active');    $('#form-in').classList.remove('hidden'); $('#form-up').classList.add('hidden'); };
-        const showSignup = () => { $('#tab-up').classList.add('active');    $('#tab-in').classList.remove('active');    $('#form-up').classList.remove('hidden'); $('#form-in').classList.add('hidden'); };
-        $('#tab-in').onclick = showLogin;  $('#goto-in').onclick = showLogin;
-        $('#tab-up').onclick = showSignup; $('#goto-up').onclick = showSignup;
-        $('#form-in').onsubmit = A.login;
-        $('#form-up').onsubmit = A.signup;
-    },
-
-    categories() {
-        const { posts, comments, likes, views } = S.db;
-
-        const recent = [...posts].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,6);
-        const weekAgo = Date.now() - 7*86400000;
-        const hot = [...posts]
-            .filter(p => new Date(p.timestamp) > weekAgo)
-            .map(p => ({...p, score: likes.filter(l=>l.postid===p.postid).length*2 + views.filter(v=>v.postid===p.postid).length}))
-            .sort((a,b)=>b.score-a.score).slice(0,4);
-
-        app.innerHTML = `
-        <div class="page">
-            <!-- Hero -->
-            <div class="hero-bg" style="text-align:center;padding:3.5rem 0 3rem">
-                <p class="cinzel" style="font-size:.6rem;letter-spacing:3px;color:#333;text-transform:uppercase;margin-bottom:.8rem">Community Forum</p>
-                <h1 class="cinzel glow" style="font-size:clamp(2.5rem,7vw,4rem);color:var(--accent);letter-spacing:3px">NOC FORUM</h1>
-                <p style="color:#3d3d3d;margin-top:.9rem;max-width:420px;margin-left:auto;margin-right:auto;font-size:1.05rem">Tempat berbagi ilmu, trik, dan diskusi seputar dunia sulap bersama NOCFAMS</p>
-                <div style="display:flex;justify-content:center;gap:3rem;margin-top:2rem">
-                    <div><div class="stat-num">${posts.length}</div><div class="stat-lbl">Thread</div></div>
-                    <div><div class="stat-num">${comments.length}</div><div class="stat-lbl">Komentar</div></div>
-                    <div><div class="stat-num">${CATS.length}</div><div class="stat-lbl">Kategori</div></div>
-                </div>
-            </div>
-
-            <!-- Search -->
-            <div style="position:relative;margin:2rem 0">
-                <svg style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#444" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input id="gsearch" class="inp search-inp" type="search" placeholder="Cari thread di semua kategori...">
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr;gap:2.5rem">
-                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem">
-                    ${CATS.map(cat=>{
-                        const n = posts.filter(p=>p.category===cat.id).length;
-                        const last = [...posts].filter(p=>p.category===cat.id).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp))[0];
-                        return `
-                        <div class="card" style="padding:1.4rem;cursor:pointer;transition:all .3s" data-cat="${cat.id}">
-                            <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:.8rem">
-                                <span style="font-size:1.8rem">${cat.icon}</span>
-                                <span class="badge b-gray">${n} thread</span>
-                            </div>
-                            <h3 class="cinzel" style="font-size:1.05rem;color:#e57;margin-bottom:.3rem">${cat.name}</h3>
-                            <p style="font-size:.85rem;color:var(--txt3);margin-bottom:.7rem">${cat.desc}</p>
-                            ${last ? `<p style="font-size:.75rem;color:#333;font-family:'Cinzel',serif;letter-spacing:.5px">Terakhir: ${timeAgo(last.timestamp)}</p>` : ''}
-                        </div>`;
-                    }).join('')}
-                </div>
-
-                <!-- Sidebar -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
-                    ${hot.length ? `
-                    <div>
-                        <h2 class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:1rem">🔥 Trending Minggu Ini</h2>
-                        <div style="display:flex;flex-direction:column;gap:.9rem">
-                            ${hot.map((p,i)=>`
-                            <div style="display:flex;gap:.7rem;cursor:pointer;align-items:flex-start" class="trending" data-pid="${p.postid}">
-                                <span class="cinzel" style="font-size:.7rem;color:#2a2a2a;min-width:1.1rem;padding-top:.15rem">${i+1}.</span>
-                                <div>
-                                    <p style="font-size:.9rem;color:#666;line-height:1.35;transition:color .2s" class="tr-title">${p.title}</p>
-                                    <p style="font-size:.75rem;color:#2d2d2d;margin-top:.25rem">${p.username} · ${timeAgo(p.timestamp)}</p>
-                                </div>
-                            </div>`).join('')}
+    <!-- Main App Container -->
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-navy-900/90 backdrop-blur-lg border-b border-magic-600/20">
+            <div class="container mx-auto max-w-6xl px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <!-- Logo & Brand -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center shadow-lg shadow-magic-500/30">
+                            <i class="fas fa-magic text-white text-lg"></i>
                         </div>
-                    </div>` : ''}
-
-                    <div>
-                        <h2 class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:1rem">🕐 Thread Terbaru</h2>
-                        <div style="display:flex;flex-direction:column;gap:.8rem">
-                            ${recent.map(p=>{
-                                const cat = CATS.find(c=>c.id===p.category);
-                                return `
-                                <div style="cursor:pointer;padding-bottom:.8rem;border-bottom:1px solid #111" class="recent-item" data-pid="${p.postid}">
-                                    <p style="font-size:.9rem;color:#555;line-height:1.35;margin-bottom:.3rem;transition:color .2s" class="ri-title">${p.title}</p>
-                                    <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-                                        <span class="badge b-red">${cat?.icon||''} ${cat?.name||p.category}</span>
-                                        <span style="font-size:.75rem;color:#2d2d2d">${timeAgo(p.timestamp)}</span>
-                                    </div>
-                                </div>`;
-                            }).join('')}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-
-        $$('[data-cat]').forEach(el => {
-            el.addEventListener('mouseenter', () => el.style.transform='translateY(-3px)');
-            el.addEventListener('mouseleave', () => el.style.transform='');
-            el.onclick = () => { S.cat = el.dataset.cat; S.search=''; V.posts(); };
-        });
-        $$('.trending').forEach(el => {
-            el.onmouseenter = () => el.querySelector('.tr-title').style.color='var(--accent)';
-            el.onmouseleave = () => el.querySelector('.tr-title').style.color='#666';
-            el.onclick = () => { const p = S.db.posts.find(x=>x.postid===el.dataset.pid); if(p){S.cat=p.category;A.viewPost(p.postid);} };
-        });
-        $$('.recent-item').forEach(el => {
-            el.onmouseenter = () => el.querySelector('.ri-title').style.color='var(--accent)';
-            el.onmouseleave = () => el.querySelector('.ri-title').style.color='#555';
-            el.onclick = () => { const p = S.db.posts.find(x=>x.postid===el.dataset.pid); if(p){S.cat=p.category;A.viewPost(p.postid);} };
-        });
-
-        let deb;
-        $('#gsearch').oninput = e => {
-            clearTimeout(deb);
-            deb = setTimeout(() => {
-                const kw = e.target.value.trim();
-                if (kw.length >= 2) { S.search=kw; S.cat=null; V.posts(); }
-            }, 380);
-        };
-        $('#gsearch').onkeydown = e => { if(e.key==='Enter') $('#gsearch').dispatchEvent(new Event('input')); };
-    },
-
-    posts() {
-        const { posts, comments, likes, views } = S.db;
-        const cat = CATS.find(c=>c.id===S.cat);
-
-        let list = [...posts];
-        if (S.cat)    list = list.filter(p=>p.category===S.cat);
-        if (S.search) {
-            const kw = S.search.toLowerCase();
-            list = posts.filter(p=>p.title.toLowerCase().includes(kw)||p.content.toLowerCase().includes(kw));
-        }
-        if (S.sort==='newest')  list.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
-        if (S.sort==='popular') list.sort((a,b)=>likes.filter(l=>l.postid===b.postid).length - likes.filter(l=>l.postid===a.postid).length);
-        if (S.sort==='views')   list.sort((a,b)=>views.filter(v=>v.postid===b.postid).length - views.filter(v=>v.postid===a.postid).length);
-
-        const title = S.search ? `Pencarian: "${S.search}"` : (cat?.name||'Semua Thread');
-        const icon  = cat?.icon||'🔍';
-
-        app.innerHTML = `
-        <div class="page">
-            <div class="crumbs" style="margin-bottom:1.25rem">
-                <span class="crumb" id="bc-home">Forum</span>
-                <span class="sep">›</span>
-                <span class="cur">${title}</span>
-            </div>
-
-            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem">
-                <div style="display:flex;align-items:center;gap:.8rem">
-                    <button class="back-btn" id="btn-back">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
-                        Kembali
-                    </button>
-                    <div style="height:16px;width:1px;background:var(--border)"></div>
-                    <h2 class="cinzel" style="font-size:1.1rem;color:#ccc">${icon} ${title}</h2>
-                    <span class="badge b-gray">${list.length}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:.7rem">
-                    <select id="sort-sel" class="inp" style="padding:.4rem .8rem;font-size:.68rem;font-family:'Cinzel',serif;letter-spacing:.8px;width:auto">
-                        <option value="newest"  ${S.sort==='newest'?'selected':''}>Terbaru</option>
-                        <option value="popular" ${S.sort==='popular'?'selected':''}>Terpopuler</option>
-                        <option value="views"   ${S.sort==='views'?'selected':''}>Banyak Dilihat</option>
-                    </select>
-                    ${S.cat ? `<button class="btn btn-pri" id="btn-new" style="padding:.48rem 1.1rem;font-size:.65rem">+ Thread Baru</button>` : ''}
-                </div>
-            </div>
-
-            ${S.cat ? `
-            <div style="position:relative;margin-bottom:1.5rem">
-                <svg style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:#444" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input id="cat-search" class="inp search-inp" type="search" placeholder="Cari di kategori ini..." value="${S.search}">
-            </div>` : ''}
-
-            <div style="display:flex;flex-direction:column;gap:.75rem">
-                ${list.length===0 ? `
-                <div style="text-align:center;padding:5rem 0">
-                    <p style="font-size:2.5rem">🌙</p>
-                    <p class="cinzel" style="color:var(--txt3);letter-spacing:2px;text-transform:uppercase;font-size:.75rem;margin-top:1.2rem">Belum ada thread</p>
-                    <p style="color:#2a2a2a;font-size:.95rem;margin-top:.4rem">Jadilah yang pertama memulai diskusi!</p>
-                </div>
-                ` : list.map(post => {
-                    const cc = comments.filter(c=>c.postid===post.postid).length;
-                    const lc = likes.filter(l=>l.postid===post.postid).length;
-                    const vc = views.filter(v=>v.postid===post.postid).length;
-                    const pc = CATS.find(c=>c.id===post.category);
-                    const preview = post.content.replace(/\*\*/g,'').replace(/\*/g,'').replace(/`/g,'').slice(0,130)+(post.content.length>130?'…':'');
-                    return `
-                    <div class="card" style="padding:1.25rem 1.4rem;cursor:pointer" data-pid="${post.postid}">
-                        <div style="display:flex;gap:.9rem;align-items:flex-start">
-                            ${avatar(post.username,36)}
-                            <div style="flex:1;min-width:0">
-                                <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.4rem;align-items:center">
-                                    ${!S.cat ? `<span class="badge b-red">${pc?.icon||''} ${pc?.name||post.category}</span>` : ''}
-                                    ${lc>4 ? `<span class="badge b-gold">🔥 Hot</span>` : ''}
-                                </div>
-                                <h3 class="cinzel" style="font-size:.95rem;color:#d0ccc5;margin-bottom:.3rem;line-height:1.35">${post.title}</h3>
-                                <p style="font-size:.88rem;color:#3d3d3d;margin-bottom:.7rem;line-height:1.5">${preview}</p>
-                                <div style="display:flex;flex-wrap:wrap;gap:.9rem;font-size:.78rem;color:#333;font-family:'Cinzel',serif;letter-spacing:.3px">
-                                    <span>${post.username}</span>
-                                    <span>${timeAgo(post.timestamp)}</span>
-                                    <span>👁 ${vc}</span>
-                                    <span>💬 ${cc}</span>
-                                    <span>❤ ${lc}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                }).join('')}
-            </div>
-        </div>`;
-
-        $('#btn-back').onclick = V.categories;
-        $('#bc-home').onclick  = V.categories;
-        $$('[data-pid]').forEach(el => el.onclick = () => A.viewPost(el.dataset.pid));
-        if ($('#btn-new')) $('#btn-new').onclick = V.newPostModal;
-        if ($('#sort-sel')) $('#sort-sel').onchange = e => { S.sort=e.target.value; V.posts(); };
-        if ($('#cat-search')) {
-            let d;
-            $('#cat-search').oninput = e => { clearTimeout(d); d=setTimeout(()=>{ S.search=e.target.value.trim(); V.posts(); },350); };
-        }
-    },
-
-    newPostModal() {
-        const cat = CATS.find(c=>c.id===S.cat);
-        const ov = openModal(`
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-            <h2 class="cinzel" style="font-size:1.2rem;color:#ccc">Thread Baru</h2>
-            <button class="btn-icon" id="mc">✕</button>
-        </div>
-        <div class="ornament" style="margin-bottom:1.5rem">
-            <span class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:#333">${cat?.icon} ${cat?.name}</span>
-        </div>
-        <form id="form-post" style="display:flex;flex-direction:column;gap:1.2rem">
-            <div>
-                <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.5rem">Judul Thread</label>
-                <input id="pt" class="inp" type="text" placeholder="Judul yang menarik dan jelas…" maxlength="120" required>
-                <div style="text-align:right;margin-top:.25rem"><span id="ptc" class="char-c">0/120</span></div>
-            </div>
-            <div>
-                <label class="cinzel" style="font-size:.62rem;letter-spacing:1.5px;color:#444;text-transform:uppercase;display:block;margin-bottom:.4rem">Isi Thread</label>
-                <p style="font-size:.78rem;color:#333;margin-bottom:.5rem">Tip: **tebal**, *miring*, \`kode\`</p>
-                <textarea id="pc" class="inp" rows="6" placeholder="Tulis isi thread Anda di sini…" maxlength="5000" required style="resize:none;min-height:130px"></textarea>
-                <div style="text-align:right;margin-top:.25rem"><span id="pcc" class="char-c">0/5000</span></div>
-            </div>
-            <div style="display:flex;gap:.8rem;padding-top:.5rem">
-                <button type="button" class="btn btn-ghost" style="flex:1;justify-content:center" id="mc2">Batal</button>
-                <button type="submit" class="btn btn-pri" style="flex:1;justify-content:center">Kirim Thread</button>
-            </div>
-        </form>`);
-        $('#mc').onclick = $('#mc2').onclick = () => ov.remove();
-        $('#form-post').onsubmit = async e => { ov.remove(); await A.createPost(e); };
-        charCounter('pt','ptc',120);
-        charCounter('pc','pcc',5000);
-    },
-
-    postDetail() {
-        const { posts, comments, likes, views } = S.db;
-        const post = posts.find(p=>p.postid===S.postId);
-        if (!post) { toast('Thread tidak ditemukan','err'); V.posts(); return; }
-
-        const cat   = CATS.find(c=>c.id===post.category);
-        const lc    = likes.filter(l=>l.postid===post.postid).length;
-        const vc    = views.filter(v=>v.postid===post.postid).length;
-        const liked = likes.some(l=>l.postid===post.postid&&l.userid===S.user.userid);
-        const pComm = comments.filter(c=>c.postid===post.postid);
-        const isOwn = post.userid===S.user.userid;
-
-        app.innerHTML = `
-        <div class="page">
-            <div class="crumbs" style="margin-bottom:1.25rem">
-                <span class="crumb" id="bc-h">Forum</span>
-                <span class="sep">›</span>
-                <span class="crumb" id="bc-c">${cat?.name||post.category}</span>
-                <span class="sep">›</span>
-                <span class="cur" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${post.title}</span>
-            </div>
-
-            <button class="back-btn" id="btn-back" style="margin-bottom:1.5rem">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg>
-                Kembali ke Daftar Thread
-            </button>
-
-            <!-- Post card -->
-            <div class="card no-hover" style="padding:1.8rem 2rem;margin-bottom:1.5rem">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.2rem">
-                    <div style="display:flex;align-items:center;gap:.8rem">
-                        ${avatar(post.username,42)}
                         <div>
-                            <p class="cinzel" style="font-size:.82rem;color:#bbb">${post.username}</p>
-                            <div style="display:flex;gap:.5rem;align-items:center;margin-top:.2rem">
-                                <span class="badge b-red">${cat?.icon||''} ${cat?.name||post.category}</span>
-                                <span style="font-size:.75rem;color:#333">${timeAgo(post.timestamp)}</span>
+                            <h1 class="font-gothic text-xl font-bold text-gradient">NOC FORUM</h1>
+                            <p class="text-xs text-gray-400 -mt-0.5">Professional Magic Community</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Desktop Navigation -->
+                    <nav class="nav-desktop hidden md:flex items-center gap-1">
+                        <a href="#" class="nav-link active" data-view="home"><i class="fas fa-home mr-1"></i>Home</a>
+                        <a href="#" class="nav-link" data-view="categories"><i class="fas fa-layer-group mr-1"></i>Kategori</a>
+                        <a href="#" class="nav-link" data-view="activity"><i class="fas fa-fire mr-1"></i>Aktifitas</a>
+                        <a href="#" class="nav-link" data-view="members"><i class="fas fa-users mr-1"></i>Member</a>
+                    </nav>
+                    
+                    <!-- User Actions -->
+                    <div class="flex items-center gap-2">
+                        <button id="search-toggle" class="btn btn-ghost btn-icon" title="Cari">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button id="notification-toggle" class="btn btn-ghost btn-icon relative" title="Notifikasi">
+                            <i class="fas fa-bell"></i>
+                            <span id="notification-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-accent-500 text-[10px] rounded-full flex items-center justify-center">3</span>
+                        </button>
+                        <div id="auth-buttons">
+                            <button id="login-btn" class="btn btn-outline text-sm px-4 py-2">Login</button>
+                            <button id="signup-btn" class="btn btn-primary text-sm px-4 py-2">Daftar</button>
+                        </div>
+                        <div id="user-menu" class="hidden relative">
+                            <button id="user-avatar-btn" class="flex items-center gap-2 hover:bg-navy-800 rounded-full px-2 py-1 transition">
+                                <div id="user-avatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center text-sm font-bold">U</div>
+                                <span id="user-name" class="hidden md:inline text-sm font-medium">User</span>
+                                <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                            </button>
+                            <!-- Dropdown Menu -->
+                            <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 card py-2 animate-fade-in">
+                                <a href="#" class="block px-4 py-2 hover:bg-navy-800 transition" data-action="profile">
+                                    <i class="fas fa-user mr-2"></i>Profil Saya
+                                </a>
+                                <a href="#" class="block px-4 py-2 hover:bg-navy-800 transition" data-action="bookmarks">
+                                    <i class="fas fa-bookmark mr-2"></i>Bookmark
+                                </a>
+                                <a href="#" class="block px-4 py-2 hover:bg-navy-800 transition" data-action="settings">
+                                    <i class="fas fa-cog mr-2"></i>Pengaturan
+                                </a>
+                                <div class="divider my-1"></div>
+                                <button id="logout-btn" class="w-full text-left px-4 py-2 hover:bg-navy-800 transition text-red-400">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Keluar
+                                </button>
                             </div>
                         </div>
                     </div>
-                    ${isOwn ? `
-                    <button class="btn-icon" id="btn-del" title="Hapus thread" style="font-size:.8rem">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="m19,6-.867,12.142A2,2,0,0,1,16.138,20H7.862a2,2,0,0,1-1.995-1.858L5,6m5,0V4a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1v2"/></svg>
-                        Hapus
-                    </button>` : ''}
                 </div>
-
-                <h1 class="cinzel" style="font-size:clamp(1.4rem,4vw,2rem);color:#ddd8cc;margin-bottom:1.2rem;line-height:1.3">${post.title}</h1>
-                <div class="post-content" style="color:#8a8580;line-height:1.82">${md(post.content)}</div>
-
-                <hr class="divider">
-
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:.9rem">
-                    <button class="reaction-btn ${liked?'active':''}" id="btn-like">
-                        ❤ ${lc} Suka${liked?' (disukai)':''}
-                    </button>
-                    <span style="font-size:.88rem;color:#333">👁 ${vc} dilihat</span>
-                    <span style="font-size:.88rem;color:#333">💬 ${pComm.length} komentar</span>
-                    <button class="btn-icon" id="btn-share" style="margin-left:auto">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                        Bagikan
-                    </button>
+                
+                <!-- Search Bar (Collapsible) -->
+                <div id="search-bar" class="hidden mt-3">
+                    <div class="relative">
+                        <input type="text" id="global-search" placeholder="Cari thread, member, atau topik..." class="form-input pl-10 pr-4 py-2 rounded-full bg-navy-800/50 border-magic-600/30 focus:border-magic-500">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <button id="search-close" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
+        </header>
 
-            <!-- Comment form -->
-            <div class="card no-hover" style="padding:1.25rem 1.5rem;margin-bottom:1.5rem">
-                <div style="display:flex;gap:.8rem;align-items:flex-start">
-                    ${avatar(S.user.username,32)}
-                    <div style="flex:1">
-                        <form id="form-cmt">
-                            <textarea id="cmt-inp" class="inp" rows="2" placeholder="Bagikan pemikiran Anda…" maxlength="1000" required style="resize:none;min-height:68px"></textarea>
-                            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.4rem">
-                                <span id="cmt-c" class="char-c">0/1000</span>
-                                <button type="submit" class="btn btn-pri" style="padding:.42rem 1.2rem;font-size:.65rem">Kirim Komentar</button>
+        <!-- Breadcrumb Navigation -->
+        <div id="breadcrumb" class="container mx-auto max-w-6xl px-4 py-2 hidden">
+            <nav class="flex items-center gap-2 text-sm text-gray-400">
+                <a href="#" class="hover:text-magic-400 transition" data-breadcrumb="home"><i class="fas fa-home"></i></a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span id="breadcrumb-current" class="text-gray-200">Home</span>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="container mx-auto max-w-6xl px-4 py-6 flex-grow">
+            <!-- Dynamic content will be rendered here -->
+        </main>
+
+        <!-- Floating Action Button (Mobile) -->
+        <button id="fab-new-post" class="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 text-white shadow-lg shadow-magic-500/40 flex items-center justify-center z-40 hover:scale-105 transition-transform">
+            <i class="fas fa-plus text-xl"></i>
+        </button>
+
+        <!-- Footer -->
+        <footer class="border-t border-navy-700/50 py-6 mt-8">
+            <div class="container mx-auto max-w-6xl px-4">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="text-center md:text-left">
+                        <p class="font-gothic text-lg font-bold text-gradient">NOC FORUM</p>
+                        <p class="text-sm text-gray-400 mt-1">dibuat untuk happy, kalo ga happy pergi by Prof.Z - nocfams 2025</p>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm text-gray-400">
+                        <a href="#" class="hover:text-magic-400 transition"><i class="fab fa-whatsapp mr-1"></i>WhatsApp</a>
+                        <a href="#" class="hover:text-magic-400 transition"><i class="fas fa-shield-alt mr-1"></i>Privacy</a>
+                        <a href="#" class="hover:text-magic-400 transition"><i class="fas fa-file-alt mr-1"></i>Terms</a>
+                    </div>
+                    <p class="text-xs text-gray-500">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div id="modal-content" class="card w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+    <!-- Firebase Configuration & App Logic -->
+    <script>
+        // ========================================
+        // 🔧 FIREBASE CONFIGURATION
+        // ========================================
+        // ⚠️ GANTI DENGAN CONFIG FIREBASE ANDA
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
+        
+        // Enable offline persistence
+        db.enablePersistence().catch(err => {
+            if (err.code === 'failed-precondition') {
+                console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+            } else if (err.code === 'unimplemented') {
+                console.log('Browser doesn\'t support persistence');
+            }
+        });
+
+        // ========================================
+        // 🎯 APP STATE & CONFIG
+        // ========================================
+        const AppState = {
+            currentUser: null,
+            currentView: 'home',
+            currentCategory: null,
+            currentPostId: null,
+            currentProfileId: null,
+            searchQuery: '',
+            isLoading: false,
+            notifications: [],
+            unreadCount: 0
+        };
+
+        const CATEGORIES = [
+            { id: 'cardmagic', name: 'Card Magic', icon: 'fa-hand-sparkles', color: 'from-pink-500 to-rose-600' },
+            { id: 'coinmagic', name: 'Coin Magic', icon: 'fa-coins', color: 'from-amber-500 to-orange-600' },
+            { id: 'mentalism', name: 'Mentalism', icon: 'fa-brain', color: 'from-purple-500 to-indigo-600' },
+            { id: 'everydayobject', name: 'Everyday Object', icon: 'fa-lightbulb', color: 'from-cyan-500 to-blue-600' },
+            { id: 'idea', name: 'Idea & Concepts', icon: 'fa-lightbulb', color: 'from-emerald-500 to-teal-600' },
+            { id: 'market', name: 'Market Magic', icon: 'fa-store', color: 'from-violet-500 to-purple-600' }
+        ];
+
+        const USER_LEVELS = [
+            { min: 0, name: 'Novice', badge: '🎴' },
+            { min: 50, name: 'Apprentice', badge: '✨' },
+            { min: 200, name: 'Magician', badge: '🎩' },
+            { min: 500, name: 'Master', badge: '🔮' },
+            { min: 1000, name: 'Grand Master', badge: '👑' }
+        ];
+
+        // ========================================
+        // 🎨 UI COMPONENTS & RENDERERS
+        // ========================================
+        const UI = {
+            // Toast Notifications
+            toast: (message, type = 'info', duration = 4000) => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                const icons = {
+                    success: 'fa-check-circle',
+                    error: 'fa-exclamation-circle',
+                    info: 'fa-info-circle',
+                    warning: 'fa-exclamation-triangle'
+                };
+                
+                toast.innerHTML = `
+                    <i class="fas ${icons[type]} text-lg"></i>
+                    <span>${message}</span>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Auto remove
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            },
+            
+            // Loading State
+            showLoading: (message = 'Memuat...') => {
+                const main = document.getElementById('main-content');
+                main.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20 animate-fade-in">
+                        <div class="relative">
+                            <div class="w-16 h-16 border-4 border-navy-700 border-t-magic-500 rounded-full animate-spin"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fas fa-magic text-magic-400 animate-pulse"></i>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-gray-300">${message}</p>
+                    </div>
+                `;
+            },
+            
+            // Render Home View
+            renderHome: () => {
+                const featuredPosts = AppState.posts?.slice(0, 5) || [];
+                const recentActivity = AppState.activities?.slice(0, 8) || [];
+                
+                return `
+                    <!-- Welcome Banner -->
+                    <div class="card p-6 mb-8 bg-gradient-to-r from-navy-800 to-navy-900 border-magic-600/30">
+                        <div class="flex flex-col md:flex-row items-center gap-6">
+                            <div class="flex-1">
+                                <h2 class="font-gothic text-2xl md:text-3xl font-bold mb-2">
+                                    Selamat Datang di <span class="text-gradient">NOC FORUM</span> 🎩
+                                </h2>
+                                <p class="text-gray-300 mb-4">
+                                    Komunitas pesulap profesional untuk berbagi trik, teknik, dan inspirasi. 
+                                    Jelajahi ribuan thread, terhubung dengan member, dan tingkatkan skill sulap Anda.
+                                </p>
+                                <div class="flex flex-wrap gap-3">
+                                    <button class="btn btn-primary" data-action="explore-categories">
+                                        <i class="fas fa-compass"></i> Jelajahi Kategori
+                                    </button>
+                                    <button class="btn btn-outline" data-action="view-guidelines">
+                                        <i class="fas fa-book"></i> Panduan Forum
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="hidden md:block">
+                                <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-magic-500/20 to-accent-500/20 flex items-center justify-center animate-float">
+                                    <i class="fas fa-wand-magic-sparkles text-5xl text-magic-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Overview -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-magic-400">${AppState.stats?.totalPosts || 0}</div>
+                            <div class="text-sm text-gray-400">Total Thread</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-accent-400">${AppState.stats?.totalMembers || 0}</div>
+                            <div class="text-sm text-gray-400">Member Aktif</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-emerald-400">${AppState.stats?.onlineNow || 0}</div>
+                            <div class="text-sm text-gray-400">Online Sekarang</div>
+                        </div>
+                        <div class="card p-4 text-center">
+                            <div class="text-2xl font-bold text-purple-400">${AppState.stats?.newToday || 0}</div>
+                            <div class="text-sm text-gray-400">Thread Hari Ini</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Featured Posts -->
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-gothic text-xl font-bold">🔥 Thread Terpopuler</h3>
+                            <a href="#" class="text-sm text-magic-400 hover:underline" data-action="view-all-posts">Lihat Semua</a>
+                        </div>
+                        <div class="space-y-4">
+                            ${featuredPosts.map(post => UI.renderPostCard(post, { compact: true })).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-gothic text-xl font-bold">⚡ Aktivitas Terbaru</h3>
+                        </div>
+                        <div class="card divide-y divide-navy-700/50">
+                            ${recentActivity.map(activity => UI.renderActivityItem(activity)).join('')}
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // Render Post Card Component
+            renderPostCard: (post, options = {}) => {
+                const category = CATEGORIES.find(c => c.id === post.category);
+                const author = AppState.users?.find(u => u.userid === post.userid) || {};
+                const comments = AppState.comments?.filter(c => c.postid === post.postid) || [];
+                const likes = AppState.likes?.filter(l => l.postid === post.postid) || [];
+                
+                const userLevel = USER_LEVELS.slice().reverse().find(l => author.reputation >= l.min) || USER_LEVELS[0];
+                
+                return `
+                    <div class="card p-4 post-item hover:border-magic-500/50 transition-all ${options.compact ? '' : 'hover:-translate-y-1'}" 
+                         data-postid="${post.postid}" data-action="view-post">
+                        <div class="flex gap-4">
+                            <!-- Avatar -->
+                            <div class="hidden sm:block">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center text-sm font-bold" title="${author.username || 'Unknown'}">
+                                    ${(author.username || 'U').charAt(0).toUpperCase()}
+                                </div>
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2 mb-2">
+                                    ${category ? `<span class="badge badge-primary"><i class="fas ${category.icon}"></i> ${category.name}</span>` : ''}
+                                    ${post.isPinned ? '<span class="badge badge-accent"><i class="fas fa-thumbtack"></i> Pinned</span>' : ''}
+                                    ${post.isSolved ? '<span class="badge badge-success"><i class="fas fa-check"></i> Solved</span>' : ''}
+                                </div>
+                                
+                                <h4 class="font-semibold text-lg hover:text-magic-400 transition line-clamp-2">${post.title}</h4>
+                                
+                                ${!options.compact ? `<p class="text-gray-400 text-sm mt-1 line-clamp-2">${post.content.substring(0, 150)}${post.content.length > 150 ? '...' : ''}</p>` : ''}
+                                
+                                <!-- Meta -->
+                                <div class="flex flex-wrap items-center gap-3 mt-3 text-sm text-gray-400">
+                                    <span class="flex items-center gap-1">
+                                        <span class="text-magic-400 font-medium">${author.username || 'Anonymous'}</span>
+                                        <span class="text-xs">${userLevel.badge} ${userLevel.name}</span>
+                                    </span>
+                                    <span>•</span>
+                                    <span>${new Date(post.timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                    <span>•</span>
+                                    <div class="post-stats">
+                                        <span><i class="fas fa-eye"></i> ${post.views || 0}</span>
+                                        <span><i class="fas fa-comment"></i> ${comments.length}</span>
+                                        <span><i class="fas fa-heart"></i> ${likes.length}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="flex flex-col items-end gap-2">
+                                <button class="btn btn-ghost btn-icon like-btn ${likes.some(l => l.userid === AppState.currentUser?.userid) ? 'text-red-500' : ''}" 
+                                        data-postid="${post.postid}" data-action="toggle-like">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="btn btn-ghost btn-icon bookmark-btn ${AppState.currentUser?.bookmarks?.includes(post.postid) ? 'text-accent-400' : ''}" 
+                                        data-postid="${post.postid}" data-action="toggle-bookmark">
+                                    <i class="fas fa-bookmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // Render Categories Grid
+            renderCategories: () => {
+                return `
+                    <div class="text-center mb-8">
+                        <h2 class="font-gothic text-2xl md:text-3xl font-bold mb-2">📚 Kategori Forum</h2>
+                        <p class="text-gray-400">Pilih kategori untuk menjelajahi thread sesuai minat Anda</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${CATEGORIES.map(cat => `
+                            <div class="card p-6 category-card text-center" data-category="${cat.id}" data-action="view-category">
+                                <div class="icon">
+                                    <i class="fas ${cat.icon}"></i>
+                                </div>
+                                <h3 class="font-gothic text-xl font-bold mb-2">${cat.name}</h3>
+                                <p class="text-sm text-gray-400 mb-4">
+                                    ${UI.getCategoryDescription(cat.id)}
+                                </p>
+                                <div class="flex items-center justify-center gap-4 text-sm text-gray-400">
+                                    <span><i class="fas fa-thread"></i> ${UI.getCategoryStats(cat.id, 'posts')} thread</span>
+                                    <span><i class="fas fa-users"></i> ${UI.getCategoryStats(cat.id, 'members')} member</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            },
+            
+            // Render Single Post Detail
+            renderPostDetail: (post) => {
+                if (!post) return '<p class="text-center text-gray-400 py-10">Post tidak ditemukan</p>';
+                
+                const author = AppState.users?.find(u => u.userid === post.userid) || {};
+                const comments = (AppState.comments?.filter(c => c.postid === post.postid) || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                const likes = AppState.likes?.filter(l => l.postid === post.postid) || [];
+                const userHasLiked = likes.some(l => l.userid === AppState.currentUser?.userid);
+                const userLevel = USER_LEVELS.slice().reverse().find(l => author.reputation >= l.min) || USER_LEVELS[0];
+                
+                return `
+                    <!-- Post Header -->
+                    <div class="card mb-6">
+                        <div class="card-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
+                                    ${(author.username || 'U').charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h1 class="font-gothic text-2xl font-bold">${post.title}</h1>
+                                    <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400">
+                                        <button class="hover:text-magic-400 transition font-medium" data-userid="${author.userid}" data-action="view-profile">
+                                            ${author.username || 'Anonymous'}
+                                        </button>
+                                        <span class="text-xs px-2 py-0.5 rounded-full bg-magic-500/20 text-magic-300">
+                                            ${userLevel.badge} ${userLevel.name}
+                                        </span>
+                                        <span>•</span>
+                                        <span>${new Date(post.timestamp).toLocaleString('id-ID')}</span>
+                                        ${post.edited ? '<span class="text-xs text-gray-500">(diedit)</span>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                ${AppState.currentUser?.userid === post.userid ? `
+                                    <button class="btn btn-ghost btn-icon" data-action="edit-post" data-postid="${post.postid}" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-ghost btn-icon text-red-400 hover:text-red-300" data-action="delete-post" data-postid="${post.postid}" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                                <button class="btn btn-ghost btn-icon" title="Share">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="prose prose-invert max-w-none">
+                                ${post.content.replace(/\n/g, '<br>')}
+                            </div>
+                            
+                            ${post.tags?.length ? `
+                                <div class="mt-6 pt-4 border-t border-navy-700/50">
+                                    <div class="flex flex-wrap gap-2">
+                                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="card-footer flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <button class="flex items-center gap-2 btn btn-outline like-btn ${userHasLiked ? 'bg-red-500/20 border-red-500 text-red-400' : ''}" 
+                                        data-postid="${post.postid}" data-action="toggle-like">
+                                    <i class="fas fa-heart"></i>
+                                    <span>${likes.length} Suka</span>
+                                </button>
+                                <span class="text-gray-400"><i class="fas fa-eye"></i> ${post.views || 0} Dilihat</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="badge badge-primary"><i class="fas fa-layer-group"></i> ${CATEGORIES.find(c => c.id === post.category)?.name}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comments Section -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="font-gothic text-xl font-bold">💬 Komentar (${comments.length})</h3>
+                        </div>
+                        <div class="card-body">
+                            ${AppState.currentUser ? `
+                                <form id="comment-form" class="mb-6">
+                                    <textarea id="comment-content" placeholder="Tulis komentar Anda..." rows="3" class="form-textarea rounded-lg" required></textarea>
+                                    <div class="flex justify-end mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane"></i> Kirim Komentar
+                                        </button>
+                                    </div>
+                                </form>
+                            ` : `
+                                <div class="text-center py-6 text-gray-400">
+                                    <i class="fas fa-comment-alt text-3xl mb-3"></i>
+                                    <p>Login untuk berpartisipasi dalam diskusi</p>
+                                    <button class="btn btn-outline mt-3" data-action="show-login">Login Sekarang</button>
+                                </div>
+                            `}
+                            
+                            <!-- Comments List -->
+                            <div class="space-y-4" id="comments-list">
+                                ${comments.map(comment => UI.renderComment(comment, comments)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // Render Comment with Nested Replies
+            renderComment: (comment, allComments, depth = 0) => {
+                const author = AppState.users?.find(u => u.userid === comment.userid) || {};
+                const replies = allComments.filter(c => c.parent_comment_id === comment.commentid);
+                const userLevel = USER_LEVELS.slice().reverse().find(l => author.reputation >= l.min) || USER_LEVELS[0];
+                
+                return `
+                    <div class="comment ${depth > 0 ? 'nested' : ''}" data-commentid="${comment.commentid}">
+                        <div class="comment-header">
+                            <div class="comment-avatar">${(author.username || 'U').charAt(0).toUpperCase()}</div>
+                            <div>
+                                <button class="font-medium hover:text-magic-400 transition text-sm" data-userid="${author.userid}" data-action="view-profile">
+                                    ${author.username || 'Anonymous'}
+                                </button>
+                                <span class="text-xs text-gray-500 ml-2">${userLevel.badge}</span>
+                            </div>
+                            <span class="text-xs text-gray-500 ml-auto">${new Date(comment.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        <p class="text-sm mb-3">${comment.content}</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-400">
+                            ${AppState.currentUser ? `
+                                <button class="hover:text-magic-400 transition reply-btn" data-commentid="${comment.commentid}">
+                                    <i class="fas fa-reply"></i> Balas
+                                </button>
+                            ` : ''}
+                            ${AppState.currentUser?.userid === comment.userid ? `
+                                <button class="hover:text-magic-400 transition" data-action="edit-comment" data-commentid="${comment.commentid}">Edit</button>
+                                <button class="hover:text-red-400 transition" data-action="delete-comment" data-commentid="${comment.commentid}">Hapus</button>
+                            ` : ''}
+                        </div>
+                        
+                        <!-- Reply Form (Hidden by default) -->
+                        <form class="reply-form hidden mt-3 ml-8" data-parentid="${comment.commentid}">
+                            <textarea placeholder="Tulis balasan..." rows="2" class="form-textarea rounded-lg text-sm" required></textarea>
+                            <div class="flex justify-end gap-2 mt-2">
+                                <button type="button" class="btn btn-ghost text-sm cancel-reply">Batal</button>
+                                <button type="submit" class="btn btn-primary text-sm">Kirim</button>
                             </div>
                         </form>
+                        
+                        <!-- Nested Replies -->
+                        ${replies.length > 0 ? `
+                            <div class="mt-4 space-y-3">
+                                ${replies.map(reply => UI.renderComment(reply, allComments, depth + 1)).join('')}
+                            </div>
+                        ` : ''}
                     </div>
-                </div>
-            </div>
-
-            <!-- Comments -->
-            <h3 class="cinzel" style="font-size:.62rem;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:1.2rem">
-                Komentar — ${pComm.length}
-            </h3>
-            <div id="cmt-tree" style="display:flex;flex-direction:column;gap:.65rem">
-                ${buildTree(pComm)}
-            </div>
-        </div>`;
-
-        $('#bc-h').onclick = V.categories;
-        $('#bc-c').onclick = V.posts;
-        $('#btn-back').onclick = V.posts;
-        $('#btn-like').onclick = () => A.likePost(post.postid);
-        $('#btn-share').onclick = () => {
-            navigator.clipboard?.writeText(location.href+'#'+post.postid).then(()=>toast('Link disalin! 🔗','ok')).catch(()=>toast('Gagal menyalin','err'));
-        };
-        if (isOwn) $('#btn-del').onclick = () => A.confirmDel(post.postid);
-        $('#form-cmt').onsubmit = e => A.createComment(e, post.postid, 'root');
-        charCounter('cmt-inp','cmt-c',1000);
-
-        attachCommentEvents(post.postid);
-    },
-};
-
-// ════════════════════════════════════════
-//  COMMENT TREE BUILDER
-// ════════════════════════════════════════
-function buildTree(comments, parentId='root', depth=0) {
-    const children = comments
-        .filter(c=>c.parent_comment_id===parentId)
-        .sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
-    if (!children.length) return '';
-    return children.map(c => {
-        const replies = buildTree(comments, c.commentid, depth+1);
-        const isMe = c.userid === S.user?.userid;
-        return `
-        <div style="${depth>0?'margin-left:clamp(.5rem,3vw,2rem);border-left:2px solid #161616;padding-left:clamp(.5rem,2vw,1.25rem);':''}">
-            <div class="card no-hover" style="padding:1rem 1.2rem;background:${depth===0?'var(--bg-card)':'#0e0e0e'}">
-                <div style="display:flex;gap:.7rem;align-items:flex-start">
-                    ${avatar(c.username,28)}
-                    <div style="flex:1;min-width:0">
-                        <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.45rem">
-                            <span class="cinzel" style="font-size:.72rem;color:#999">${c.username}</span>
-                            ${isMe?`<span class="badge b-gold" style="font-size:.55rem">Anda</span>`:''}
-                            <span style="font-size:.72rem;color:#2d2d2d">${timeAgo(c.timestamp)}</span>
+                `;
+            },
+            
+            // Render User Profile
+            renderProfile: (user, isOwnProfile = false) => {
+                if (!user) return '<p class="text-center text-gray-400 py-10">Profil tidak ditemukan</p>';
+                
+                const userLevel = USER_LEVELS.slice().reverse().find(l => user.reputation >= l.min) || USER_LEVELS[0];
+                const userPosts = AppState.posts?.filter(p => p.userid === user.userid) || [];
+                const userComments = AppState.comments?.filter(c => c.userid === user.userid) || [];
+                
+                return `
+                    <!-- Profile Header -->
+                    <div class="card mb-6 overflow-hidden">
+                        <div class="profile-cover"></div>
+                        <div class="profile-header">
+                            <div class="profile-avatar">${(user.username || 'U').charAt(0).toUpperCase()}</div>
+                            <h2 class="font-gothic text-2xl font-bold">${user.username}</h2>
+                            <div class="flex items-center justify-center gap-2 mt-1">
+                                <span class="badge badge-primary">${userLevel.badge} ${userLevel.name}</span>
+                                ${user.isOnline ? '<span class="badge badge-success"><i class="fas fa-circle text-[8px]"></i> Online</span>' : ''}
+                            </div>
+                            <p class="text-gray-400 mt-2">${user.bio || 'Belum ada bio...'}</p>
+                            
+                            ${isOwnProfile ? `
+                                <button class="btn btn-outline mt-4" data-action="edit-profile">
+                                    <i class="fas fa-edit"></i> Edit Profil
+                                </button>
+                            ` : `
+                                <button class="btn btn-primary mt-4" data-action="send-message" data-userid="${user.userid}">
+                                    <i class="fas fa-paper-plane"></i> Kirim Pesan
+                                </button>
+                            `}
                         </div>
-                        <div class="post-content" style="font-size:.93rem;color:#666;line-height:1.6">${md(c.content)}</div>
-                        ${depth<3?`
-                        <div style="margin-top:.6rem">
-                            <button class="btn-icon reply-tog" data-cid="${c.commentid}" style="font-size:.78rem">↩ Balas</button>
-                            <form id="rf-${c.commentid}" class="hidden" data-pid="${c.commentid}" style="margin-top:.7rem">
-                                <div style="display:flex;gap:.55rem;align-items:flex-start">
-                                    ${avatar(S.user?.username||'?',24)}
-                                    <div style="flex:1">
-                                        <textarea id="ri-${c.commentid}" class="inp" rows="2" placeholder="Balas komentar…" maxlength="500" required style="resize:none;font-size:.9rem;min-height:58px"></textarea>
-                                        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.3rem">
-                                            <span id="rc-${c.commentid}" class="char-c">0/500</span>
-                                            <div style="display:flex;gap:.5rem">
-                                                <button type="button" class="btn btn-ghost cancel-rf" data-cid="${c.commentid}" style="padding:.28rem .7rem;font-size:.6rem">Batal</button>
-                                                <button type="submit" class="btn btn-pri" style="padding:.28rem .7rem;font-size:.6rem">Kirim</button>
-                                            </div>
+                        
+                        <!-- Profile Stats -->
+                        <div class="profile-stats">
+                            <div class="profile-stat">
+                                <div class="profile-stat-value">${userPosts.length}</div>
+                                <div class="profile-stat-label">Thread</div>
+                            </div>
+                            <div class="profile-stat">
+                                <div class="profile-stat-value">${userComments.length}</div>
+                                <div class="profile-stat-label">Komentar</div>
+                            </div>
+                            <div class="profile-stat">
+                                <div class="profile-stat-value">${user.reputation || 0}</div>
+                                <div class="profile-stat-label">Reputasi</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Info -->
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- Main Content -->
+                        <div class="md:col-span-2 space-y-6">
+                            <!-- User Posts -->
+                            <div class="card">
+                                <div class="card-header flex items-center justify-between">
+                                    <h3 class="font-gothic text-lg font-bold">📝 Thread oleh ${user.username}</h3>
+                                    <a href="#" class="text-sm text-magic-400 hover:underline">Lihat Semua</a>
+                                </div>
+                                <div class="card-body">
+                                    ${userPosts.length > 0 ? `
+                                        <div class="space-y-4">
+                                            ${userPosts.slice(0, 5).map(post => UI.renderPostCard(post, { compact: true })).join('')}
                                         </div>
+                                    ` : '<p class="text-gray-400 text-center py-4">Belum ada thread</p>'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sidebar -->
+                        <div class="space-y-6">
+                            <!-- About -->
+                            <div class="card p-4">
+                                <h4 class="font-semibold mb-3">📋 Tentang</h4>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Bergabung</span>
+                                        <span>${new Date(user.joinedAt).toLocaleDateString('id-ID')}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Lama Main Sulap</span>
+                                        <span>${user.lama_sulap || '-'}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Aliran</span>
+                                        <span>${user.aliran_sulap || '-'}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Lokasi</span>
+                                        <span>${user.location || '-'}</span>
                                     </div>
                                 </div>
-                            </form>
-                        </div>` : ''}
+                            </div>
+                            
+                            <!-- Badges -->
+                            <div class="card p-4">
+                                <h4 class="font-semibold mb-3">🏆 Achievement</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="badge badge-primary">🎯 First Post</span>
+                                    <span class="badge badge-success">💬 Active Commenter</span>
+                                    ${user.reputation >= 200 ? '<span class="badge badge-accent">🎩 Rising Magician</span>' : ''}
+                                    ${user.reputation >= 500 ? '<span class="badge badge-warning">🔮 Master</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            ${replies}
-        </div>`;
-    }).join('');
-}
+                `;
+            },
+            
+            // Render Activity Item
+            renderActivityItem: (activity) => {
+                const icons = {
+                    post: 'fas fa-plus-circle text-emerald-400',
+                    comment: 'fas fa-comment text-magic-400',
+                    like: 'fas fa-heart text-red-400',
+                    join: 'fas fa-user-plus text-purple-400'
+                };
+                
+                return `
+                    <div class="p-4 hover:bg-navy-800/50 transition flex gap-3">
+                        <div class="w-8 h-8 rounded-full bg-navy-700 flex items-center justify-center flex-shrink-0">
+                            <i class="${icons[activity.type] || 'fas fa-circle'} text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm">
+                                <span class="font-medium text-magic-400">${activity.username}</span>
+                                ${activity.action}
+                                ${activity.postTitle ? `<span class="text-gray-300 hover:text-magic-400 cursor-pointer" data-postid="${activity.postid}" data-action="view-post">"${activity.postTitle}"</span>` : ''}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">${new Date(activity.timestamp).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // Helper: Category Description
+            getCategoryDescription: (categoryId) => {
+                const descriptions = {
+                    cardmagic: 'Teknik, tutorial, dan diskusi tentang sulap kartu',
+                    coinmagic: 'Sulap koin: sleight of hand, production, vanishing',
+                    mentalism: 'Mind reading, prediction, psychological magic',
+                    everydayobject: 'Sulap dengan benda sehari-hari: pulpen, kertas, dll',
+                    idea: 'Konsep, teori, dan ide kreatif untuk pertunjukan',
+                    market: 'Review produk, rekomendasi, dan diskusi peralatan sulap'
+                };
+                return descriptions[categoryId] || 'Diskusi umum';
+            },
+            
+            // Helper: Category Stats (mock data)
+            getCategoryStats: (categoryId, type) => {
+                const stats = {
+                    cardmagic: { posts: 234, members: 89 },
+                    coinmagic: { posts: 156, members: 67 },
+                    mentalism: { posts: 189, members: 102 },
+                    everydayobject: { posts: 98, members: 45 },
+                    idea: { posts: 145, members: 78 },
+                    market: { posts: 67, members: 34 }
+                };
+                return stats[categoryId]?.[type] || 0;
+            }
+        };
 
-function attachCommentEvents(postId) {
-    $$('.reply-tog').forEach(btn => {
-        btn.onclick = () => {
-            const cid = btn.dataset.cid;
-            $$('.rf-form').forEach(f => { if(f.id!=='rf-'+cid) f.classList.add('hidden'); });
-            const form = $('#rf-'+cid);
-            if (form) {
-                form.classList.toggle('hidden');
-                if (!form.classList.contains('hidden')) {
-                    form.querySelector('textarea')?.focus();
-                    charCounter('ri-'+cid,'rc-'+cid,500);
+        // ========================================
+        // 🔄 DATA SERVICE (Firebase Operations)
+        // ========================================
+        const DataService = {
+            // Subscribe to real-time data
+            subscribe: (callback) => {
+                const unsubscribers = [];
+                
+                // Posts collection
+                unsubscribers.push(
+                    db.collection('posts').orderBy('timestamp', 'desc').limit(50)
+                      .onSnapshot(snapshot => {
+                          AppState.posts = snapshot.docs.map(doc => ({ postid: doc.id, ...doc.data() }));
+                          callback();
+                      })
+                );
+                
+                // Users collection
+                unsubscribers.push(
+                    db.collection('users').onSnapshot(snapshot => {
+                        AppState.users = snapshot.docs.map(doc => ({ userid: doc.id, ...doc.data() }));
+                        callback();
+                    })
+                );
+                
+                // Comments collection
+                unsubscribers.push(
+                    db.collection('comments').orderBy('timestamp', 'asc')
+                      .onSnapshot(snapshot => {
+                          AppState.comments = snapshot.docs.map(doc => ({ commentid: doc.id, ...doc.data() }));
+                          callback();
+                      })
+                );
+                
+                // Likes collection
+                unsubscribers.push(
+                    db.collection('likes').onSnapshot(snapshot => {
+                        AppState.likes = snapshot.docs.map(doc => ({ likeid: doc.id, ...doc.data() }));
+                        callback();
+                    })
+                );
+                
+                // Return cleanup function
+                return () => unsubscribers.forEach(unsub => unsub());
+            },
+            
+            // Create new post
+            createPost: async (postData) => {
+                const postRef = await db.collection('posts').add({
+                    ...postData,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    views: 0,
+                    isPinned: false,
+                    isSolved: false
+                });
+                return postRef.id;
+            },
+            
+            // Create comment
+            createComment: async (commentData) => {
+                const commentRef = await db.collection('comments').add({
+                    ...commentData,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                return commentRef.id;
+            },
+            
+            // Toggle like
+            toggleLike: async (postId, userId) => {
+                const existing = await db.collection('likes')
+                    .where('postid', '==', postId)
+                    .where('userid', '==', userId)
+                    .limit(1)
+                    .get();
+                
+                if (!existing.empty) {
+                    // Unlike
+                    await existing.docs[0].ref.delete();
+                    return false;
+                } else {
+                    // Like
+                    await db.collection('likes').add({
+                        postid: postId,
+                        userid: userId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    return true;
+                }
+            },
+            
+            // Update user profile
+            updateProfile: async (userId, profileData) => {
+                await db.collection('users').doc(userId).update({
+                    ...profileData,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            },
+            
+            // Track post view
+            trackView: async (postId, userId) => {
+                // Check if already viewed
+                const viewed = await db.collection('views')
+                    .where('postid', '==', postId)
+                    .where('userid', '==', userId)
+                    .limit(1)
+                    .get();
+                
+                if (viewed.empty) {
+                    await db.collection('views').add({
+                        postid: postId,
+                        userid: userId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    // Increment view count
+                    await db.collection('posts').doc(postId).update({
+                        views: firebase.firestore.FieldValue.increment(1)
+                    });
                 }
             }
         };
-    });
-    $$('.cancel-rf').forEach(btn => {
-        btn.onclick = () => { const f=$('#rf-'+btn.dataset.cid); if(f)f.classList.add('hidden'); };
-    });
-    $$('[id^="rf-"]').forEach(form => {
-        if (form.tagName==='FORM') form.onsubmit = e => A.createComment(e, postId, form.dataset.pid);
-    });
-}
 
-// ════════════════════════════════════════
-//  ACTIONS  (A.*)
-// ════════════════════════════════════════
-const A = {
-
-    async login(e) {
-        e.preventDefault();
-        const btn = e.target.querySelector('[type=submit]');
-        btn.disabled=true; btn.textContent='Memeriksa…';
-        try {
-            const u = $('#in-user').value.trim();
-            const p = $('#in-pass').value;
-            const res = await api(`${API.users}/search?username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
-            if (res?.length>0) {
-                S.user = res[0];
-                sessionStorage.setItem('noc_u', JSON.stringify(S.user));
-                await A.boot(true);
-                toast(`Selamat datang, ${S.user.username}! 🎩`,'ok');
-            } else {
-                toast('Username atau password salah','err');
-                btn.disabled=false; btn.textContent='Masuk ke Forum';
+        // ========================================
+        // 🎮 APP ACTIONS & CONTROLLERS
+        // ========================================
+        const Actions = {
+            // Navigation
+            navigateTo: (view, params = {}) => {
+                AppState.currentView = view;
+                Object.assign(AppState, params);
+                
+                // Update breadcrumb
+                const breadcrumb = document.getElementById('breadcrumb');
+                const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+                
+                if (view === 'home') {
+                    breadcrumb.classList.add('hidden');
+                } else {
+                    breadcrumb.classList.remove('hidden');
+                    breadcrumbCurrent.textContent = params.title || view;
+                }
+                
+                // Render view
+                Actions.renderCurrentView();
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            
+            // Render current view based on state
+            renderCurrentView: () => {
+                const main = document.getElementById('main-content');
+                
+                switch(AppState.currentView) {
+                    case 'home':
+                        main.innerHTML = UI.renderHome();
+                        break;
+                    case 'categories':
+                        main.innerHTML = UI.renderCategories();
+                        break;
+                    case 'category':
+                        const category = CATEGORIES.find(c => c.id === AppState.currentCategory);
+                        const categoryPosts = (AppState.posts || []).filter(p => p.category === AppState.currentCategory);
+                        main.innerHTML = `
+                            <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </button>
+                            <h2 class="font-gothic text-2xl font-bold mb-6 flex items-center gap-3">
+                                <i class="fas ${category?.icon}"></i> ${category?.name}
+                            </h2>
+                            <div class="flex justify-between items-center mb-6">
+                                <p class="text-gray-400">${categoryPosts.length} thread ditemukan</p>
+                                <button class="btn btn-primary" data-action="new-post" data-category="${AppState.currentCategory}">
+                                    <i class="fas fa-plus"></i> Thread Baru
+                                </button>
+                            </div>
+                            <div class="space-y-4">
+                                ${categoryPosts.length > 0 
+                                    ? categoryPosts.map(post => UI.renderPostCard(post)).join('')
+                                    : '<div class="card p-8 text-center text-gray-400">Belum ada thread di kategori ini. Jadilah yang pertama!</div>'
+                                }
+                            </div>
+                        `;
+                        break;
+                    case 'post':
+                        const post = AppState.posts?.find(p => p.postid === AppState.currentPostId);
+                        main.innerHTML = `
+                            <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
+                                <i class="fas fa-arrow-left"></i> Kembali ke ${AppState.currentCategory ? 'Kategori' : 'Daftar Thread'}
+                            </button>
+                            ${UI.renderPostDetail(post)}
+                        `;
+                        // Track view
+                        if (AppState.currentUser) {
+                            DataService.trackView(AppState.currentPostId, AppState.currentUser.userid);
+                        }
+                        break;
+                    case 'profile':
+                        const profileUser = AppState.currentProfileId === AppState.currentUser?.userid 
+                            ? AppState.currentUser 
+                            : AppState.users?.find(u => u.userid === AppState.currentProfileId);
+                        main.innerHTML = `
+                            <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </button>
+                            ${UI.renderProfile(profileUser, AppState.currentProfileId === AppState.currentUser?.userid)}
+                        `;
+                        break;
+                    case 'new-post':
+                        main.innerHTML = UI.renderNewPostForm();
+                        break;
+                    default:
+                        main.innerHTML = UI.renderHome();
+                }
+                
+                // Attach event listeners after render
+                Actions.attachEventListeners();
+            },
+            
+            // Render New Post Form
+            renderNewPostForm: () => {
+                return `
+                    <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    
+                    <div class="card p-6 max-w-3xl mx-auto">
+                        <h2 class="font-gothic text-2xl font-bold mb-6">✨ Buat Thread Baru</h2>
+                        
+                        <form id="new-post-form">
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Kategori</label>
+                                <select id="post-category" class="form-select rounded-lg" required>
+                                    ${CATEGORIES.map(cat => `
+                                        <option value="${cat.id}" ${cat.id === AppState.currentCategory ? 'selected' : ''}>
+                                            ${cat.name}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Judul Thread</label>
+                                <input type="text" id="post-title" class="form-input rounded-lg" placeholder="Contoh: Teknik Advanced Palm untuk Coin Magic" required maxlength="150">
+                                <p class="text-xs text-gray-500 mt-1">Maksimal 150 karakter</p>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Isi Thread</label>
+                                <textarea id="post-content" class="form-textarea rounded-lg min-h-[200px]" placeholder="Jelaskan pertanyaan, trik, atau ide Anda secara detail..." required></textarea>
+                                <p class="text-xs text-gray-500 mt-1">Gunakan paragraf untuk keterbacaan yang lebih baik</p>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-2">Tags (opsional)</label>
+                                <input type="text" id="post-tags" class="form-input rounded-lg" placeholder="tutorial, beginner, card-control (pisahkan dengan koma)">
+                                <p class="text-xs text-gray-500 mt-1">Bantu orang lain menemukan thread Anda</p>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 mb-6">
+                                <input type="checkbox" id="post-notify" class="rounded border-gray-600 text-magic-600 focus:ring-magic-500">
+                                <label for="post-notify" class="text-sm">Kirim notifikasi saat ada yang membalas</label>
+                            </div>
+                            
+                            <div class="flex justify-end gap-3">
+                                <button type="button" class="btn btn-outline" data-action="back">Batal</button>
+                                <button type="submit" class="btn btn-primary" id="submit-post-btn">
+                                    <i class="fas fa-paper-plane"></i> Publikasikan Thread
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+            },
+            
+            // Attach event listeners to dynamic content
+            attachEventListeners: () => {
+                // Back button
+                document.querySelectorAll('[data-action="back"]').forEach(btn => {
+                    btn.onclick = (e) => {
+                        e.preventDefault();
+                        if (AppState.currentView === 'post' && AppState.currentCategory) {
+                            Actions.navigateTo('category', { currentCategory: AppState.currentCategory });
+                        } else {
+                            Actions.navigateTo('home');
+                        }
+                    };
+                });
+                
+                // Navigation links
+                document.querySelectorAll('[data-view]').forEach(link => {
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        const view = link.dataset.view;
+                        Actions.navigateTo(view);
+                    };
+                });
+                
+                // Category cards
+                document.querySelectorAll('[data-action="view-category"]').forEach(card => {
+                    card.onclick = (e) => {
+                        e.preventDefault();
+                        const categoryId = card.dataset.category;
+                        Actions.navigateTo('category', { currentCategory: categoryId, title: CATEGORIES.find(c => c.id === categoryId)?.name });
+                    };
+                });
+                
+                // Post items
+                document.querySelectorAll('[data-action="view-post"]').forEach(item => {
+                    item.onclick = (e) => {
+                        e.preventDefault();
+                        const postId = item.dataset.postid;
+                        Actions.navigateTo('post', { currentPostId: postId });
+                    };
+                });
+                
+                // Profile links
+                document.querySelectorAll('[data-action="view-profile"]').forEach(link => {
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        const userId = link.dataset.userid;
+                        Actions.navigateTo('profile', { currentProfileId: userId });
+                    };
+                });
+                
+                // Like buttons
+                document.querySelectorAll('[data-action="toggle-like"]').forEach(btn => {
+                    btn.onclick = async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!AppState.currentUser) {
+                            UI.toast('Login untuk menyukai thread', 'info');
+                            return;
+                        }
+                        const postId = btn.dataset.postid;
+                        const wasLiked = await DataService.toggleLike(postId, AppState.currentUser.userid);
+                        UI.toast(wasLiked ? '✅ Thread disukai!' : '❌ Like dibatalkan', wasLiked ? 'success' : 'info');
+                        Actions.renderCurrentView();
+                    };
+                });
+                
+                // Comment form
+                const commentForm = document.getElementById('comment-form');
+                if (commentForm) {
+                    commentForm.onsubmit = async (e) => {
+                        e.preventDefault();
+                        const content = document.getElementById('comment-content').value.trim();
+                        if (!content) return;
+                        
+                        try {
+                            await DataService.createComment({
+                                postid: AppState.currentPostId,
+                                userid: AppState.currentUser.userid,
+                                username: AppState.currentUser.username,
+                                content,
+                                parent_comment_id: 'root'
+                            });
+                            UI.toast('💬 Komentar terkirim!', 'success');
+                            Actions.renderCurrentView();
+                        } catch (err) {
+                            UI.toast('Gagal mengirim komentar', 'error');
+                            console.error(err);
+                        }
+                    };
+                }
+                
+                // Reply buttons
+                document.querySelectorAll('.reply-btn').forEach(btn => {
+                    btn.onclick = (e) => {
+                        e.preventDefault();
+                        const commentId = btn.dataset.commentid;
+                        const form = document.querySelector(`.reply-form[data-parentid="${commentId}"]`);
+                        if (form) {
+                            form.classList.toggle('hidden');
+                            form.querySelector('textarea')?.focus();
+                        }
+                    };
+                });
+                
+                // Cancel reply
+                document.querySelectorAll('.cancel-reply').forEach(btn => {
+                    btn.onclick = (e) => {
+                        e.preventDefault();
+                        btn.closest('.reply-form').classList.add('hidden');
+                    };
+                });
+                
+                // Reply form submit
+                document.querySelectorAll('.reply-form').forEach(form => {
+                    form.onsubmit = async (e) => {
+                        e.preventDefault();
+                        const content = form.querySelector('textarea').value.trim();
+                        const parentId = form.dataset.parentid;
+                        if (!content) return;
+                        
+                        try {
+                            await DataService.createComment({
+                                postid: AppState.currentPostId,
+                                userid: AppState.currentUser.userid,
+                                username: AppState.currentUser.username,
+                                content,
+                                parent_comment_id: parentId
+                            });
+                            UI.toast('💬 Balasan terkirim!', 'success');
+                            Actions.renderCurrentView();
+                        } catch (err) {
+                            UI.toast('Gagal mengirim balasan', 'error');
+                        }
+                    };
+                });
+                
+                // New post form
+                const newPostForm = document.getElementById('new-post-form');
+                if (newPostForm) {
+                    newPostForm.onsubmit = async (e) => {
+                        e.preventDefault();
+                        const submitBtn = document.getElementById('submit-post-btn');
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Memproses...';
+                        
+                        try {
+                            const tags = document.getElementById('post-tags').value
+                                .split(',').map(t => t.trim()).filter(t => t);
+                            
+                            await DataService.createPost({
+                                userid: AppState.currentUser.userid,
+                                username: AppState.currentUser.username,
+                                title: document.getElementById('post-title').value,
+                                content: document.getElementById('post-content').value,
+                                category: document.getElementById('post-category').value,
+                                tags,
+                                notifyReplies: document.getElementById('post-notify').checked
+                            });
+                            
+                            UI.toast('✨ Thread berhasil dipublikasikan!', 'success');
+                            Actions.navigateTo('category', { currentCategory: document.getElementById('post-category').value });
+                        } catch (err) {
+                            UI.toast('Gagal membuat thread', 'error');
+                            console.error(err);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Publikasikan Thread';
+                        }
+                    };
+                }
+                
+                // FAB new post button
+                const fabBtn = document.getElementById('fab-new-post');
+                if (fabBtn) {
+                    fabBtn.onclick = (e) => {
+                        e.preventDefault();
+                        if (!AppState.currentUser) {
+                            UI.toast('Login untuk membuat thread', 'info');
+                            return;
+                        }
+                        Actions.navigateTo('new-post');
+                    };
+                }
             }
-        } catch {
-            toast('Gagal terhubung ke server','err');
-            btn.disabled=false; btn.textContent='Masuk ke Forum';
-        }
-    },
+        };
 
-    async signup(e) {
-        e.preventDefault();
-        const u = $('#up-user').value.trim();
-        const p = $('#up-pass').value;
-        if (u.length<3) { toast('Username minimal 3 karakter','err'); return; }
-        if (p.length<4) { toast('Password minimal 4 karakter','err'); return; }
-        const btn = e.target.querySelector('[type=submit]');
-        btn.disabled=true; btn.textContent='Mendaftarkan…';
-        try {
-            const ex = await api(`${API.users}/search?username=${encodeURIComponent(u)}`);
-            if (ex?.length>0) { toast('Username sudah digunakan','err'); btn.disabled=false; btn.textContent='Buat Akun'; return; }
-            await api(API.users, {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({data:{userid:Date.now().toString(),username:u,password:p,lama_sulap:$('#up-lama').value,aliran_sulap:$('#up-aliran').value}})
+        // ========================================
+        // 🔐 AUTHENTICATION HANDLERS
+        // ========================================
+        const Auth = {
+            // Check auth state
+            init: () => {
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        // Get user data from Firestore
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists) {
+                            AppState.currentUser = { userid: user.uid, ...userDoc.data() };
+                            UI.updateAuthUI(true);
+                            Actions.navigateTo('home');
+                        }
+                    } else {
+                        AppState.currentUser = null;
+                        UI.updateAuthUI(false);
+                        Actions.navigateTo('home');
+                    }
+                });
+            },
+            
+            // Login with email/password
+            login: async (email, password) => {
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    UI.toast('✅ Login berhasil!', 'success');
+                } catch (error) {
+                    UI.toast('Login gagal: ' + error.message, 'error');
+                    throw error;
+                }
+            },
+            
+            // Register new user
+            signup: async (userData) => {
+                try {
+                    const cred = await auth.createUserWithEmailAndPassword(userData.email, userData.password);
+                    
+                    // Save additional user data to Firestore
+                    await db.collection('users').doc(cred.user.uid).set({
+                        username: userData.username,
+                        email: userData.email,
+                        lama_sulap: userData.lama_sulap,
+                        aliran_sulap: userData.aliran_sulap,
+                        bio: '',
+                        location: '',
+                        reputation: 0,
+                        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        isOnline: true,
+                        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    UI.toast('✅ Registrasi berhasil! Silakan login.', 'success');
+                    return true;
+                } catch (error) {
+                    UI.toast('Registrasi gagal: ' + error.message, 'error');
+                    throw error;
+                }
+            },
+            
+            // Logout
+            logout: async () => {
+                try {
+                    await auth.signOut();
+                    UI.toast('👋 Sampai jumpa!', 'info');
+                } catch (error) {
+                    UI.toast('Logout gagal', 'error');
+                }
+            }
+        };
+
+        // ========================================
+        // 🎨 UI HELPERS
+        // ========================================
+        UI.updateAuthUI = (isLoggedIn) => {
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+            const userName = document.getElementById('user-name');
+            const userAvatar = document.getElementById('user-avatar');
+            
+            if (isLoggedIn && AppState.currentUser) {
+                authButtons.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+                userName.textContent = AppState.currentUser.username;
+                userAvatar.textContent = (AppState.currentUser.username || 'U').charAt(0).toUpperCase();
+            } else {
+                authButtons.classList.remove('hidden');
+                userMenu.classList.add('hidden');
+            }
+        };
+
+        // ========================================
+        // 🚀 APP INITIALIZATION
+        // ========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize auth
+            Auth.init();
+            
+            // Setup data subscription
+            DataService.subscribe(() => {
+                // Re-render if needed
+                if (AppState.currentView) {
+                    Actions.renderCurrentView();
+                }
             });
-            toast('Akun berhasil dibuat! Silakan login 🎉','ok');
-            V.auth();
-        } catch { toast('Gagal mendaftar, coba lagi','err'); btn.disabled=false; btn.textContent='Buat Akun'; }
-    },
-
-    logout() {
-        S.user=null; sessionStorage.removeItem('noc_u');
-        renderNav(); V.auth();
-        toast('Sampai jumpa! 👋','inf');
-    },
-
-    async createPost(e) {
-        e.preventDefault();
-        const title   = document.getElementById('pt')?.value?.trim();
-        const content = document.getElementById('pc')?.value?.trim();
-        if (!title||!content) { toast('Judul dan isi harus diisi','err'); return; }
-        V.skeleton();
-        try {
-            await api(API.posts, {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({data:{postid:Date.now().toString(),userid:S.user.userid,username:S.user.username,title,content,timestamp:new Date().toISOString(),category:S.cat,views:'0'}})
+            
+            // Global event listeners
+            document.getElementById('search-toggle').onclick = () => {
+                document.getElementById('search-bar').classList.toggle('hidden');
+                if (!document.getElementById('search-bar').classList.contains('hidden')) {
+                    document.getElementById('global-search').focus();
+                }
+            };
+            
+            document.getElementById('search-close').onclick = () => {
+                document.getElementById('search-bar').classList.add('hidden');
+                document.getElementById('global-search').value = '';
+            };
+            
+            document.getElementById('notification-toggle').onclick = () => {
+                UI.toast('🔔 Fitur notifikasi akan segera hadir!', 'info');
+            };
+            
+            document.getElementById('user-avatar-btn').onclick = () => {
+                document.getElementById('user-dropdown').classList.toggle('hidden');
+            };
+            
+            // Close dropdown when clicking outside
+            document.onclick = (e) => {
+                if (!e.target.closest('#user-avatar-btn')) {
+                    document.getElementById('user-dropdown').classList.add('hidden');
+                }
+            };
+            
+            // Auth buttons
+            document.getElementById('login-btn').onclick = () => {
+                UI.showAuthModal('login');
+            };
+            
+            document.getElementById('signup-btn').onclick = () => {
+                UI.showAuthModal('signup');
+            };
+            
+            document.getElementById('logout-btn').onclick = async () => {
+                await Auth.logout();
+            };
+            
+            // User dropdown actions
+            document.querySelectorAll('#user-dropdown [data-action]').forEach(item => {
+                item.onclick = (e) => {
+                    e.preventDefault();
+                    const action = item.dataset.action;
+                    document.getElementById('user-dropdown').classList.add('hidden');
+                    
+                    if (action === 'profile' && AppState.currentUser) {
+                        Actions.navigateTo('profile', { currentProfileId: AppState.currentUser.userid });
+                    } else if (action === 'bookmarks') {
+                        UI.toast('🔖 Fitur bookmark akan segera hadir!', 'info');
+                    } else if (action === 'settings') {
+                        UI.toast('⚙️ Pengaturan akan segera hadir!', 'info');
+                    }
+                };
             });
-            await wait(1800); await loadAll(); V.posts();
-            toast('Thread berhasil dibuat! ✨','ok');
-        } catch { toast('Gagal membuat thread','err'); V.posts(); }
-    },
-
-    async viewPost(postId) {
-        S.postId = postId;
-        if (!S.db.views.some(v=>v.postid===postId&&v.userid===S.user.userid)) {
-            const nv = {viewid:Date.now().toString(),postid:postId,userid:S.user.userid};
-            S.db.views.push(nv);
-            api(API.views,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:nv})}).catch(()=>{});
-        }
-        V.postDetail();
-    },
-
-    async createComment(e, postId, parentId='root') {
-        e.preventDefault();
-        const inpId = parentId==='root' ? 'cmt-inp' : 'ri-'+parentId;
-        const inp   = document.getElementById(inpId);
-        const txt   = inp?.value?.trim();
-        if (!txt) return;
-        V.skeleton();
-        try {
-            await api(API.comments, {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({data:{commentid:Date.now().toString(),postid:postId,userid:S.user.userid,username:S.user.username,content:txt,timestamp:new Date().toISOString(),parent_comment_id:parentId}})
+            
+            // Home view actions
+            document.addEventListener('click', (e) => {
+                const action = e.target.closest('[data-action]')?.dataset.action;
+                if (!action) return;
+                
+                e.preventDefault();
+                
+                switch(action) {
+                    case 'explore-categories':
+                        Actions.navigateTo('categories');
+                        break;
+                    case 'view-guidelines':
+                        UI.toast('📖 Panduan forum akan segera tersedia!', 'info');
+                        break;
+                    case 'view-all-posts':
+                        Actions.navigateTo('categories');
+                        break;
+                    case 'new-post':
+                        if (!AppState.currentUser) {
+                            UI.toast('Login untuk membuat thread', 'info');
+                            return;
+                        }
+                        Actions.navigateTo('new-post', { currentCategory: e.target.closest('[data-category]')?.dataset.category });
+                        break;
+                    case 'edit-profile':
+                        UI.toast('✏️ Edit profil akan segera hadir!', 'info');
+                        break;
+                    case 'send-message':
+                        UI.toast('💬 Fitur pesan akan segera hadir!', 'info');
+                        break;
+                }
             });
-            await wait(1400); await loadAll(); V.postDetail();
-            toast('Komentar terkirim!','ok');
-        } catch { toast('Gagal mengirim komentar','err'); V.postDetail(); }
-    },
-
-    async likePost(postId) {
-        if (S.db.likes.some(l=>l.postid===postId&&l.userid===S.user.userid)) {
-            toast('Kamu sudah menyukai thread ini','inf'); return;
-        }
-        const nl = {likeid:Date.now().toString(),postid:postId,userid:S.user.userid};
-        S.db.likes.push(nl);
-        try {
-            await api(API.likes,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:nl})});
-            V.postDetail(); toast('Disukai! ❤','ok');
-        } catch { toast('Gagal menyukai thread','err'); }
-    },
-
-    confirmDel(postId) {
-        const ov = openModal(`
-        <div style="text-align:center">
-            <p style="font-size:2.5rem;margin-bottom:.9rem">🗑️</p>
-            <h3 class="cinzel" style="font-size:1.1rem;color:#ccc;margin-bottom:.6rem">Hapus Thread?</h3>
-            <p style="color:#444;font-size:.95rem;margin-bottom:1.6rem;max-width:320px;margin-left:auto;margin-right:auto">Tindakan ini permanen. Thread beserta semua komentarnya akan hilang.</p>
-            <div style="display:flex;gap:.8rem;justify-content:center">
-                <button class="btn btn-ghost" id="c-del">Batal</button>
-                <button class="btn btn-pri" id="ok-del" style="background:#7f1d1d">Ya, Hapus</button>
-            </div>
-        </div>`);
-        $('#c-del').onclick  = () => ov.remove();
-        $('#ok-del').onclick = async () => { ov.remove(); await A.deletePost(postId); };
-    },
-
-    async deletePost(postId) {
-        V.skeleton();
-        try {
-            await api(`${API.posts}/postid/${postId}`,{method:'DELETE'});
-            await wait(2000); await loadAll(); V.posts();
-            toast('Thread dihapus','inf');
-        } catch { toast('Gagal menghapus','err'); V.posts(); }
-    },
-
-    async boot(skipSaved=false) {
-        if (!skipSaved) {
-            const saved = sessionStorage.getItem('noc_u');
-            if (saved) S.user = JSON.parse(saved);
-        }
-        if (!S.user) { V.auth(); return; }
-        renderNav(); V.skeleton();
-        try { await loadAll(); V.categories(); }
-        catch {
-            app.innerHTML = `
-            <div style="text-align:center;padding:6rem 0">
-                <p style="font-size:2.5rem">⚡</p>
-                <h3 class="cinzel" style="color:var(--txt3);font-size:.8rem;letter-spacing:2px;text-transform:uppercase;margin:1.2rem 0 .5rem">Koneksi Bermasalah</h3>
-                <p style="color:#2a2a2a;font-size:.95rem">Gagal memuat data forum. Periksa koneksi internet.</p>
-                <button class="btn btn-pri" style="margin-top:1.5rem" onclick="A.boot()">Coba Lagi</button>
-            </div>`;
-        }
-    },
-};
-
-// expose for onclick attributes
-window.A = A;
-window.V = V;
-
-// ── INIT ──
-A.boot();
-});
-</script>
+            
+            // Auth Modal
+            window.UI.showAuthModal = (mode = 'login') => {
+                const modal = document.getElementById('modal-overlay');
+                const content = document.getElementById('modal-content');
+                
+                content.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-gothic text-xl font-bold">${mode === 'login' ? '🔐 Login' : '✨ Buat Akun'}</h3>
+                            <button id="modal-close" class="btn btn-ghost btn-icon">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        ${mode === 'login' ? `
+                            <form id="auth-form">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium mb-2">Email</label>
+                                    <input type="email" id="auth-email" class="form-input rounded-lg" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium mb-2">Password</label>
+                                    <input type="password" id="auth-password" class="form-input rounded-lg" required>
+                                </div>
+                                <button type="submit" class="w-full btn btn-primary">Login</button>
+                            </form>
+                            <p class="text-center mt-4 text-sm text-gray-400">
+                                Belum punya akun? 
+                                <button class="text-magic-400 hover:underline" onclick="UI.showAuthModal('signup')">Daftar di sini</button>
+                            </p>
+                        ` : `
+                            <form id="auth-form">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium mb-2">Username</label>
+                                    <input type="text" id="auth-username" class="form-input rounded-lg" required minlength="3">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium mb-2">Email</label>
+                                    <input type="email" id="auth-email" class="form-input rounded-lg" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium mb-2">Password</label>
+                                    <input type="password" id="auth-password" class="form-input rounded-lg" required minlength="6">
+                                    <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium mb-2">Berapa lama bermain sulap?</label>
+                                    <select id="auth-lama-sulap" class="form-select rounded-lg" required>
+                                        <option value="">Pilih...</option>
+                                        <option value="Kurang dari 1 tahun">Kurang dari 1 tahun</option>
+                                        <option value="1-3 tahun">1-3 tahun</option>
+                                        <option value="3-5 tahun">3-5 tahun</option>
+                                        <option value="Lebih dari 5 tahun">Lebih dari 5 tahun</option>
+                                    </select>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium mb-2">Aliran sulap yang diminati?</label>
+                                    <select id="auth-aliran-sulap" class="form-select rounded-lg" required>
+                                        <option value="">Pilih...</option>
+                                        <option value="Mentalism">Mentalism</option>
+                                        <option value="Sleight of Hand">Sleight of Hand</option>
+                                        <option value="Illusionism">Illusionism</option>
+                                        <option value="Close-up Magic">Close-up Magic</option>
+                                        <option value="Stage Magic">Stage Magic</option>
+                                        <option value="Comedy Magic">Comedy Magic</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full btn btn-primary">Daftar Sekarang</button>
+                            </form>
+                            <p class="text-center mt-4 text-sm text-gray-400">
+                                Sudah punya akun? 
+                                <button class="text-magic-400 hover:underline" onclick="UI.showAuthModal('login')">Login di sini</button>
+                            </p>
+                        `}
+                    </div>
+                `;
+                
+                modal.classList.remove('hidden');
+                
+                // Close modal
+                document.getElementById('modal-close').onclick = () => {
+                    modal.classList.add('hidden');
+                };
+                
+                // Form submit
+                document.getElementById('auth-form').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('auth-email').value;
+                    const password = document.getElementById('auth-password').value;
+                    
+                    try {
+                        if (mode === 'login') {
+                            await Auth.login(email, password);
+                        } else {
+                            await Auth.signup({
+                                username: document.getElementById('auth-username').value,
+                                email,
+                                password,
+                                lama_sulap: document.getElementById('auth-lama-sulap').value,
+                                aliran_sulap: document.getElementById('auth-aliran-sulap').value
+                            });
+                            // Switch to login after successful signup
+                            setTimeout(() => UI.showAuthModal('login'), 1500);
+                        }
+                        modal.classList.add('hidden');
+                    } catch (err) {
+                        // Error already shown via toast
+                    }
+                };
+            };
+            
+            // Initial render
+            Actions.navigateTo('home');
+            
+            // Update online status periodically
+            if (AppState.currentUser) {
+                setInterval(async () => {
+                    await db.collection('users').doc(AppState.currentUser.userid).update({
+                        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                        isOnline: true
+                    });
+                }, 30000);
+            }
+        });
+    </script>
 </body>
 </html>
