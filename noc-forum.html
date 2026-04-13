@@ -2,20 +2,18 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOC FORUM • Professional Magic Community</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NOC FORUM • Gothic Magic Community</title>
     
-    <!-- Fonts & Icons -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,33 +22,20 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
                         gothic: ['Cinzel', 'serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
                     },
                     colors: {
-                        navy: { 50: '#f8fafc', 100: '#f1f5f9', 800: '#1e293b', 900: '#0f172a' },
-                        magic: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
-                        accent: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'slide-in': 'slideIn 0.3s ease-out',
-                        'fade-in': 'fadeIn 0.4s ease-out'
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' }
-                        },
-                        slideIn: {
-                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
-                            '100%': { transform: 'translateX(0)', opacity: '1' }
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' }
+                        gothic: {
+                            bg: '#0a0a0f', card: '#11111a', border: '#2a2a3a',
+                            text: '#e8e8f0', muted: '#88889a', accent: '#8b0000',
+                            gold: '#c9a961', goldHover: '#d4b87a'
                         }
+                    },
+                    animation: { 'fade-in': 'fadeIn 0.4s ease-out', 'slide-up': 'slideUp 0.3s ease-out' },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
                     }
                 }
             }
@@ -58,1890 +43,903 @@
     </script>
     
     <style>
-        /* === BASE STYLES === */
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
-            min-height: 100vh;
-            line-height: 1.6;
+            font-family: 'Cormorant Garamond', serif; 
+            background: radial-gradient(ellipse at top, #1a1a2e 0%, transparent 70%), #0a0a0f;
+            color: #e8e8f0; min-height: 100vh; line-height: 1.7; position: relative;
         }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, #8b0000, #c9a961, #8b0000, transparent); z-index: 100;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #11111a; }
+        ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8b0000; }
         
-        /* === CUSTOM SCROLLBAR === */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
-        
-        /* === FORM ELEMENTS === */
         .form-input, .form-select, .form-textarea {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid #475569;
-            color: #f1f5f9;
-            padding: 0.75rem 0;
-            width: 100%;
+            background: #0f0f16; border: 1px solid #2a2a3a; border-bottom: 2px solid #3a3a4a;
+            color: #e8e8f0; padding: 0.875rem 1rem; width: 100%; font-family: inherit;
             transition: all 0.3s ease;
-            font-size: 1rem;
         }
         .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-bottom-color: #3b82f6;
-            box-shadow: 0 1px 0 0 #3b82f6;
+            outline: none; border-bottom-color: #c9a961; background: #14141e;
         }
-        .form-input::placeholder, .form-textarea::placeholder { color: #64748b; }
+        .form-input::placeholder { color: #55556a; font-style: italic; }
         
-        /* === BUTTONS === */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 1rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.75rem 1.75rem; font-family: 'Cinzel', serif; font-weight: 600;
+            font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;
+            transition: all 0.3s ease; cursor: pointer; border: none; position: relative;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+            background: linear-gradient(135deg, #8b0000, #6b0000); color: #f8f8fa;
+            border: 1px solid #a50000; box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
         }
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #a50000, #8b0000);
+            box-shadow: 0 6px 25px rgba(139, 0, 0, 0.6); transform: translateY(-2px);
         }
-        .btn-primary:active { transform: translateY(0); }
         .btn-primary:disabled {
-            background: #475569;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+            background: #2a2a3a; border-color: #3a3a4a; color: #66667a;
+            cursor: not-allowed; transform: none; box-shadow: none;
         }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #3b82f6;
-            color: #3b82f6;
+        .btn-gold {
+            background: linear-gradient(135deg, #c9a961, #b89650); color: #0a0a0f;
+            border: 1px solid #d4b87a;
         }
-        .btn-outline:hover {
-            background: rgba(59, 130, 246, 0.1);
-        }
-        .btn-ghost {
-            background: transparent;
-            color: #94a3b8;
-            padding: 0.5rem;
-        }
-        .btn-ghost:hover {
-            color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-        }
-        .btn-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            padding: 0;
-            border-radius: 50%;
-        }
+        .btn-gold:hover { background: linear-gradient(135deg, #d4b87a, #c9a961); transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 1px solid #3a3a4a; color: #c9a961; }
+        .btn-outline:hover { border-color: #c9a961; background: rgba(201, 169, 97, 0.08); }
+        .btn-ghost { background: transparent; color: #88889a; padding: 0.5rem; }
+        .btn-ghost:hover { color: #c9a961; }
         
-        /* === CARDS === */
         .card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            animation: float 6s ease-in-out infinite;
+            background: linear-gradient(145deg, #11111a, #0d0d14);
+            border: 1px solid #2a2a3a; position: relative; overflow: hidden;
         }
-        .card:hover {
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.2);
-            transform: translateY(-4px);
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #8b0000, #c9a961, #8b0000, transparent);
         }
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-        }
-        .card-body { padding: 1.5rem; }
-        .card-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid rgba(59, 130, 246, 0.2);
-        }
+        .card:hover { border-color: #3a3a4a; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); }
+        .card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #2a2a3a; background: rgba(17, 17, 26, 0.8); }
+        .card-body { padding: 1.25rem; }
+        .card-footer { padding: 0.875rem 1.25rem; border-top: 1px solid #2a2a3a; background: rgba(17, 17, 26, 0.5); }
         
-        /* === CATEGORY CARDS === */
+        .nav-btn {
+            font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 1px;
+            padding: 0.5rem 1rem; color: #88889a; transition: all 0.2s;
+            display: flex; align-items: center; gap: 0.35rem;
+        }
+        .nav-btn:hover, .nav-btn.active { color: #c9a961; }
+        .nav-btn.active { border-bottom: 2px solid #c9a961; }
+        
         .category-card {
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
+            cursor: pointer; text-align: center; padding: 1.5rem 1rem;
+            transition: all 0.3s ease; border: 1px solid #2a2a3a;
         }
-        .category-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 0;
-        }
-        .category-card:hover::before { opacity: 1; }
-        .category-card .icon {
-            font-size: 2rem;
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            transition: transform 0.3s ease;
-        }
-        .category-card:hover .icon { transform: scale(1.1); }
+        .category-card:hover { border-color: #8b0000; background: rgba(139, 0, 0, 0.08); transform: translateY(-3px); }
+        .category-icon { font-size: 2rem; color: #c9a961; margin-bottom: 0.75rem; display: block; }
+        .category-name { font-family: 'Cinzel', serif; font-weight: 600; color: #e8e8f0; font-size: 1.1rem; }
         
-        /* === POST ITEMS === */
-        .post-item {
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .post-item:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
-        }
-        .post-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-        .post-stats {
-            display: flex;
-            gap: 1.5rem;
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-        .post-stats span {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
+        .post-item { cursor: pointer; transition: all 0.2s ease; border-left: 3px solid transparent; }
+        .post-item:hover { border-left-color: #8b0000; background: rgba(139, 0, 0, 0.05); }
+        .post-title { font-family: 'Cinzel', serif; font-weight: 600; color: #e8e8f0; transition: color 0.2s; }
+        .post-item:hover .post-title { color: #c9a961; }
         
-        /* === COMMENTS === */
-        .comment {
-            border-left: 3px solid #3b82f6;
-            padding-left: 1rem;
-            margin-left: 0.5rem;
-        }
-        .comment.nested {
-            margin-left: 2.5rem;
-            border-left-color: #60a5fa;
-        }
-        .comment-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-        .comment-avatar {
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.75rem;
-            color: white;
-        }
+        .comment { border-left: 2px solid #3a3a4a; padding-left: 1rem; margin-left: 0.5rem; }
+        .comment.nested { margin-left: 2rem; border-left-color: #8b0000; }
+        .comment-author { font-family: 'Cinzel', serif; font-size: 0.9rem; color: #c9a961; cursor: pointer; }
+        .comment-author:hover { text-decoration: underline; }
         
-        /* === PROFILE === */
-        .profile-header {
-            position: relative;
-            padding: 2rem;
-            text-align: center;
-        }
-        .profile-cover {
-            height: 120px;
-            background: linear-gradient(135deg, #1e293b, #3b82f6);
-            border-radius: 1.5rem 1.5rem 0 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .profile-cover::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
         .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 4px solid #1e293b;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            margin: -50px auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: white;
-            position: relative;
-            z-index: 1;
-        }
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            padding: 1rem;
-            text-align: center;
-        }
-        .profile-stat {
-            padding: 0.75rem;
-            border-radius: 1rem;
-            background: rgba(59, 130, 246, 0.1);
-        }
-        .profile-stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #3b82f6;
-        }
-        .profile-stat-label {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            width: 80px; height: 80px; border: 2px solid #c9a961;
+            background: linear-gradient(135deg, #1a1a2e, #0a0a0f);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Cinzel', serif; font-size: 2rem; color: #c9a961;
+            margin: 0 auto 1rem;
         }
         
-        /* === BADGES & TAGS === */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .badge-primary { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-        .badge-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-        .badge-accent { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        
-        .tag {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: rgba(59, 130, 246, 0.15);
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            color: #93c5fd;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            transition: all 0.2s ease;
-        }
-        .tag:hover {
-            background: rgba(59, 130, 246, 0.3);
-            color: #dbeafe;
-        }
-        
-        /* === NAVIGATION === */
-        .nav-link {
-            position: relative;
-            padding: 0.5rem 1rem;
-            color: #94a3b8;
-            transition: color 0.2s ease;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #3b82f6;
-        }
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70%;
-            height: 2px;
-            background: #3b82f6;
-            border-radius: 9999px;
-        }
-        
-        /* === TOAST NOTIFICATIONS === */
-        #toast-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            max-width: 350px;
-        }
-        .toast {
-            padding: 1rem 1.25rem;
-            border-radius: 1rem;
-            background: rgba(30, 41, 59, 0.95);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            animation: slide-in 0.3s ease-out;
-        }
-        .toast.success { border-left: 4px solid #22c55e; }
-        .toast.error { border-left: 4px solid #ef4444; }
-        .toast.info { border-left: 4px solid #3b82f6; }
-        .toast.warning { border-left: 4px solid #f59e0b; }
-        
-        /* === UTILITIES === */
         .hidden { display: none !important; }
-        .animate-fade-in { animation: fade-in 0.4s ease-out; }
-        .text-gradient {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .divider {
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.3), transparent);
-            margin: 1.5rem 0;
+        .animate-fade { animation: fade-in 0.4s ease-out; }
+        .animate-slide { animation: slide-up 0.3s ease-out; }
+        .divider { height: 1px; background: linear-gradient(to right, transparent, #2a2a3a, transparent); margin: 1.25rem 0; }
+        .text-gold { color: #c9a961; } .text-accent { color: #8b0000; } .text-muted { color: #88889a; }
+        
+        @media (max-width: 640px) {
+            .btn { padding: 0.625rem 1.25rem; font-size: 0.8rem; }
+            .card-body { padding: 1rem; }
+            .post-stats { flex-wrap: wrap; gap: 0.5rem; }
         }
         
-        /* === LOADING STATES === */
-        .skeleton {
-            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 0.5rem;
+        .loader {
+            width: 40px; height: 40px; border: 3px solid #2a2a3a;
+            border-top-color: #c9a961; border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 2rem auto;
         }
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* === RESPONSIVE === */
-        @media (max-width: 768px) {
-            .profile-stats { grid-template-columns: 1fr; }
-            .post-stats { flex-wrap: wrap; gap: 0.75rem; }
-            .nav-desktop { display: none; }
-        }
+        #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; max-width: 320px; }
+        .toast { padding: 0.875rem 1.25rem; background: #11111a; border: 1px solid #2a2a3a; border-left: 3px solid #c9a961; font-size: 0.9rem; animation: slide-up 0.3s ease-out; display: flex; align-items: center; gap: 0.75rem; }
+        .toast.error { border-left-color: #8b0000; } .toast.success { border-left-color: #2d7d4e; }
+        #modal-overlay { background: rgba(5, 5, 10, 0.92); backdrop-filter: blur(4px); }
     </style>
 </head>
-<body class="antialiased">
-
-    <!-- Toast Container -->
+<body>
     <div id="toast-container"></div>
-
-    <!-- Main App Container -->
     <div id="app" class="min-h-screen flex flex-col">
         
         <!-- Header -->
-        <header class="sticky top-0 z-50 bg-navy-900/90 backdrop-blur-lg border-b border-magic-600/20">
-            <div class="container mx-auto max-w-6xl px-4 py-3">
+        <header class="sticky top-0 z-40 bg-gothic-bg/95 border-b border-gothic-border">
+            <div class="max-w-4xl mx-auto px-4 py-3">
                 <div class="flex items-center justify-between">
-                    <!-- Logo & Brand -->
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center shadow-lg shadow-magic-500/30">
-                            <i class="fas fa-magic text-white text-lg"></i>
-                        </div>
+                        <span class="text-2xl">🎩</span>
                         <div>
-                            <h1 class="font-gothic text-xl font-bold text-gradient">NOC FORUM</h1>
-                            <p class="text-xs text-gray-400 -mt-0.5">Professional Magic Community</p>
+                            <h1 class="font-gothic text-lg font-bold text-gold tracking-wide">NOC FORUM</h1>
+                            <p class="text-xs text-muted -mt-0.5 italic">Ars Magica • Est. 2025</p>
                         </div>
                     </div>
-                    
-                    <!-- Desktop Navigation -->
-                    <nav class="nav-desktop hidden md:flex items-center gap-1">
-                        <a href="#" class="nav-link active" data-view="home"><i class="fas fa-home mr-1"></i>Home</a>
-                        <a href="#" class="nav-link" data-view="categories"><i class="fas fa-layer-group mr-1"></i>Kategori</a>
-                        <a href="#" class="nav-link" data-view="activity"><i class="fas fa-fire mr-1"></i>Aktifitas</a>
-                        <a href="#" class="nav-link" data-view="members"><i class="fas fa-users mr-1"></i>Member</a>
-                    </nav>
-                    
-                    <!-- User Actions -->
-                    <div class="flex items-center gap-2">
-                        <button id="search-toggle" class="btn btn-ghost btn-icon" title="Cari">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <button id="notification-toggle" class="btn btn-ghost btn-icon relative" title="Notifikasi">
-                            <i class="fas fa-bell"></i>
-                            <span id="notification-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-accent-500 text-[10px] rounded-full flex items-center justify-center">3</span>
-                        </button>
-                        <div id="auth-buttons">
-                            <button id="login-btn" class="btn btn-outline text-sm px-4 py-2">Login</button>
-                            <button id="signup-btn" class="btn btn-primary text-sm px-4 py-2">Daftar</button>
-                        </div>
-                        <div id="user-menu" class="hidden relative">
-                            <button id="user-avatar-btn" class="flex items-center gap-2 hover:bg-navy-800 rounded-full px-2 py-1 transition">
-                                <div id="user-avatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center text-sm font-bold">U</div>
-                                <span id="user-name" class="hidden md:inline text-sm font-medium">User</span>
-                                <i class="fas fa-chevron-down text-xs text-gray-400"></i>
-                            </button>
-                            <!-- Dropdown Menu -->
-                            <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 card py-2 animate-fade-in">
-                                <a href="#" class="block px-4 py-2 hover:bg-navy-800 transition" data-action="profile">
-                                    <i class="fas fa-user mr-2"></i>Profil Saya
-                                </a>
-                                <a href="#" class="block px-4 py-2 hover:bg-navy-800 transition" data-action="bookmarks">
-                                    <i class="fas fa-bookmark mr-2"></i>Bookmark
-                                </a>
-                                <a href="#" class="block px-4 py-2 hover:bg-navy-800 transition" data-action="settings">
-                                    <i class="fas fa-cog mr-2"></i>Pengaturan
-                                </a>
-                                <div class="divider my-1"></div>
-                                <button id="logout-btn" class="w-full text-left px-4 py-2 hover:bg-navy-800 transition text-red-400">
-                                    <i class="fas fa-sign-out-alt mr-2"></i>Keluar
-                                </button>
-                            </div>
-                        </div>
+                    <div class="flex items-center gap-1">
+                        <button id="nav-home" class="nav-btn active" title="Home">⌂ Home</button>
+                        <button id="nav-back" class="nav-btn hidden" title="Kembali">← Back</button>
                     </div>
                 </div>
-                
-                <!-- Search Bar (Collapsible) -->
-                <div id="search-bar" class="hidden mt-3">
-                    <div class="relative">
-                        <input type="text" id="global-search" placeholder="Cari thread, member, atau topik..." class="form-input pl-10 pr-4 py-2 rounded-full bg-navy-800/50 border-magic-600/30 focus:border-magic-500">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <button id="search-close" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
-                            <i class="fas fa-times"></i>
-                        </button>
+                <div id="nav-user" class="mt-3 pt-3 border-t border-gothic-border flex items-center justify-between">
+                    <div id="auth-links">
+                        <button id="btn-login" class="text-sm text-gold hover:text-gothic-goldHover transition">✦ Login</button>
+                        <span class="text-muted mx-2">•</span>
+                        <button id="btn-signup" class="text-sm text-gold hover:text-gothic-goldHover transition">✦ Daftar</button>
+                    </div>
+                    <div id="user-info" class="hidden flex items-center gap-3">
+                        <span class="text-sm">Welcome, <span id="user-name-display" class="text-gold font-gothic"></span></span>
+                        <button id="btn-logout" class="text-xs text-muted hover:text-accent transition">[Keluar]</button>
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Breadcrumb Navigation -->
-        <div id="breadcrumb" class="container mx-auto max-w-6xl px-4 py-2 hidden">
-            <nav class="flex items-center gap-2 text-sm text-gray-400">
-                <a href="#" class="hover:text-magic-400 transition" data-breadcrumb="home"><i class="fas fa-home"></i></a>
-                <i class="fas fa-chevron-right text-xs"></i>
-                <span id="breadcrumb-current" class="text-gray-200">Home</span>
-            </nav>
-        </div>
+        <!-- Breadcrumb -->
+        <nav id="breadcrumb" class="max-w-4xl mx-auto px-4 py-2 hidden">
+            <div class="flex items-center gap-2 text-sm text-muted">
+                <button id="crumb-home" class="hover:text-gold transition">Home</button>
+                <span>/</span>
+                <span id="crumb-current" class="text-gothic-text">Kategori</span>
+            </div>
+        </nav>
 
-        <!-- Main Content Area -->
-        <main id="main-content" class="container mx-auto max-w-6xl px-4 py-6 flex-grow">
-            <!-- Dynamic content will be rendered here -->
-        </main>
-
-        <!-- Floating Action Button (Mobile) -->
-        <button id="fab-new-post" class="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 text-white shadow-lg shadow-magic-500/40 flex items-center justify-center z-40 hover:scale-105 transition-transform">
-            <i class="fas fa-plus text-xl"></i>
-        </button>
+        <!-- Main Content -->
+        <main id="main-content" class="flex-grow max-w-4xl mx-auto w-full px-4 py-4"></main>
 
         <!-- Footer -->
-        <footer class="border-t border-navy-700/50 py-6 mt-8">
-            <div class="container mx-auto max-w-6xl px-4">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="text-center md:text-left">
-                        <p class="font-gothic text-lg font-bold text-gradient">NOC FORUM</p>
-                        <p class="text-sm text-gray-400 mt-1">dibuat untuk happy, kalo ga happy pergi by Prof.Z - nocfams 2025</p>
-                    </div>
-                    <div class="flex items-center gap-4 text-sm text-gray-400">
-                        <a href="#" class="hover:text-magic-400 transition"><i class="fab fa-whatsapp mr-1"></i>WhatsApp</a>
-                        <a href="#" class="hover:text-magic-400 transition"><i class="fas fa-shield-alt mr-1"></i>Privacy</a>
-                        <a href="#" class="hover:text-magic-400 transition"><i class="fas fa-file-alt mr-1"></i>Terms</a>
-                    </div>
-                    <p class="text-xs text-gray-500">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
-                </div>
+        <footer class="border-t border-gothic-border py-6 mt-4">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <p class="font-gothic text-gold text-sm">✦ NOC FORUM ✦</p>
+                <p class="text-muted text-xs mt-1 italic">dibuat untuk happy, kalo ga happy pergi by Prof.Z — nocfams 2025</p>
+                <p class="text-muted text-xs mt-2">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
             </div>
         </footer>
-
     </div>
 
-    <!-- Modal Container -->
-    <div id="modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div id="modal-content" class="card w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in">
-            <!-- Modal content will be injected here -->
-        </div>
+    <!-- Modal -->
+    <div id="modal-overlay" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div id="modal-content" class="card w-full max-w-md animate-fade"></div>
     </div>
 
-    <!-- Firebase Configuration & App Logic -->
     <script>
         // ========================================
-        // 🔧 FIREBASE CONFIGURATION
+        // 🔥 FIREBASE CONFIGURATION (YOUR CONFIG)
         // ========================================
-        // ⚠️ GANTI DENGAN CONFIG FIREBASE ANDA
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
+            authDomain: "magicnoc-125b6.firebaseapp.com",
+            databaseURL: "https://magicnoc-125b6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "magicnoc-125b6",
+            storageBucket: "magicnoc-125b6.firebasestorage.app",
+            messagingSenderId: "321388594743",
+            appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
         };
         
         // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        const storage = firebase.storage();
         
         // Enable offline persistence
-        db.enablePersistence().catch(err => {
-            if (err.code === 'failed-precondition') {
-                console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-            } else if (err.code === 'unimplemented') {
-                console.log('Browser doesn\'t support persistence');
-            }
-        });
+        db.enablePersistence().catch(err => console.log('Persistence error:', err.code));
 
         // ========================================
-        // 🎯 APP STATE & CONFIG
+        // ⚙️ CONFIG & STATE
         // ========================================
-        const AppState = {
-            currentUser: null,
-            currentView: 'home',
-            currentCategory: null,
-            currentPostId: null,
-            currentProfileId: null,
-            searchQuery: '',
-            isLoading: false,
-            notifications: [],
-            unreadCount: 0
+        const CONFIG = {
+            CATEGORIES: [
+                { id: 'cardmagic', name: '✦ Card Magic', icon: '♠' },
+                { id: 'coinmagic', name: '✦ Coin Magic', icon: '◉' },
+                { id: 'mentalism', name: '✦ Mentalism', icon: '◈' },
+                { id: 'everydayobject', name: '✦ Everyday Object', icon: '◇' },
+                { id: 'idea', name: '✦ Idea', icon: '✧' },
+                { id: 'market', name: '✦ Market Magic', icon: '❖' }
+            ]
         };
 
-        const CATEGORIES = [
-            { id: 'cardmagic', name: 'Card Magic', icon: 'fa-hand-sparkles', color: 'from-pink-500 to-rose-600' },
-            { id: 'coinmagic', name: 'Coin Magic', icon: 'fa-coins', color: 'from-amber-500 to-orange-600' },
-            { id: 'mentalism', name: 'Mentalism', icon: 'fa-brain', color: 'from-purple-500 to-indigo-600' },
-            { id: 'everydayobject', name: 'Everyday Object', icon: 'fa-lightbulb', color: 'from-cyan-500 to-blue-600' },
-            { id: 'idea', name: 'Idea & Concepts', icon: 'fa-lightbulb', color: 'from-emerald-500 to-teal-600' },
-            { id: 'market', name: 'Market Magic', icon: 'fa-store', color: 'from-violet-500 to-purple-600' }
-        ];
-
-        const USER_LEVELS = [
-            { min: 0, name: 'Novice', badge: '🎴' },
-            { min: 50, name: 'Apprentice', badge: '✨' },
-            { min: 200, name: 'Magician', badge: '🎩' },
-            { min: 500, name: 'Master', badge: '🔮' },
-            { min: 1000, name: 'Grand Master', badge: '👑' }
-        ];
+        const App = {
+            user: null, 
+            view: 'home', 
+            history: ['home'],
+            data: { posts: [], comments: [], likes: [], users: [] },
+            params: {}, 
+            loading: false, 
+            unsubscribers: []
+        };
 
         // ========================================
-        // 🎨 UI COMPONENTS & RENDERERS
+        // 🎨 UI RENDERERS
         // ========================================
         const UI = {
-            // Toast Notifications
-            toast: (message, type = 'info', duration = 4000) => {
-                const container = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                
-                const icons = {
-                    success: 'fa-check-circle',
-                    error: 'fa-exclamation-circle',
-                    info: 'fa-info-circle',
-                    warning: 'fa-exclamation-triangle'
-                };
-                
-                toast.innerHTML = `
-                    <i class="fas ${icons[type]} text-lg"></i>
-                    <span>${message}</span>
-                `;
-                
-                container.appendChild(toast);
-                
-                // Auto remove
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(100px)';
-                    setTimeout(() => toast.remove(), 300);
-                }, duration);
+            toast: (msg, type = 'info') => {
+                const el = document.createElement('div');
+                el.className = `toast ${type === 'error' ? 'error' : type === 'success' ? 'success' : ''}`;
+                el.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : '•'}</span> ${msg}`;
+                document.getElementById('toast-container').appendChild(el);
+                setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 4000);
             },
-            
-            // Loading State
-            showLoading: (message = 'Memuat...') => {
-                const main = document.getElementById('main-content');
-                main.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-20 animate-fade-in">
-                        <div class="relative">
-                            <div class="w-16 h-16 border-4 border-navy-700 border-t-magic-500 rounded-full animate-spin"></div>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <i class="fas fa-magic text-magic-400 animate-pulse"></i>
-                            </div>
-                        </div>
-                        <p class="mt-4 text-gray-300">${message}</p>
-                    </div>
-                `;
+
+            loading: (msg = 'Memuat...') => {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="text-center py-12 animate-fade">
+                        <div class="loader"></div>
+                        <p class="text-muted mt-4 italic">${msg}</p>
+                    </div>`;
             },
-            
-            // Render Home View
-            renderHome: () => {
-                const featuredPosts = AppState.posts?.slice(0, 5) || [];
-                const recentActivity = AppState.activities?.slice(0, 8) || [];
-                
-                return `
-                    <!-- Welcome Banner -->
-                    <div class="card p-6 mb-8 bg-gradient-to-r from-navy-800 to-navy-900 border-magic-600/30">
-                        <div class="flex flex-col md:flex-row items-center gap-6">
-                            <div class="flex-1">
-                                <h2 class="font-gothic text-2xl md:text-3xl font-bold mb-2">
-                                    Selamat Datang di <span class="text-gradient">NOC FORUM</span> 🎩
-                                </h2>
-                                <p class="text-gray-300 mb-4">
-                                    Komunitas pesulap profesional untuk berbagi trik, teknik, dan inspirasi. 
-                                    Jelajahi ribuan thread, terhubung dengan member, dan tingkatkan skill sulap Anda.
-                                </p>
-                                <div class="flex flex-wrap gap-3">
-                                    <button class="btn btn-primary" data-action="explore-categories">
-                                        <i class="fas fa-compass"></i> Jelajahi Kategori
-                                    </button>
-                                    <button class="btn btn-outline" data-action="view-guidelines">
-                                        <i class="fas fa-book"></i> Panduan Forum
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="hidden md:block">
-                                <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-magic-500/20 to-accent-500/20 flex items-center justify-center animate-float">
-                                    <i class="fas fa-wand-magic-sparkles text-5xl text-magic-400"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Stats Overview -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                        <div class="card p-4 text-center">
-                            <div class="text-2xl font-bold text-magic-400">${AppState.stats?.totalPosts || 0}</div>
-                            <div class="text-sm text-gray-400">Total Thread</div>
-                        </div>
-                        <div class="card p-4 text-center">
-                            <div class="text-2xl font-bold text-accent-400">${AppState.stats?.totalMembers || 0}</div>
-                            <div class="text-sm text-gray-400">Member Aktif</div>
-                        </div>
-                        <div class="card p-4 text-center">
-                            <div class="text-2xl font-bold text-emerald-400">${AppState.stats?.onlineNow || 0}</div>
-                            <div class="text-sm text-gray-400">Online Sekarang</div>
-                        </div>
-                        <div class="card p-4 text-center">
-                            <div class="text-2xl font-bold text-purple-400">${AppState.stats?.newToday || 0}</div>
-                            <div class="text-sm text-gray-400">Thread Hari Ini</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Featured Posts -->
-                    <div class="mb-8">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-gothic text-xl font-bold">🔥 Thread Terpopuler</h3>
-                            <a href="#" class="text-sm text-magic-400 hover:underline" data-action="view-all-posts">Lihat Semua</a>
-                        </div>
-                        <div class="space-y-4">
-                            ${featuredPosts.map(post => UI.renderPostCard(post, { compact: true })).join('')}
-                        </div>
-                    </div>
-                    
-                    <!-- Recent Activity -->
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-gothic text-xl font-bold">⚡ Aktivitas Terbaru</h3>
-                        </div>
-                        <div class="card divide-y divide-navy-700/50">
-                            ${recentActivity.map(activity => UI.renderActivityItem(activity)).join('')}
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // Render Post Card Component
-            renderPostCard: (post, options = {}) => {
-                const category = CATEGORIES.find(c => c.id === post.category);
-                const author = AppState.users?.find(u => u.userid === post.userid) || {};
-                const comments = AppState.comments?.filter(c => c.postid === post.postid) || [];
-                const likes = AppState.likes?.filter(l => l.postid === post.postid) || [];
-                
-                const userLevel = USER_LEVELS.slice().reverse().find(l => author.reputation >= l.min) || USER_LEVELS[0];
-                
-                return `
-                    <div class="card p-4 post-item hover:border-magic-500/50 transition-all ${options.compact ? '' : 'hover:-translate-y-1'}" 
-                         data-postid="${post.postid}" data-action="view-post">
-                        <div class="flex gap-4">
-                            <!-- Avatar -->
-                            <div class="hidden sm:block">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center text-sm font-bold" title="${author.username || 'Unknown'}">
-                                    ${(author.username || 'U').charAt(0).toUpperCase()}
-                                </div>
-                            </div>
-                            
-                            <!-- Content -->
-                            <div class="flex-1 min-w-0">
-                                <div class="flex flex-wrap items-center gap-2 mb-2">
-                                    ${category ? `<span class="badge badge-primary"><i class="fas ${category.icon}"></i> ${category.name}</span>` : ''}
-                                    ${post.isPinned ? '<span class="badge badge-accent"><i class="fas fa-thumbtack"></i> Pinned</span>' : ''}
-                                    ${post.isSolved ? '<span class="badge badge-success"><i class="fas fa-check"></i> Solved</span>' : ''}
-                                </div>
-                                
-                                <h4 class="font-semibold text-lg hover:text-magic-400 transition line-clamp-2">${post.title}</h4>
-                                
-                                ${!options.compact ? `<p class="text-gray-400 text-sm mt-1 line-clamp-2">${post.content.substring(0, 150)}${post.content.length > 150 ? '...' : ''}</p>` : ''}
-                                
-                                <!-- Meta -->
-                                <div class="flex flex-wrap items-center gap-3 mt-3 text-sm text-gray-400">
-                                    <span class="flex items-center gap-1">
-                                        <span class="text-magic-400 font-medium">${author.username || 'Anonymous'}</span>
-                                        <span class="text-xs">${userLevel.badge} ${userLevel.name}</span>
-                                    </span>
-                                    <span>•</span>
-                                    <span>${new Date(post.timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                    <span>•</span>
-                                    <div class="post-stats">
-                                        <span><i class="fas fa-eye"></i> ${post.views || 0}</span>
-                                        <span><i class="fas fa-comment"></i> ${comments.length}</span>
-                                        <span><i class="fas fa-heart"></i> ${likes.length}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Actions -->
-                            <div class="flex flex-col items-end gap-2">
-                                <button class="btn btn-ghost btn-icon like-btn ${likes.some(l => l.userid === AppState.currentUser?.userid) ? 'text-red-500' : ''}" 
-                                        data-postid="${post.postid}" data-action="toggle-like">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                                <button class="btn btn-ghost btn-icon bookmark-btn ${AppState.currentUser?.bookmarks?.includes(post.postid) ? 'text-accent-400' : ''}" 
-                                        data-postid="${post.postid}" data-action="toggle-bookmark">
-                                    <i class="fas fa-bookmark"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // Render Categories Grid
-            renderCategories: () => {
-                return `
-                    <div class="text-center mb-8">
-                        <h2 class="font-gothic text-2xl md:text-3xl font-bold mb-2">📚 Kategori Forum</h2>
-                        <p class="text-gray-400">Pilih kategori untuk menjelajahi thread sesuai minat Anda</p>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${CATEGORIES.map(cat => `
-                            <div class="card p-6 category-card text-center" data-category="${cat.id}" data-action="view-category">
-                                <div class="icon">
-                                    <i class="fas ${cat.icon}"></i>
-                                </div>
-                                <h3 class="font-gothic text-xl font-bold mb-2">${cat.name}</h3>
-                                <p class="text-sm text-gray-400 mb-4">
-                                    ${UI.getCategoryDescription(cat.id)}
-                                </p>
-                                <div class="flex items-center justify-center gap-4 text-sm text-gray-400">
-                                    <span><i class="fas fa-thread"></i> ${UI.getCategoryStats(cat.id, 'posts')} thread</span>
-                                    <span><i class="fas fa-users"></i> ${UI.getCategoryStats(cat.id, 'members')} member</span>
-                                </div>
+
+            renderHome: () => `
+                <div class="text-center py-8 animate-slide">
+                    <p class="font-gothic text-2xl text-gold mb-2">✦ Selamat Datang ✦</p>
+                    <p class="text-muted italic mb-6">Pilih kategori untuk menjelajahi dunia sulap</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        ${CONFIG.CATEGORIES.map(c => `
+                            <div class="category-card card" data-cat="${c.id}">
+                                <span class="category-icon">${c.icon}</span>
+                                <div class="category-name">${c.name}</div>
                             </div>
                         `).join('')}
                     </div>
-                `;
-            },
-            
-            // Render Single Post Detail
-            renderPostDetail: (post) => {
-                if (!post) return '<p class="text-center text-gray-400 py-10">Post tidak ditemukan</p>';
-                
-                const author = AppState.users?.find(u => u.userid === post.userid) || {};
-                const comments = (AppState.comments?.filter(c => c.postid === post.postid) || []).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-                const likes = AppState.likes?.filter(l => l.postid === post.postid) || [];
-                const userHasLiked = likes.some(l => l.userid === AppState.currentUser?.userid);
-                const userLevel = USER_LEVELS.slice().reverse().find(l => author.reputation >= l.min) || USER_LEVELS[0];
+                </div>
+            `,
+
+            renderCategories: (categoryId) => {
+                const cat = CONFIG.CATEGORIES.find(c => c.id === categoryId);
+                const posts = App.data.posts.filter(p => p.category === categoryId)
+                    .sort((a,b) => (b.timestamp?.toDate?.() || new Date(b.timestamp)) - (a.timestamp?.toDate?.() || new Date(a.timestamp)));
                 
                 return `
-                    <!-- Post Header -->
-                    <div class="card mb-6">
-                        <div class="card-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-magic-500 to-magic-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
-                                    ${(author.username || 'U').charAt(0).toUpperCase()}
-                                </div>
-                                <div>
-                                    <h1 class="font-gothic text-2xl font-bold">${post.title}</h1>
-                                    <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-400">
-                                        <button class="hover:text-magic-400 transition font-medium" data-userid="${author.userid}" data-action="view-profile">
-                                            ${author.username || 'Anonymous'}
-                                        </button>
-                                        <span class="text-xs px-2 py-0.5 rounded-full bg-magic-500/20 text-magic-300">
-                                            ${userLevel.badge} ${userLevel.name}
-                                        </span>
-                                        <span>•</span>
-                                        <span>${new Date(post.timestamp).toLocaleString('id-ID')}</span>
-                                        ${post.edited ? '<span class="text-xs text-gray-500">(diedit)</span>' : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                ${AppState.currentUser?.userid === post.userid ? `
-                                    <button class="btn btn-ghost btn-icon" data-action="edit-post" data-postid="${post.postid}" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-ghost btn-icon text-red-400 hover:text-red-300" data-action="delete-post" data-postid="${post.postid}" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                ` : ''}
-                                <button class="btn btn-ghost btn-icon" title="Share">
-                                    <i class="fas fa-share-alt"></i>
-                                </button>
-                            </div>
+                    <div class="animate-slide">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="font-gothic text-xl text-gold">${cat?.icon} ${cat?.name}</h2>
+                            ${App.user ? `<button id="btn-new-post" class="btn btn-primary text-xs">＋ Thread</button>` : ''}
                         </div>
-                        
-                        <div class="card-body">
-                            <div class="prose prose-invert max-w-none">
-                                ${post.content.replace(/\n/g, '<br>')}
-                            </div>
-                            
-                            ${post.tags?.length ? `
-                                <div class="mt-6 pt-4 border-t border-navy-700/50">
-                                    <div class="flex flex-wrap gap-2">
-                                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="card-footer flex flex-wrap items-center justify-between gap-4">
-                            <div class="flex items-center gap-4">
-                                <button class="flex items-center gap-2 btn btn-outline like-btn ${userHasLiked ? 'bg-red-500/20 border-red-500 text-red-400' : ''}" 
-                                        data-postid="${post.postid}" data-action="toggle-like">
-                                    <i class="fas fa-heart"></i>
-                                    <span>${likes.length} Suka</span>
-                                </button>
-                                <span class="text-gray-400"><i class="fas fa-eye"></i> ${post.views || 0} Dilihat</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="badge badge-primary"><i class="fas fa-layer-group"></i> ${CATEGORIES.find(c => c.id === post.category)?.name}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Comments Section -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="font-gothic text-xl font-bold">💬 Komentar (${comments.length})</h3>
-                        </div>
-                        <div class="card-body">
-                            ${AppState.currentUser ? `
-                                <form id="comment-form" class="mb-6">
-                                    <textarea id="comment-content" placeholder="Tulis komentar Anda..." rows="3" class="form-textarea rounded-lg" required></textarea>
-                                    <div class="flex justify-end mt-3">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-paper-plane"></i> Kirim Komentar
-                                        </button>
-                                    </div>
-                                </form>
-                            ` : `
-                                <div class="text-center py-6 text-gray-400">
-                                    <i class="fas fa-comment-alt text-3xl mb-3"></i>
-                                    <p>Login untuk berpartisipasi dalam diskusi</p>
-                                    <button class="btn btn-outline mt-3" data-action="show-login">Login Sekarang</button>
-                                </div>
-                            `}
-                            
-                            <!-- Comments List -->
-                            <div class="space-y-4" id="comments-list">
-                                ${comments.map(comment => UI.renderComment(comment, comments)).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // Render Comment with Nested Replies
-            renderComment: (comment, allComments, depth = 0) => {
-                const author = AppState.users?.find(u => u.userid === comment.userid) || {};
-                const replies = allComments.filter(c => c.parent_comment_id === comment.commentid);
-                const userLevel = USER_LEVELS.slice().reverse().find(l => author.reputation >= l.min) || USER_LEVELS[0];
-                
-                return `
-                    <div class="comment ${depth > 0 ? 'nested' : ''}" data-commentid="${comment.commentid}">
-                        <div class="comment-header">
-                            <div class="comment-avatar">${(author.username || 'U').charAt(0).toUpperCase()}</div>
-                            <div>
-                                <button class="font-medium hover:text-magic-400 transition text-sm" data-userid="${author.userid}" data-action="view-profile">
-                                    ${author.username || 'Anonymous'}
-                                </button>
-                                <span class="text-xs text-gray-500 ml-2">${userLevel.badge}</span>
-                            </div>
-                            <span class="text-xs text-gray-500 ml-auto">${new Date(comment.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                        <p class="text-sm mb-3">${comment.content}</p>
-                        <div class="flex items-center gap-4 text-xs text-gray-400">
-                            ${AppState.currentUser ? `
-                                <button class="hover:text-magic-400 transition reply-btn" data-commentid="${comment.commentid}">
-                                    <i class="fas fa-reply"></i> Balas
-                                </button>
-                            ` : ''}
-                            ${AppState.currentUser?.userid === comment.userid ? `
-                                <button class="hover:text-magic-400 transition" data-action="edit-comment" data-commentid="${comment.commentid}">Edit</button>
-                                <button class="hover:text-red-400 transition" data-action="delete-comment" data-commentid="${comment.commentid}">Hapus</button>
-                            ` : ''}
-                        </div>
-                        
-                        <!-- Reply Form (Hidden by default) -->
-                        <form class="reply-form hidden mt-3 ml-8" data-parentid="${comment.commentid}">
-                            <textarea placeholder="Tulis balasan..." rows="2" class="form-textarea rounded-lg text-sm" required></textarea>
-                            <div class="flex justify-end gap-2 mt-2">
-                                <button type="button" class="btn btn-ghost text-sm cancel-reply">Batal</button>
-                                <button type="submit" class="btn btn-primary text-sm">Kirim</button>
-                            </div>
-                        </form>
-                        
-                        <!-- Nested Replies -->
-                        ${replies.length > 0 ? `
-                            <div class="mt-4 space-y-3">
-                                ${replies.map(reply => UI.renderComment(reply, allComments, depth + 1)).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            },
-            
-            // Render User Profile
-            renderProfile: (user, isOwnProfile = false) => {
-                if (!user) return '<p class="text-center text-gray-400 py-10">Profil tidak ditemukan</p>';
-                
-                const userLevel = USER_LEVELS.slice().reverse().find(l => user.reputation >= l.min) || USER_LEVELS[0];
-                const userPosts = AppState.posts?.filter(p => p.userid === user.userid) || [];
-                const userComments = AppState.comments?.filter(c => c.userid === user.userid) || [];
-                
-                return `
-                    <!-- Profile Header -->
-                    <div class="card mb-6 overflow-hidden">
-                        <div class="profile-cover"></div>
-                        <div class="profile-header">
-                            <div class="profile-avatar">${(user.username || 'U').charAt(0).toUpperCase()}</div>
-                            <h2 class="font-gothic text-2xl font-bold">${user.username}</h2>
-                            <div class="flex items-center justify-center gap-2 mt-1">
-                                <span class="badge badge-primary">${userLevel.badge} ${userLevel.name}</span>
-                                ${user.isOnline ? '<span class="badge badge-success"><i class="fas fa-circle text-[8px]"></i> Online</span>' : ''}
-                            </div>
-                            <p class="text-gray-400 mt-2">${user.bio || 'Belum ada bio...'}</p>
-                            
-                            ${isOwnProfile ? `
-                                <button class="btn btn-outline mt-4" data-action="edit-profile">
-                                    <i class="fas fa-edit"></i> Edit Profil
-                                </button>
-                            ` : `
-                                <button class="btn btn-primary mt-4" data-action="send-message" data-userid="${user.userid}">
-                                    <i class="fas fa-paper-plane"></i> Kirim Pesan
-                                </button>
-                            `}
-                        </div>
-                        
-                        <!-- Profile Stats -->
-                        <div class="profile-stats">
-                            <div class="profile-stat">
-                                <div class="profile-stat-value">${userPosts.length}</div>
-                                <div class="profile-stat-label">Thread</div>
-                            </div>
-                            <div class="profile-stat">
-                                <div class="profile-stat-value">${userComments.length}</div>
-                                <div class="profile-stat-label">Komentar</div>
-                            </div>
-                            <div class="profile-stat">
-                                <div class="profile-stat-value">${user.reputation || 0}</div>
-                                <div class="profile-stat-label">Reputasi</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Profile Info -->
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <!-- Main Content -->
-                        <div class="md:col-span-2 space-y-6">
-                            <!-- User Posts -->
-                            <div class="card">
-                                <div class="card-header flex items-center justify-between">
-                                    <h3 class="font-gothic text-lg font-bold">📝 Thread oleh ${user.username}</h3>
-                                    <a href="#" class="text-sm text-magic-400 hover:underline">Lihat Semua</a>
-                                </div>
-                                <div class="card-body">
-                                    ${userPosts.length > 0 ? `
-                                        <div class="space-y-4">
-                                            ${userPosts.slice(0, 5).map(post => UI.renderPostCard(post, { compact: true })).join('')}
+                        ${posts.length === 0 ? `
+                            <div class="card p-6 text-center text-muted italic">Belum ada thread. Jadilah yang pertama! ✨</div>
+                        ` : `
+                            <div class="space-y-3">
+                                ${posts.map(p => {
+                                    const author = App.data.users.find(u => u.userid === p.userid) || {};
+                                    const comments = App.data.comments.filter(c => c.postid === p.postid).length;
+                                    const likes = App.data.likes.filter(l => l.postid === p.postid).length;
+                                    return `
+                                        <div class="card p-4 post-item" data-post="${p.postid}">
+                                            <div class="post-title text-base mb-1">${p.title}</div>
+                                            <div class="text-xs text-muted flex flex-wrap gap-3">
+                                                <span>oleh <span class="text-gold">${author.username || 'Anon'}</span></span>
+                                                <span>•</span>
+                                                <span>${new Date(p.timestamp?.toDate?.() || p.timestamp).toLocaleDateString('id-ID')}</span>
+                                                <span>•</span><span>${comments} 💬</span><span>${likes} ❤</span>
+                                            </div>
                                         </div>
-                                    ` : '<p class="text-gray-400 text-center py-4">Belum ada thread</p>'}
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            },
+
+            renderPost: (postId) => {
+                const post = App.data.posts.find(p => p.postid === postId);
+                if (!post) return '<p class="text-center text-muted py-8">Thread tidak ditemukan</p>';
+                
+                const author = App.data.users.find(u => u.userid === post.userid) || {};
+                const comments = App.data.comments.filter(c => c.postid === postId)
+                    .sort((a,b) => (a.timestamp?.toDate?.() || a.timestamp) - (b.timestamp?.toDate?.() || b.timestamp));
+                const likes = App.data.likes.filter(l => l.postid === postId);
+                const liked = App.user && likes.some(l => l.userid === App.user.userid);
+                
+                return `
+                    <div class="animate-slide">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h2 class="font-gothic text-lg">${post.title}</h2>
+                                <div class="text-xs text-muted mt-1">
+                                    oleh <span class="text-gold">${author.username || 'Anon'}</span> 
+                                    • ${new Date(post.timestamp?.toDate?.() || post.timestamp).toLocaleString('id-ID')}
                                 </div>
+                            </div>
+                            <div class="card-body"><p class="whitespace-pre-wrap">${post.content}</p></div>
+                            <div class="card-footer flex items-center justify-between">
+                                <div class="flex items-center gap-4 text-sm">
+                                    <button id="btn-like" class="${liked ? 'text-accent' : 'text-muted'} hover:text-accent transition">
+                                        ${liked ? '❤' : '♡'} ${likes.length}
+                                    </button>
+                                    <span class="text-muted">👁 ${post.views || 0}</span>
+                                </div>
+                                ${App.user?.userid === post.userid ? `<button id="btn-delete-post" class="text-xs text-muted hover:text-accent">[Hapus]</button>` : ''}
                             </div>
                         </div>
-                        
-                        <!-- Sidebar -->
-                        <div class="space-y-6">
-                            <!-- About -->
-                            <div class="card p-4">
-                                <h4 class="font-semibold mb-3">📋 Tentang</h4>
-                                <div class="space-y-3 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Bergabung</span>
-                                        <span>${new Date(user.joinedAt).toLocaleDateString('id-ID')}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Lama Main Sulap</span>
-                                        <span>${user.lama_sulap || '-'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Aliran</span>
-                                        <span>${user.aliran_sulap || '-'}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-400">Lokasi</span>
-                                        <span>${user.location || '-'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Badges -->
-                            <div class="card p-4">
-                                <h4 class="font-semibold mb-3">🏆 Achievement</h4>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="badge badge-primary">🎯 First Post</span>
-                                    <span class="badge badge-success">💬 Active Commenter</span>
-                                    ${user.reputation >= 200 ? '<span class="badge badge-accent">🎩 Rising Magician</span>' : ''}
-                                    ${user.reputation >= 500 ? '<span class="badge badge-warning">🔮 Master</span>' : ''}
-                                </div>
+                        <div class="card">
+                            <div class="card-header"><span class="font-gothic">💬 Komentar (${comments.length})</span></div>
+                            <div class="card-body space-y-4">
+                                ${App.user ? `
+                                    <form id="form-comment" class="mb-4">
+                                        <textarea id="comment-text" class="form-textarea" placeholder="Tulis komentar..." rows="2" required></textarea>
+                                        <div class="flex justify-end mt-2"><button type="submit" class="btn btn-primary text-xs">Kirim</button></div>
+                                    </form>
+                                ` : '<p class="text-center text-muted text-sm italic py-4">Login untuk berkomentar</p>'}
+                                ${comments.map(c => {
+                                    const cAuthor = App.data.users.find(u => u.userid === c.userid) || {};
+                                    const replies = comments.filter(r => r.parent_comment_id === c.commentid);
+                                    return `
+                                        <div class="comment">
+                                            <div class="comment-author" data-user="${c.userid}">${cAuthor.username || 'Anon'}</div>
+                                            <p class="text-sm mt-1">${c.content}</p>
+                                            <div class="text-xs text-muted mt-1 flex items-center gap-3">
+                                                <span>${new Date(c.timestamp?.toDate?.() || c.timestamp).toLocaleString('id-ID', {hour:'2-digit',minute:'2-digit'})}</span>
+                                                ${App.user ? `<button class="reply-btn hover:text-gold" data-cid="${c.commentid}">Balas</button>` : ''}
+                                            </div>
+                                            ${App.user ? `
+                                                <form class="reply-form hidden mt-2" data-parent="${c.commentid}">
+                                                    <textarea class="form-textarea text-sm" placeholder="Balasan..." rows="2"></textarea>
+                                                    <div class="flex justify-end gap-2 mt-1">
+                                                        <button type="button" class="btn btn-ghost text-xs cancel-reply">Batal</button>
+                                                        <button type="submit" class="btn btn-primary text-xs">Kirim</button>
+                                                    </div>
+                                                </form>
+                                            ` : ''}
+                                            ${replies.length > 0 ? `<div class="mt-3 space-y-3">${replies.map(r => {
+                                                const rAuthor = App.data.users.find(u => u.userid === r.userid) || {};
+                                                return `<div class="comment nested"><div class="comment-author" data-user="${r.userid}">${rAuthor.username || 'Anon'}</div><p class="text-sm mt-1">${r.content}</p><span class="text-xs text-muted">${new Date(r.timestamp?.toDate?.() || r.timestamp).toLocaleString('id-ID', {hour:'2-digit',minute:'2-digit'})}</span></div>`;
+                                            }).join('')}</div>` : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
                     </div>
                 `;
             },
-            
-            // Render Activity Item
-            renderActivityItem: (activity) => {
-                const icons = {
-                    post: 'fas fa-plus-circle text-emerald-400',
-                    comment: 'fas fa-comment text-magic-400',
-                    like: 'fas fa-heart text-red-400',
-                    join: 'fas fa-user-plus text-purple-400'
-                };
+
+            renderProfile: (userId) => {
+                const user = App.data.users.find(u => u.userid === userId) || App.user;
+                if (!user) return '<p class="text-center text-muted py-8">Profil tidak ditemukan</p>';
+                const posts = App.data.posts.filter(p => p.userid === user.userid);
+                const isOwn = App.user?.userid === user.userid;
                 
                 return `
-                    <div class="p-4 hover:bg-navy-800/50 transition flex gap-3">
-                        <div class="w-8 h-8 rounded-full bg-navy-700 flex items-center justify-center flex-shrink-0">
-                            <i class="${icons[activity.type] || 'fas fa-circle'} text-sm"></i>
+                    <div class="card animate-slide">
+                        <div class="card-body text-center py-6">
+                            <div class="profile-avatar">${(user.username||'?').charAt(0).toUpperCase()}</div>
+                            <h2 class="font-gothic text-xl text-gold">${user.username}</h2>
+                            ${user.lama_sulap ? `<p class="text-muted text-sm italic mt-1">🎴 ${user.lama_sulap}</p>` : ''}
+                            ${user.aliran_sulap ? `<p class="text-muted text-sm mt-1">✧ ${user.aliran_sulap}</p>` : ''}
+                            ${isOwn ? `
+                                <button id="btn-edit-profile" class="btn btn-outline text-xs mt-4">✎ Edit Profil</button>
+                            ` : `
+                                <button class="btn btn-gold text-xs mt-4">✉ Kirim Pesan</button>
+                            `}
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm">
-                                <span class="font-medium text-magic-400">${activity.username}</span>
-                                ${activity.action}
-                                ${activity.postTitle ? `<span class="text-gray-300 hover:text-magic-400 cursor-pointer" data-postid="${activity.postid}" data-action="view-post">"${activity.postTitle}"</span>` : ''}
-                            </p>
-                            <p class="text-xs text-gray-500 mt-1">${new Date(activity.timestamp).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // Helper: Category Description
-            getCategoryDescription: (categoryId) => {
-                const descriptions = {
-                    cardmagic: 'Teknik, tutorial, dan diskusi tentang sulap kartu',
-                    coinmagic: 'Sulap koin: sleight of hand, production, vanishing',
-                    mentalism: 'Mind reading, prediction, psychological magic',
-                    everydayobject: 'Sulap dengan benda sehari-hari: pulpen, kertas, dll',
-                    idea: 'Konsep, teori, dan ide kreatif untuk pertunjukan',
-                    market: 'Review produk, rekomendasi, dan diskusi peralatan sulap'
-                };
-                return descriptions[categoryId] || 'Diskusi umum';
-            },
-            
-            // Helper: Category Stats (mock data)
-            getCategoryStats: (categoryId, type) => {
-                const stats = {
-                    cardmagic: { posts: 234, members: 89 },
-                    coinmagic: { posts: 156, members: 67 },
-                    mentalism: { posts: 189, members: 102 },
-                    everydayobject: { posts: 98, members: 45 },
-                    idea: { posts: 145, members: 78 },
-                    market: { posts: 67, members: 34 }
-                };
-                return stats[categoryId]?.[type] || 0;
-            }
-        };
-
-        // ========================================
-        // 🔄 DATA SERVICE (Firebase Operations)
-        // ========================================
-        const DataService = {
-            // Subscribe to real-time data
-            subscribe: (callback) => {
-                const unsubscribers = [];
-                
-                // Posts collection
-                unsubscribers.push(
-                    db.collection('posts').orderBy('timestamp', 'desc').limit(50)
-                      .onSnapshot(snapshot => {
-                          AppState.posts = snapshot.docs.map(doc => ({ postid: doc.id, ...doc.data() }));
-                          callback();
-                      })
-                );
-                
-                // Users collection
-                unsubscribers.push(
-                    db.collection('users').onSnapshot(snapshot => {
-                        AppState.users = snapshot.docs.map(doc => ({ userid: doc.id, ...doc.data() }));
-                        callback();
-                    })
-                );
-                
-                // Comments collection
-                unsubscribers.push(
-                    db.collection('comments').orderBy('timestamp', 'asc')
-                      .onSnapshot(snapshot => {
-                          AppState.comments = snapshot.docs.map(doc => ({ commentid: doc.id, ...doc.data() }));
-                          callback();
-                      })
-                );
-                
-                // Likes collection
-                unsubscribers.push(
-                    db.collection('likes').onSnapshot(snapshot => {
-                        AppState.likes = snapshot.docs.map(doc => ({ likeid: doc.id, ...doc.data() }));
-                        callback();
-                    })
-                );
-                
-                // Return cleanup function
-                return () => unsubscribers.forEach(unsub => unsub());
-            },
-            
-            // Create new post
-            createPost: async (postData) => {
-                const postRef = await db.collection('posts').add({
-                    ...postData,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    views: 0,
-                    isPinned: false,
-                    isSolved: false
-                });
-                return postRef.id;
-            },
-            
-            // Create comment
-            createComment: async (commentData) => {
-                const commentRef = await db.collection('comments').add({
-                    ...commentData,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                return commentRef.id;
-            },
-            
-            // Toggle like
-            toggleLike: async (postId, userId) => {
-                const existing = await db.collection('likes')
-                    .where('postid', '==', postId)
-                    .where('userid', '==', userId)
-                    .limit(1)
-                    .get();
-                
-                if (!existing.empty) {
-                    // Unlike
-                    await existing.docs[0].ref.delete();
-                    return false;
-                } else {
-                    // Like
-                    await db.collection('likes').add({
-                        postid: postId,
-                        userid: userId,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    return true;
-                }
-            },
-            
-            // Update user profile
-            updateProfile: async (userId, profileData) => {
-                await db.collection('users').doc(userId).update({
-                    ...profileData,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            },
-            
-            // Track post view
-            trackView: async (postId, userId) => {
-                // Check if already viewed
-                const viewed = await db.collection('views')
-                    .where('postid', '==', postId)
-                    .where('userid', '==', userId)
-                    .limit(1)
-                    .get();
-                
-                if (viewed.empty) {
-                    await db.collection('views').add({
-                        postid: postId,
-                        userid: userId,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    // Increment view count
-                    await db.collection('posts').doc(postId).update({
-                        views: firebase.firestore.FieldValue.increment(1)
-                    });
-                }
-            }
-        };
-
-        // ========================================
-        // 🎮 APP ACTIONS & CONTROLLERS
-        // ========================================
-        const Actions = {
-            // Navigation
-            navigateTo: (view, params = {}) => {
-                AppState.currentView = view;
-                Object.assign(AppState, params);
-                
-                // Update breadcrumb
-                const breadcrumb = document.getElementById('breadcrumb');
-                const breadcrumbCurrent = document.getElementById('breadcrumb-current');
-                
-                if (view === 'home') {
-                    breadcrumb.classList.add('hidden');
-                } else {
-                    breadcrumb.classList.remove('hidden');
-                    breadcrumbCurrent.textContent = params.title || view;
-                }
-                
-                // Render view
-                Actions.renderCurrentView();
-                
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            },
-            
-            // Render current view based on state
-            renderCurrentView: () => {
-                const main = document.getElementById('main-content');
-                
-                switch(AppState.currentView) {
-                    case 'home':
-                        main.innerHTML = UI.renderHome();
-                        break;
-                    case 'categories':
-                        main.innerHTML = UI.renderCategories();
-                        break;
-                    case 'category':
-                        const category = CATEGORIES.find(c => c.id === AppState.currentCategory);
-                        const categoryPosts = (AppState.posts || []).filter(p => p.category === AppState.currentCategory);
-                        main.innerHTML = `
-                            <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </button>
-                            <h2 class="font-gothic text-2xl font-bold mb-6 flex items-center gap-3">
-                                <i class="fas ${category?.icon}"></i> ${category?.name}
-                            </h2>
-                            <div class="flex justify-between items-center mb-6">
-                                <p class="text-gray-400">${categoryPosts.length} thread ditemukan</p>
-                                <button class="btn btn-primary" data-action="new-post" data-category="${AppState.currentCategory}">
-                                    <i class="fas fa-plus"></i> Thread Baru
-                                </button>
-                            </div>
-                            <div class="space-y-4">
-                                ${categoryPosts.length > 0 
-                                    ? categoryPosts.map(post => UI.renderPostCard(post)).join('')
-                                    : '<div class="card p-8 text-center text-gray-400">Belum ada thread di kategori ini. Jadilah yang pertama!</div>'
-                                }
-                            </div>
-                        `;
-                        break;
-                    case 'post':
-                        const post = AppState.posts?.find(p => p.postid === AppState.currentPostId);
-                        main.innerHTML = `
-                            <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
-                                <i class="fas fa-arrow-left"></i> Kembali ke ${AppState.currentCategory ? 'Kategori' : 'Daftar Thread'}
-                            </button>
-                            ${UI.renderPostDetail(post)}
-                        `;
-                        // Track view
-                        if (AppState.currentUser) {
-                            DataService.trackView(AppState.currentPostId, AppState.currentUser.userid);
-                        }
-                        break;
-                    case 'profile':
-                        const profileUser = AppState.currentProfileId === AppState.currentUser?.userid 
-                            ? AppState.currentUser 
-                            : AppState.users?.find(u => u.userid === AppState.currentProfileId);
-                        main.innerHTML = `
-                            <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </button>
-                            ${UI.renderProfile(profileUser, AppState.currentProfileId === AppState.currentUser?.userid)}
-                        `;
-                        break;
-                    case 'new-post':
-                        main.innerHTML = UI.renderNewPostForm();
-                        break;
-                    default:
-                        main.innerHTML = UI.renderHome();
-                }
-                
-                // Attach event listeners after render
-                Actions.attachEventListeners();
-            },
-            
-            // Render New Post Form
-            renderNewPostForm: () => {
-                return `
-                    <button class="mb-4 text-magic-400 hover:underline flex items-center gap-2" data-action="back">
-                        <i class="fas fa-arrow-left"></i> Batal
-                    </button>
-                    
-                    <div class="card p-6 max-w-3xl mx-auto">
-                        <h2 class="font-gothic text-2xl font-bold mb-6">✨ Buat Thread Baru</h2>
-                        
-                        <form id="new-post-form">
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium mb-2">Kategori</label>
-                                <select id="post-category" class="form-select rounded-lg" required>
-                                    ${CATEGORIES.map(cat => `
-                                        <option value="${cat.id}" ${cat.id === AppState.currentCategory ? 'selected' : ''}>
-                                            ${cat.name}
-                                        </option>
+                        <div class="divider"></div>
+                        <div class="card-body">
+                            <h3 class="font-gothic text-gold mb-3">Thread oleh ${user.username}</h3>
+                            ${posts.length === 0 ? '<p class="text-muted italic text-sm">Belum ada thread</p>' : `
+                                <div class="space-y-3">
+                                    ${posts.slice(0,5).map(p => `
+                                        <div class="p-3 border border-gothic-border hover:border-accent cursor-pointer" data-post="${p.postid}">
+                                            <div class="font-gothic text-sm">${p.title}</div>
+                                            <div class="text-xs text-muted">${new Date(p.timestamp?.toDate?.() || p.timestamp).toLocaleDateString('id-ID')}</div>
+                                        </div>
                                     `).join('')}
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderNewPost: () => `
+                <div class="card animate-slide">
+                    <div class="card-header"><span class="font-gothic">✦ Thread Baru</span></div>
+                    <form id="form-new-post" class="card-body space-y-4">
+                        <div>
+                            <label class="text-xs text-muted block mb-1">Kategori</label>
+                            <select id="np-category" class="form-select" required>
+                                ${CONFIG.CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-muted block mb-1">Judul</label>
+                            <input type="text" id="np-title" class="form-input" placeholder="Judul thread..." required maxlength="100">
+                        </div>
+                        <div>
+                            <label class="text-xs text-muted block mb-1">Isi</label>
+                            <textarea id="np-content" class="form-textarea" placeholder="Tulis konten thread..." rows="6" required></textarea>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button type="button" id="btn-cancel-post" class="btn btn-outline text-xs">Batal</button>
+                            <button type="submit" class="btn btn-primary text-xs">Publikasi</button>
+                        </div>
+                    </form>
+                </div>
+            `,
+            
+            renderEditProfile: () => {
+                const user = App.user;
+                return `
+                    <div class="card animate-slide">
+                        <div class="card-header"><span class="font-gothic">✦ Edit Profil</span></div>
+                        <form id="form-edit-profile" class="card-body space-y-4">
+                            <div>
+                                <label class="text-xs text-muted block mb-1">Username</label>
+                                <input type="text" id="ep-username" class="form-input" value="${user.username || ''}" required>
+                            </div>
+                            <div>
+                                <label class="text-xs text-muted block mb-1">Bio</label>
+                                <textarea id="ep-bio" class="form-textarea" rows="3" placeholder="Ceritakan tentang Anda...">${user.bio || ''}</textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs text-muted block mb-1">Lama Main Sulap</label>
+                                <select id="ep-lama" class="form-select">
+                                    <option value="">Pilih...</option>
+                                    <option value="Kurang dari 1 tahun" ${user.lama_sulap === 'Kurang dari 1 tahun' ? 'selected' : ''}>Kurang dari 1 tahun</option>
+                                    <option value="1-3 tahun" ${user.lama_sulap === '1-3 tahun' ? 'selected' : ''}>1-3 tahun</option>
+                                    <option value="3-5 tahun" ${user.lama_sulap === '3-5 tahun' ? 'selected' : ''}>3-5 tahun</option>
+                                    <option value="5+ tahun" ${user.lama_sulap === '5+ tahun' ? 'selected' : ''}>5+ tahun</option>
                                 </select>
                             </div>
-                            
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium mb-2">Judul Thread</label>
-                                <input type="text" id="post-title" class="form-input rounded-lg" placeholder="Contoh: Teknik Advanced Palm untuk Coin Magic" required maxlength="150">
-                                <p class="text-xs text-gray-500 mt-1">Maksimal 150 karakter</p>
+                            <div>
+                                <label class="text-xs text-muted block mb-1">Aliran Sulap</label>
+                                <select id="ep-aliran" class="form-select">
+                                    <option value="">Pilih...</option>
+                                    <option value="Mentalism" ${user.aliran_sulap === 'Mentalism' ? 'selected' : ''}>Mentalism</option>
+                                    <option value="Sleight of Hand" ${user.aliran_sulap === 'Sleight of Hand' ? 'selected' : ''}>Sleight of Hand</option>
+                                    <option value="Illusionism" ${user.aliran_sulap === 'Illusionism' ? 'selected' : ''}>Illusionism</option>
+                                    <option value="Close-up" ${user.aliran_sulap === 'Close-up' ? 'selected' : ''}>Close-up Magic</option>
+                                    <option value="Stage" ${user.aliran_sulap === 'Stage' ? 'selected' : ''}>Stage Magic</option>
+                                </select>
                             </div>
-                            
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium mb-2">Isi Thread</label>
-                                <textarea id="post-content" class="form-textarea rounded-lg min-h-[200px]" placeholder="Jelaskan pertanyaan, trik, atau ide Anda secara detail..." required></textarea>
-                                <p class="text-xs text-gray-500 mt-1">Gunakan paragraf untuk keterbacaan yang lebih baik</p>
-                            </div>
-                            
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium mb-2">Tags (opsional)</label>
-                                <input type="text" id="post-tags" class="form-input rounded-lg" placeholder="tutorial, beginner, card-control (pisahkan dengan koma)">
-                                <p class="text-xs text-gray-500 mt-1">Bantu orang lain menemukan thread Anda</p>
-                            </div>
-                            
-                            <div class="flex items-center gap-3 mb-6">
-                                <input type="checkbox" id="post-notify" class="rounded border-gray-600 text-magic-600 focus:ring-magic-500">
-                                <label for="post-notify" class="text-sm">Kirim notifikasi saat ada yang membalas</label>
-                            </div>
-                            
-                            <div class="flex justify-end gap-3">
-                                <button type="button" class="btn btn-outline" data-action="back">Batal</button>
-                                <button type="submit" class="btn btn-primary" id="submit-post-btn">
-                                    <i class="fas fa-paper-plane"></i> Publikasikan Thread
-                                </button>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" id="btn-cancel-edit" class="btn btn-outline text-xs">Batal</button>
+                                <button type="submit" class="btn btn-gold text-xs">Simpan Perubahan</button>
                             </div>
                         </form>
                     </div>
                 `;
+            }
+        };
+
+        // ========================================
+        // 🔄 FIREBASE DATA OPERATIONS
+        // ========================================
+        const DB = {
+            subscribe: (callback) => {
+                App.unsubscribers = [
+                    db.collection('posts').orderBy('timestamp', 'desc').limit(50)
+                      .onSnapshot(s => { App.data.posts = s.docs.map(d => ({postid: d.id, ...d.data()})); callback(); }, err => console.error('Posts error:', err)),
+                    db.collection('users').onSnapshot(s => { App.data.users = s.docs.map(d => ({userid: d.id, ...d.data()})); callback(); }, err => console.error('Users error:', err)),
+                    db.collection('comments').orderBy('timestamp', 'asc')
+                      .onSnapshot(s => { App.data.comments = s.docs.map(d => ({commentid: d.id, ...d.data()})); callback(); }, err => console.error('Comments error:', err)),
+                    db.collection('likes').onSnapshot(s => { App.data.likes = s.docs.map(d => ({likeid: d.id, ...d.data()})); callback(); }, err => console.error('Likes error:', err))
+                ];
+            },
+            createPost: (data) => db.collection('posts').add({ 
+                ...data, 
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
+                views: 0 
+            }),
+            createComment: (data) => db.collection('comments').add({ 
+                ...data, 
+                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+            }),
+            toggleLike: async (postId, userId) => {
+                const q = await db.collection('likes').where('postid', '==', postId).where('userid', '==', userId).limit(1).get();
+                if (!q.empty) { await q.docs[0].ref.delete(); return false; }
+                await db.collection('likes').add({ 
+                    postid: postId, 
+                    userid: userId, 
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+                });
+                return true;
+            },
+            deletePost: (postId) => db.collection('posts').doc(postId).delete(),
+            updateProfile: (userId, data) => db.collection('users').doc(userId).update({ 
+                ...data, 
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp() 
+            }),
+            trackView: async (postId, userId) => {
+                const q = await db.collection('views').where('postid', '==', postId).where('userid', '==', userId).limit(1).get();
+                if (q.empty) {
+                    await db.collection('views').add({ 
+                        postid: postId, 
+                        userid: userId, 
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+                    });
+                    await db.collection('posts').doc(postId).update({ 
+                        views: firebase.firestore.FieldValue.increment(1) 
+                    });
+                }
+            }
+        };
+
+        // ========================================
+        // 🎮 ACTIONS
+        // ========================================
+        const Actions = {
+            go: (view, params = {}) => {
+                App.view = view; 
+                App.params = { ...params };
+                if (view !== 'home') App.history.push(view);
+                
+                document.getElementById('nav-back').classList.toggle('hidden', App.history.length <= 1);
+                document.getElementById('breadcrumb').classList.toggle('hidden', view === 'home');
+                document.getElementById('crumb-current').textContent = params.title || view;
+                
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                if (view === 'home') document.getElementById('nav-home').classList.add('active');
+                
+                Actions.render(); 
+                window.scrollTo({top: 0, behavior: 'smooth'});
             },
             
-            // Attach event listeners to dynamic content
-            attachEventListeners: () => {
-                // Back button
-                document.querySelectorAll('[data-action="back"]').forEach(btn => {
-                    btn.onclick = (e) => {
-                        e.preventDefault();
-                        if (AppState.currentView === 'post' && AppState.currentCategory) {
-                            Actions.navigateTo('category', { currentCategory: AppState.currentCategory });
-                        } else {
-                            Actions.navigateTo('home');
-                        }
-                    };
-                });
-                
-                // Navigation links
-                document.querySelectorAll('[data-view]').forEach(link => {
-                    link.onclick = (e) => {
-                        e.preventDefault();
-                        const view = link.dataset.view;
-                        Actions.navigateTo(view);
-                    };
-                });
-                
+            back: () => { 
+                if (App.history.length > 1) { 
+                    App.history.pop(); 
+                    Actions.go(App.history[App.history.length-1] === 'home' ? 'home' : App.params.prevView || 'home'); 
+                } 
+            },
+            
+            render: () => {
+                const main = document.getElementById('main-content');
+                switch(App.view) {
+                    case 'home': main.innerHTML = UI.renderHome(); break;
+                    case 'category': main.innerHTML = UI.renderCategories(App.params.categoryId); break;
+                    case 'post': 
+                        main.innerHTML = UI.renderPost(App.params.postId);
+                        if (App.user) DB.trackView(App.params.postId, App.user.userid);
+                        break;
+                    case 'profile': main.innerHTML = UI.renderProfile(App.params.userId); break;
+                    case 'new-post': main.innerHTML = UI.renderNewPost(); break;
+                    case 'edit-profile': main.innerHTML = UI.renderEditProfile(); break;
+                    default: main.innerHTML = UI.renderHome();
+                }
+                Actions.bindEvents();
+            },
+            
+            bindEvents: () => {
                 // Category cards
-                document.querySelectorAll('[data-action="view-category"]').forEach(card => {
-                    card.onclick = (e) => {
-                        e.preventDefault();
-                        const categoryId = card.dataset.category;
-                        Actions.navigateTo('category', { currentCategory: categoryId, title: CATEGORIES.find(c => c.id === categoryId)?.name });
-                    };
+                document.querySelectorAll('.category-card').forEach(el => {
+                    el.onclick = () => Actions.go('category', { 
+                        categoryId: el.dataset.cat, 
+                        title: CONFIG.CATEGORIES.find(c=>c.id===el.dataset.cat)?.name, 
+                        prevView: App.view 
+                    });
                 });
                 
                 // Post items
-                document.querySelectorAll('[data-action="view-post"]').forEach(item => {
-                    item.onclick = (e) => {
-                        e.preventDefault();
-                        const postId = item.dataset.postid;
-                        Actions.navigateTo('post', { currentPostId: postId });
-                    };
-                });
-                
-                // Profile links
-                document.querySelectorAll('[data-action="view-profile"]').forEach(link => {
-                    link.onclick = (e) => {
-                        e.preventDefault();
-                        const userId = link.dataset.userid;
-                        Actions.navigateTo('profile', { currentProfileId: userId });
-                    };
-                });
-                
-                // Like buttons
-                document.querySelectorAll('[data-action="toggle-like"]').forEach(btn => {
-                    btn.onclick = async (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (!AppState.currentUser) {
-                            UI.toast('Login untuk menyukai thread', 'info');
-                            return;
+                document.querySelectorAll('.post-item, [data-post]').forEach(el => {
+                    el.onclick = (e) => { 
+                        if (e.target.tagName !== 'BUTTON') {
+                            Actions.go('post', { 
+                                postId: el.dataset.post, 
+                                title: 'Thread', 
+                                prevView: App.view 
+                            }); 
                         }
-                        const postId = btn.dataset.postid;
-                        const wasLiked = await DataService.toggleLike(postId, AppState.currentUser.userid);
-                        UI.toast(wasLiked ? '✅ Thread disukai!' : '❌ Like dibatalkan', wasLiked ? 'success' : 'info');
-                        Actions.renderCurrentView();
                     };
+                });
+                
+                // New post button
+                document.getElementById('btn-new-post')?.addEventListener('click', () => {
+                    if (!App.user) return UI.toast('Login untuk membuat thread', 'error');
+                    Actions.go('new-post', { title: 'Thread Baru', prevView: App.view });
+                });
+                
+                // Cancel new post
+                document.getElementById('btn-cancel-post')?.addEventListener('click', () => Actions.back());
+                
+                // Submit new post
+                document.getElementById('form-new-post')?.addEventListener('submit', async (e) => {
+                    e.preventDefault(); 
+                    const btn = e.target.querySelector('button[type="submit"]'); 
+                    btn.disabled = true;
+                    try {
+                        await DB.createPost({
+                            userid: App.user.userid, 
+                            username: App.user.username,
+                            title: document.getElementById('np-title').value,
+                            content: document.getElementById('np-content').value,
+                            category: document.getElementById('np-category').value
+                        });
+                        UI.toast('Thread diterbitkan ✦', 'success');
+                        Actions.go('category', { categoryId: document.getElementById('np-category').value });
+                    } catch(err) { 
+                        UI.toast('Gagal: ' + err.message, 'error'); 
+                        btn.disabled = false; 
+                    }
+                });
+                
+                // Like button
+                document.getElementById('btn-like')?.addEventListener('click', async () => {
+                    if (!App.user) return UI.toast('Login untuk menyukai', 'error');
+                    const liked = await DB.toggleLike(App.params.postId, App.user.userid);
+                    UI.toast(liked ? '❤ Disukai!' : '♡ Like dibatalkan', 'success');
+                    Actions.render();
+                });
+                
+                // Delete post
+                document.getElementById('btn-delete-post')?.addEventListener('click', async () => {
+                    if (!confirm('Hapus thread ini?')) return;
+                    await DB.deletePost(App.params.postId);
+                    UI.toast('Thread dihapus', 'success'); 
+                    Actions.back();
                 });
                 
                 // Comment form
-                const commentForm = document.getElementById('comment-form');
-                if (commentForm) {
-                    commentForm.onsubmit = async (e) => {
-                        e.preventDefault();
-                        const content = document.getElementById('comment-content').value.trim();
-                        if (!content) return;
-                        
-                        try {
-                            await DataService.createComment({
-                                postid: AppState.currentPostId,
-                                userid: AppState.currentUser.userid,
-                                username: AppState.currentUser.username,
-                                content,
-                                parent_comment_id: 'root'
-                            });
-                            UI.toast('💬 Komentar terkirim!', 'success');
-                            Actions.renderCurrentView();
-                        } catch (err) {
-                            UI.toast('Gagal mengirim komentar', 'error');
-                            console.error(err);
-                        }
-                    };
-                }
+                document.getElementById('form-comment')?.addEventListener('submit', async (e) => {
+                    e.preventDefault(); 
+                    const txt = document.getElementById('comment-text');
+                    if (!txt.value.trim()) return;
+                    await DB.createComment({ 
+                        postid: App.params.postId, 
+                        userid: App.user.userid, 
+                        username: App.user.username, 
+                        content: txt.value, 
+                        parent_comment_id: 'root' 
+                    });
+                    txt.value = ''; 
+                    Actions.render();
+                });
                 
                 // Reply buttons
                 document.querySelectorAll('.reply-btn').forEach(btn => {
-                    btn.onclick = (e) => {
-                        e.preventDefault();
-                        const commentId = btn.dataset.commentid;
-                        const form = document.querySelector(`.reply-form[data-parentid="${commentId}"]`);
-                        if (form) {
-                            form.classList.toggle('hidden');
-                            form.querySelector('textarea')?.focus();
-                        }
+                    btn.onclick = (e) => { 
+                        e.preventDefault(); 
+                        const form = btn.closest('.comment').querySelector('.reply-form'); 
+                        if (form) form.classList.toggle('hidden'); 
                     };
                 });
                 
                 // Cancel reply
                 document.querySelectorAll('.cancel-reply').forEach(btn => {
-                    btn.onclick = (e) => {
-                        e.preventDefault();
-                        btn.closest('.reply-form').classList.add('hidden');
+                    btn.onclick = (e) => { 
+                        e.preventDefault(); 
+                        btn.closest('.reply-form').classList.add('hidden'); 
                     };
                 });
                 
                 // Reply form submit
                 document.querySelectorAll('.reply-form').forEach(form => {
                     form.onsubmit = async (e) => {
-                        e.preventDefault();
-                        const content = form.querySelector('textarea').value.trim();
-                        const parentId = form.dataset.parentid;
-                        if (!content) return;
-                        
-                        try {
-                            await DataService.createComment({
-                                postid: AppState.currentPostId,
-                                userid: AppState.currentUser.userid,
-                                username: AppState.currentUser.username,
-                                content,
-                                parent_comment_id: parentId
-                            });
-                            UI.toast('💬 Balasan terkirim!', 'success');
-                            Actions.renderCurrentView();
-                        } catch (err) {
-                            UI.toast('Gagal mengirim balasan', 'error');
-                        }
+                        e.preventDefault(); 
+                        const txt = form.querySelector('textarea');
+                        if (!txt.value.trim()) return;
+                        await DB.createComment({ 
+                            postid: App.params.postId, 
+                            userid: App.user.userid, 
+                            username: App.user.username, 
+                            content: txt.value, 
+                            parent_comment_id: form.dataset.parent 
+                        });
+                        Actions.render();
                     };
                 });
                 
-                // New post form
-                const newPostForm = document.getElementById('new-post-form');
-                if (newPostForm) {
-                    newPostForm.onsubmit = async (e) => {
-                        e.preventDefault();
-                        const submitBtn = document.getElementById('submit-post-btn');
-                        submitBtn.disabled = true;
-                        submitBtn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Memproses...';
-                        
-                        try {
-                            const tags = document.getElementById('post-tags').value
-                                .split(',').map(t => t.trim()).filter(t => t);
-                            
-                            await DataService.createPost({
-                                userid: AppState.currentUser.userid,
-                                username: AppState.currentUser.username,
-                                title: document.getElementById('post-title').value,
-                                content: document.getElementById('post-content').value,
-                                category: document.getElementById('post-category').value,
-                                tags,
-                                notifyReplies: document.getElementById('post-notify').checked
-                            });
-                            
-                            UI.toast('✨ Thread berhasil dipublikasikan!', 'success');
-                            Actions.navigateTo('category', { currentCategory: document.getElementById('post-category').value });
-                        } catch (err) {
-                            UI.toast('Gagal membuat thread', 'error');
-                            console.error(err);
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Publikasikan Thread';
-                        }
+                // Profile links
+                document.querySelectorAll('.comment-author, [data-user]').forEach(el => {
+                    el.onclick = (e) => { 
+                        e.preventDefault(); 
+                        const uid = el.dataset.user; 
+                        if (uid) Actions.go('profile', { 
+                            userId: uid, 
+                            title: 'Profil', 
+                            prevView: App.view 
+                        }); 
                     };
-                }
+                });
                 
-                // FAB new post button
-                const fabBtn = document.getElementById('fab-new-post');
-                if (fabBtn) {
-                    fabBtn.onclick = (e) => {
-                        e.preventDefault();
-                        if (!AppState.currentUser) {
-                            UI.toast('Login untuk membuat thread', 'info');
-                            return;
-                        }
-                        Actions.navigateTo('new-post');
-                    };
-                }
+                // Edit profile button
+                document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
+                    Actions.go('edit-profile', { title: 'Edit Profil', prevView: App.view });
+                });
+                
+                // Cancel edit profile
+                document.getElementById('btn-cancel-edit')?.addEventListener('click', () => Actions.back());
+                
+                // Submit edit profile
+                document.getElementById('form-edit-profile')?.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = e.target.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    try {
+                        await DB.updateProfile(App.user.userid, {
+                            username: document.getElementById('ep-username').value,
+                            bio: document.getElementById('ep-bio').value,
+                            lama_sulap: document.getElementById('ep-lama').value,
+                            aliran_sulap: document.getElementById('ep-aliran').value
+                        });
+                        // Update local user data
+                        App.user = { ...App.user, 
+                            username: document.getElementById('ep-username').value,
+                            bio: document.getElementById('ep-bio').value,
+                            lama_sulap: document.getElementById('ep-lama').value,
+                            aliran_sulap: document.getElementById('ep-aliran').value
+                        };
+                        UI.toast('Profil diperbarui ✦', 'success');
+                        Actions.go('profile', { userId: App.user.userid });
+                    } catch(err) {
+                        UI.toast('Gagal: ' + err.message, 'error');
+                        btn.disabled = false;
+                    }
+                });
             }
         };
 
         // ========================================
-        // 🔐 AUTHENTICATION HANDLERS
+        // 🔐 AUTH
         // ========================================
         const Auth = {
-            // Check auth state
             init: () => {
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
-                        // Get user data from Firestore
-                        const userDoc = await db.collection('users').doc(user.uid).get();
-                        if (userDoc.exists) {
-                            AppState.currentUser = { userid: user.uid, ...userDoc.data() };
-                            UI.updateAuthUI(true);
-                            Actions.navigateTo('home');
+                        const doc = await db.collection('users').doc(user.uid).get();
+                        if (doc.exists) { 
+                            App.user = { userid: user.uid, ...doc.data() }; 
+                            UI.updateAuth(); 
                         }
-                    } else {
-                        AppState.currentUser = null;
-                        UI.updateAuthUI(false);
-                        Actions.navigateTo('home');
+                    } else { 
+                        App.user = null; 
+                        UI.updateAuth(); 
                     }
+                    Actions.render();
                 });
             },
-            
-            // Login with email/password
             login: async (email, password) => {
-                try {
-                    await auth.signInWithEmailAndPassword(email, password);
-                    UI.toast('✅ Login berhasil!', 'success');
-                } catch (error) {
-                    UI.toast('Login gagal: ' + error.message, 'error');
-                    throw error;
-                }
+                await auth.signInWithEmailAndPassword(email, password);
+                UI.toast('✅ Login berhasil!', 'success');
             },
-            
-            // Register new user
-            signup: async (userData) => {
-                try {
-                    const cred = await auth.createUserWithEmailAndPassword(userData.email, userData.password);
-                    
-                    // Save additional user data to Firestore
-                    await db.collection('users').doc(cred.user.uid).set({
-                        username: userData.username,
-                        email: userData.email,
-                        lama_sulap: userData.lama_sulap,
-                        aliran_sulap: userData.aliran_sulap,
-                        bio: '',
-                        location: '',
-                        reputation: 0,
-                        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        isOnline: true,
-                        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    UI.toast('✅ Registrasi berhasil! Silakan login.', 'success');
-                    return true;
-                } catch (error) {
-                    UI.toast('Registrasi gagal: ' + error.message, 'error');
-                    throw error;
-                }
+            signup: async (data) => {
+                const cred = await auth.createUserWithEmailAndPassword(data.email, data.password);
+                await db.collection('users').doc(cred.user.uid).set({
+                    username: data.username, 
+                    email: data.email,
+                    lama_sulap: data.lama_sulap, 
+                    aliran_sulap: data.aliran_sulap,
+                    bio: '', 
+                    reputation: 0, 
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                UI.toast('✅ Registrasi berhasil! Silakan login.', 'success');
             },
-            
-            // Logout
-            logout: async () => {
-                try {
-                    await auth.signOut();
-                    UI.toast('👋 Sampai jumpa!', 'info');
-                } catch (error) {
-                    UI.toast('Logout gagal', 'error');
-                }
+            logout: async () => { 
+                await auth.signOut(); 
+                UI.toast('👋 Sampai jumpa!', 'info'); 
             }
         };
 
-        // ========================================
-        // 🎨 UI HELPERS
-        // ========================================
-        UI.updateAuthUI = (isLoggedIn) => {
-            const authButtons = document.getElementById('auth-buttons');
-            const userMenu = document.getElementById('user-menu');
-            const userName = document.getElementById('user-name');
-            const userAvatar = document.getElementById('user-avatar');
-            
-            if (isLoggedIn && AppState.currentUser) {
-                authButtons.classList.add('hidden');
-                userMenu.classList.remove('hidden');
-                userName.textContent = AppState.currentUser.username;
-                userAvatar.textContent = (AppState.currentUser.username || 'U').charAt(0).toUpperCase();
-            } else {
-                authButtons.classList.remove('hidden');
-                userMenu.classList.add('hidden');
-            }
+        UI.updateAuth = () => {
+            document.getElementById('auth-links').classList.toggle('hidden', !!App.user);
+            document.getElementById('user-info').classList.toggle('hidden', !App.user);
+            if (App.user) document.getElementById('user-name-display').textContent = App.user.username;
+        };
+
+        UI.showAuthModal = (mode = 'login') => {
+            const modal = document.getElementById('modal-overlay');
+            document.getElementById('modal-content').innerHTML = mode === 'login' ? `
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-gothic text-gold">✦ Login</h3>
+                        <button id="modal-close" class="text-muted hover:text-gold">✕</button>
+                    </div>
+                    <form id="auth-form">
+                        <input type="email" id="auth-email" class="form-input mb-3" placeholder="Email" required>
+                        <input type="password" id="auth-pass" class="form-input mb-4" placeholder="Password" required>
+                        <button type="submit" class="w-full btn btn-primary">Masuk</button>
+                    </form>
+                    <p class="text-center text-xs text-muted mt-4">
+                        Belum punya akun? <button id="switch-signup" class="text-gold hover:underline">Daftar</button>
+                    </p>
+                </div>` : `
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-gothic text-gold">✦ Daftar Akun</h3>
+                        <button id="modal-close" class="text-muted hover:text-gold">✕</button>
+                    </div>
+                    <form id="auth-form">
+                        <input type="text" id="auth-user" class="form-input mb-3" placeholder="Username" required minlength="3">
+                        <input type="email" id="auth-email" class="form-input mb-3" placeholder="Email" required>
+                        <input type="password" id="auth-pass" class="form-input mb-3" placeholder="Password" required minlength="6">
+                        <select id="auth-lama" class="form-select mb-3" required>
+                            <option value="">Lama main sulap...</option>
+                            <option value="Kurang dari 1 tahun">Kurang dari 1 tahun</option>
+                            <option value="1-3 tahun">1-3 tahun</option>
+                            <option value="3-5 tahun">3-5 tahun</option>
+                            <option value="5+ tahun">5+ tahun</option>
+                        </select>
+                        <select id="auth-aliran" class="form-select mb-4" required>
+                            <option value="">Aliran sulap...</option>
+                            <option value="Mentalism">Mentalism</option>
+                            <option value="Sleight of Hand">Sleight of Hand</option>
+                            <option value="Illusionism">Illusionism</option>
+                            <option value="Close-up">Close-up Magic</option>
+                        </select>
+                        <button type="submit" class="w-full btn btn-gold">Daftar</button>
+                    </form>
+                    <p class="text-center text-xs text-muted mt-4">
+                        Sudah punya akun? <button id="switch-login" class="text-gold hover:underline">Login</button>
+                    </p>
+                </div>`;
+            modal.classList.remove('hidden');
+            document.getElementById('modal-close').onclick = () => modal.classList.add('hidden');
+            document.getElementById('switch-signup')?.onclick = () => UI.showAuthModal('signup');
+            document.getElementById('switch-login')?.onclick = () => UI.showAuthModal('login');
+            document.getElementById('auth-form').onsubmit = async (e) => {
+                e.preventDefault();
+                try {
+                    if (mode === 'login') {
+                        await Auth.login(
+                            document.getElementById('auth-email').value, 
+                            document.getElementById('auth-pass').value
+                        );
+                    } else {
+                        await Auth.signup({ 
+                            username: document.getElementById('auth-user').value, 
+                            email: document.getElementById('auth-email').value, 
+                            password: document.getElementById('auth-pass').value, 
+                            lama_sulap: document.getElementById('auth-lama').value, 
+                            aliran_sulap: document.getElementById('auth-aliran').value 
+                        });
+                    }
+                    modal.classList.add('hidden');
+                } catch(err) { 
+                    UI.toast(err.message, 'error'); 
+                }
+            };
         };
 
         // ========================================
-        // 🚀 APP INITIALIZATION
+        // 🚀 INIT
         // ========================================
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize auth
+        document.addEventListener('DOMContentLoaded', () => {
             Auth.init();
+            DB.subscribe(() => { if (App.view) Actions.render(); });
             
-            // Setup data subscription
-            DataService.subscribe(() => {
-                // Re-render if needed
-                if (AppState.currentView) {
-                    Actions.renderCurrentView();
-                }
-            });
-            
-            // Global event listeners
-            document.getElementById('search-toggle').onclick = () => {
-                document.getElementById('search-bar').classList.toggle('hidden');
-                if (!document.getElementById('search-bar').classList.contains('hidden')) {
-                    document.getElementById('global-search').focus();
-                }
-            };
-            
-            document.getElementById('search-close').onclick = () => {
-                document.getElementById('search-bar').classList.add('hidden');
-                document.getElementById('global-search').value = '';
-            };
-            
-            document.getElementById('notification-toggle').onclick = () => {
-                UI.toast('🔔 Fitur notifikasi akan segera hadir!', 'info');
-            };
-            
-            document.getElementById('user-avatar-btn').onclick = () => {
-                document.getElementById('user-dropdown').classList.toggle('hidden');
-            };
-            
-            // Close dropdown when clicking outside
-            document.onclick = (e) => {
-                if (!e.target.closest('#user-avatar-btn')) {
-                    document.getElementById('user-dropdown').classList.add('hidden');
-                }
-            };
+            // Navigation buttons
+            document.getElementById('nav-home').onclick = () => Actions.go('home');
+            document.getElementById('nav-back').onclick = () => Actions.back();
+            document.getElementById('crumb-home').onclick = () => Actions.go('home');
             
             // Auth buttons
-            document.getElementById('login-btn').onclick = () => {
-                UI.showAuthModal('login');
-            };
-            
-            document.getElementById('signup-btn').onclick = () => {
-                UI.showAuthModal('signup');
-            };
-            
-            document.getElementById('logout-btn').onclick = async () => {
-                await Auth.logout();
-            };
-            
-            // User dropdown actions
-            document.querySelectorAll('#user-dropdown [data-action]').forEach(item => {
-                item.onclick = (e) => {
-                    e.preventDefault();
-                    const action = item.dataset.action;
-                    document.getElementById('user-dropdown').classList.add('hidden');
-                    
-                    if (action === 'profile' && AppState.currentUser) {
-                        Actions.navigateTo('profile', { currentProfileId: AppState.currentUser.userid });
-                    } else if (action === 'bookmarks') {
-                        UI.toast('🔖 Fitur bookmark akan segera hadir!', 'info');
-                    } else if (action === 'settings') {
-                        UI.toast('⚙️ Pengaturan akan segera hadir!', 'info');
-                    }
-                };
-            });
-            
-            // Home view actions
-            document.addEventListener('click', (e) => {
-                const action = e.target.closest('[data-action]')?.dataset.action;
-                if (!action) return;
-                
-                e.preventDefault();
-                
-                switch(action) {
-                    case 'explore-categories':
-                        Actions.navigateTo('categories');
-                        break;
-                    case 'view-guidelines':
-                        UI.toast('📖 Panduan forum akan segera tersedia!', 'info');
-                        break;
-                    case 'view-all-posts':
-                        Actions.navigateTo('categories');
-                        break;
-                    case 'new-post':
-                        if (!AppState.currentUser) {
-                            UI.toast('Login untuk membuat thread', 'info');
-                            return;
-                        }
-                        Actions.navigateTo('new-post', { currentCategory: e.target.closest('[data-category]')?.dataset.category });
-                        break;
-                    case 'edit-profile':
-                        UI.toast('✏️ Edit profil akan segera hadir!', 'info');
-                        break;
-                    case 'send-message':
-                        UI.toast('💬 Fitur pesan akan segera hadir!', 'info');
-                        break;
-                }
-            });
-            
-            // Auth Modal
-            window.UI.showAuthModal = (mode = 'login') => {
-                const modal = document.getElementById('modal-overlay');
-                const content = document.getElementById('modal-content');
-                
-                content.innerHTML = `
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-gothic text-xl font-bold">${mode === 'login' ? '🔐 Login' : '✨ Buat Akun'}</h3>
-                            <button id="modal-close" class="btn btn-ghost btn-icon">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        
-                        ${mode === 'login' ? `
-                            <form id="auth-form">
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium mb-2">Email</label>
-                                    <input type="email" id="auth-email" class="form-input rounded-lg" required>
-                                </div>
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium mb-2">Password</label>
-                                    <input type="password" id="auth-password" class="form-input rounded-lg" required>
-                                </div>
-                                <button type="submit" class="w-full btn btn-primary">Login</button>
-                            </form>
-                            <p class="text-center mt-4 text-sm text-gray-400">
-                                Belum punya akun? 
-                                <button class="text-magic-400 hover:underline" onclick="UI.showAuthModal('signup')">Daftar di sini</button>
-                            </p>
-                        ` : `
-                            <form id="auth-form">
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium mb-2">Username</label>
-                                    <input type="text" id="auth-username" class="form-input rounded-lg" required minlength="3">
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium mb-2">Email</label>
-                                    <input type="email" id="auth-email" class="form-input rounded-lg" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium mb-2">Password</label>
-                                    <input type="password" id="auth-password" class="form-input rounded-lg" required minlength="6">
-                                    <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium mb-2">Berapa lama bermain sulap?</label>
-                                    <select id="auth-lama-sulap" class="form-select rounded-lg" required>
-                                        <option value="">Pilih...</option>
-                                        <option value="Kurang dari 1 tahun">Kurang dari 1 tahun</option>
-                                        <option value="1-3 tahun">1-3 tahun</option>
-                                        <option value="3-5 tahun">3-5 tahun</option>
-                                        <option value="Lebih dari 5 tahun">Lebih dari 5 tahun</option>
-                                    </select>
-                                </div>
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium mb-2">Aliran sulap yang diminati?</label>
-                                    <select id="auth-aliran-sulap" class="form-select rounded-lg" required>
-                                        <option value="">Pilih...</option>
-                                        <option value="Mentalism">Mentalism</option>
-                                        <option value="Sleight of Hand">Sleight of Hand</option>
-                                        <option value="Illusionism">Illusionism</option>
-                                        <option value="Close-up Magic">Close-up Magic</option>
-                                        <option value="Stage Magic">Stage Magic</option>
-                                        <option value="Comedy Magic">Comedy Magic</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="w-full btn btn-primary">Daftar Sekarang</button>
-                            </form>
-                            <p class="text-center mt-4 text-sm text-gray-400">
-                                Sudah punya akun? 
-                                <button class="text-magic-400 hover:underline" onclick="UI.showAuthModal('login')">Login di sini</button>
-                            </p>
-                        `}
-                    </div>
-                `;
-                
-                modal.classList.remove('hidden');
-                
-                // Close modal
-                document.getElementById('modal-close').onclick = () => {
-                    modal.classList.add('hidden');
-                };
-                
-                // Form submit
-                document.getElementById('auth-form').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const email = document.getElementById('auth-email').value;
-                    const password = document.getElementById('auth-password').value;
-                    
-                    try {
-                        if (mode === 'login') {
-                            await Auth.login(email, password);
-                        } else {
-                            await Auth.signup({
-                                username: document.getElementById('auth-username').value,
-                                email,
-                                password,
-                                lama_sulap: document.getElementById('auth-lama-sulap').value,
-                                aliran_sulap: document.getElementById('auth-aliran-sulap').value
-                            });
-                            // Switch to login after successful signup
-                            setTimeout(() => UI.showAuthModal('login'), 1500);
-                        }
-                        modal.classList.add('hidden');
-                    } catch (err) {
-                        // Error already shown via toast
-                    }
-                };
-            };
+            document.getElementById('btn-login').onclick = () => UI.showAuthModal('login');
+            document.getElementById('btn-signup').onclick = () => UI.showAuthModal('signup');
+            document.getElementById('btn-logout').onclick = Auth.logout;
             
             // Initial render
-            Actions.navigateTo('home');
+            Actions.go('home');
             
-            // Update online status periodically
-            if (AppState.currentUser) {
-                setInterval(async () => {
-                    await db.collection('users').doc(AppState.currentUser.userid).update({
-                        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-                        isOnline: true
-                    });
-                }, 30000);
-            }
+            // Cleanup on unload
+            window.addEventListener('beforeunload', () => {
+                App.unsubscribers.forEach(unsub => { if (typeof unsub === 'function') unsub(); });
+            });
         });
     </script>
 </body>
