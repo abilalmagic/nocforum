@@ -4,235 +4,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NOC FORUM • Gothic Magic Community</title>
-    
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        gothic: ['Cinzel', 'serif'],
-                        serif: ['Cormorant Garamond', 'serif'],
-                    },
+                    fontFamily: { gothic: ['Cinzel', 'serif'], serif: ['Cormorant Garamond', 'serif'] },
                     colors: {
-                        gothic: {
-                            bg: '#0a0a0f', card: '#11111a', border: '#2a2a3a',
-                            text: '#e8e8f0', muted: '#88889a', accent: '#8b0000',
-                            gold: '#c9a961', goldHover: '#d4b87a'
-                        }
+                        gothic: { bg: '#0a0a0f', card: '#11111a', border: '#2a2a3a', text: '#e8e8f0', muted: '#88889a', accent: '#8b0000', gold: '#c9a961' }
                     },
-                    animation: { 'fade-in': 'fadeIn 0.4s ease-out', 'slide-up': 'slideUp 0.3s ease-out' },
+                    animation: { 'fade-in': 'fadeIn 0.4s ease-out', 'slide-up': 'slideUp 0.3s ease-out', 'pulse-slow': 'pulse 3s infinite' },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
                         slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
                     }
                 }
             }
-        }
+        };
     </script>
-    
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            font-family: 'Cormorant Garamond', serif; 
-            background: radial-gradient(ellipse at top, #1a1a2e 0%, transparent 70%), #0a0a0f;
-            color: #e8e8f0; min-height: 100vh; line-height: 1.7; position: relative;
-        }
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, transparent, #8b0000, #c9a961, #8b0000, transparent); z-index: 100;
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #11111a; }
-        ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #8b0000; }
-        
-        .form-input, .form-select, .form-textarea {
-            background: #0f0f16; border: 1px solid #2a2a3a; border-bottom: 2px solid #3a3a4a;
-            color: #e8e8f0; padding: 0.875rem 1rem; width: 100%; font-family: inherit;
-            transition: all 0.3s ease;
-        }
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none; border-bottom-color: #c9a961; background: #14141e;
-        }
+        body { font-family: 'Cormorant Garamond', serif; background: radial-gradient(ellipse at top, #1a1a2e 0%, transparent 70%), #0a0a0f; color: #e8e8f0; min-height: 100vh; line-height: 1.7; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #8b0000, #c9a961, #8b0000, transparent); z-index: 100; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #11111a; } ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: #8b0000; }
+        .form-input, .form-select, .form-textarea { background: #0f0f16; border: 1px solid #2a2a3a; border-bottom: 2px solid #3a3a4a; color: #e8e8f0; padding: 0.875rem 1rem; width: 100%; font-family: inherit; transition: all 0.3s ease; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-bottom-color: #c9a961; background: #14141e; }
         .form-input::placeholder { color: #55556a; font-style: italic; }
-        
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.75rem 1.75rem; font-family: 'Cinzel', serif; font-weight: 600;
-            font-size: 0.85rem; letter-spacing: 1.5px; text-transform: uppercase;
-            transition: all 0.3s ease; cursor: pointer; border: none; position: relative;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #8b0000, #6b0000); color: #f8f8fa;
-            border: 1px solid #a50000; box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #a50000, #8b0000);
-            box-shadow: 0 6px 25px rgba(139, 0, 0, 0.6); transform: translateY(-2px);
-        }
-        .btn-primary:disabled {
-            background: #2a2a3a; border-color: #3a3a4a; color: #66667a;
-            cursor: not-allowed; transform: none; box-shadow: none;
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, #c9a961, #b89650); color: #0a0a0f;
-            border: 1px solid #d4b87a;
-        }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem 1.2rem; font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; cursor: pointer; border: none; }
+        .btn-primary { background: linear-gradient(135deg, #8b0000, #6b0000); color: #f8f8fa; border: 1px solid #a50000; }
+        .btn-primary:hover { background: linear-gradient(135deg, #a50000, #8b0000); transform: translateY(-2px); }
+        .btn-primary:disabled { background: #2a2a3a; border-color: #3a3a4a; color: #666; cursor: not-allowed; transform: none; }
+        .btn-gold { background: linear-gradient(135deg, #c9a961, #b89650); color: #0a0a0f; border: 1px solid #d4b87a; }
         .btn-gold:hover { background: linear-gradient(135deg, #d4b87a, #c9a961); transform: translateY(-2px); }
         .btn-outline { background: transparent; border: 1px solid #3a3a4a; color: #c9a961; }
-        .btn-outline:hover { border-color: #c9a961; background: rgba(201, 169, 97, 0.08); }
-        .btn-ghost { background: transparent; color: #88889a; padding: 0.5rem; }
+        .btn-outline:hover { border-color: #c9a961; background: rgba(201,169,97,0.08); }
+        .btn-ghost { background: transparent; color: #88889a; padding: 0.4rem; }
         .btn-ghost:hover { color: #c9a961; }
-        
-        .card {
-            background: linear-gradient(145deg, #11111a, #0d0d14);
-            border: 1px solid #2a2a3a; position: relative; overflow: hidden;
-        }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, #8b0000, #c9a961, #8b0000, transparent);
-        }
-        .card:hover { border-color: #3a3a4a; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); }
-        .card-header { padding: 1rem 1.25rem; border-bottom: 1px solid #2a2a3a; background: rgba(17, 17, 26, 0.8); }
-        .card-body { padding: 1.25rem; }
-        .card-footer { padding: 0.875rem 1.25rem; border-top: 1px solid #2a2a3a; background: rgba(17, 17, 26, 0.5); }
-        
-        .nav-btn {
-            font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 1px;
-            padding: 0.5rem 1rem; color: #88889a; transition: all 0.2s;
-            display: flex; align-items: center; gap: 0.35rem;
-        }
-        .nav-btn:hover, .nav-btn.active { color: #c9a961; }
-        .nav-btn.active { border-bottom: 2px solid #c9a961; }
-        
-        .category-card {
-            cursor: pointer; text-align: center; padding: 1.5rem 1rem;
-            transition: all 0.3s ease; border: 1px solid #2a2a3a;
-        }
-        .category-card:hover { border-color: #8b0000; background: rgba(139, 0, 0, 0.08); transform: translateY(-3px); }
-        .category-icon { font-size: 2rem; color: #c9a961; margin-bottom: 0.75rem; display: block; }
-        .category-name { font-family: 'Cinzel', serif; font-weight: 600; color: #e8e8f0; font-size: 1.1rem; }
-        
+        .btn-nav { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 1px; padding: 0.4rem 0.8rem; color: #88889a; transition: all 0.2s; display: flex; align-items: center; gap: 0.3rem; }
+        .btn-nav:hover, .btn-nav.active { color: #c9a961; }
+        .btn-nav.active { border-bottom: 2px solid #c9a961; }
+        .card { background: linear-gradient(145deg, #11111a, #0d0d14); border: 1px solid #2a2a3a; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #8b0000, #c9a961, #8b0000, transparent); }
+        .card:hover { border-color: #3a3a4a; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+        .card-header { padding: 0.8rem 1rem; border-bottom: 1px solid #2a2a3a; background: rgba(17,17,26,0.8); }
+        .card-body { padding: 1rem; }
+        .card-footer { padding: 0.7rem 1rem; border-top: 1px solid #2a2a3a; background: rgba(17,17,26,0.5); }
+        .category-card { cursor: pointer; text-align: center; padding: 1.2rem 0.8rem; transition: all 0.3s ease; border: 1px solid #2a2a3a; }
+        .category-card:hover { border-color: #8b0000; background: rgba(139,0,0,0.08); transform: translateY(-3px); }
+        .category-icon { font-size: 1.8rem; color: #c9a961; margin-bottom: 0.5rem; display: block; }
+        .category-name { font-family: 'Cinzel', serif; font-weight: 600; color: #e8e8f0; font-size: 1rem; }
         .post-item { cursor: pointer; transition: all 0.2s ease; border-left: 3px solid transparent; }
-        .post-item:hover { border-left-color: #8b0000; background: rgba(139, 0, 0, 0.05); }
+        .post-item:hover { border-left-color: #8b0000; background: rgba(139,0,0,0.05); }
         .post-title { font-family: 'Cinzel', serif; font-weight: 600; color: #e8e8f0; transition: color 0.2s; }
         .post-item:hover .post-title { color: #c9a961; }
-        
-        .comment { border-left: 2px solid #3a3a4a; padding-left: 1rem; margin-left: 0.5rem; }
-        .comment.nested { margin-left: 2rem; border-left-color: #8b0000; }
-        .comment-author { font-family: 'Cinzel', serif; font-size: 0.9rem; color: #c9a961; cursor: pointer; }
+        .comment { border-left: 2px solid #3a3a4a; padding-left: 0.8rem; margin-left: 0.4rem; }
+        .comment.nested { margin-left: 1.5rem; border-left-color: #8b0000; }
+        .comment-author { font-family: 'Cinzel', serif; font-size: 0.85rem; color: #c9a961; cursor: pointer; }
         .comment-author:hover { text-decoration: underline; }
-        
-        .profile-avatar {
-            width: 80px; height: 80px; border: 2px solid #c9a961;
-            background: linear-gradient(135deg, #1a1a2e, #0a0a0f);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Cinzel', serif; font-size: 2rem; color: #c9a961;
-            margin: 0 auto 1rem;
-        }
-        
+        .profile-avatar { width: 70px; height: 70px; border: 2px solid #c9a961; background: linear-gradient(135deg, #1a1a2e, #0a0a0f); display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 1.8rem; color: #c9a961; margin: 0 auto 0.8rem; }
         .hidden { display: none !important; }
         .animate-fade { animation: fade-in 0.4s ease-out; }
         .animate-slide { animation: slide-up 0.3s ease-out; }
-        .divider { height: 1px; background: linear-gradient(to right, transparent, #2a2a3a, transparent); margin: 1.25rem 0; }
+        .divider { height: 1px; background: linear-gradient(to right, transparent, #2a2a3a, transparent); margin: 1rem 0; }
         .text-gold { color: #c9a961; } .text-accent { color: #8b0000; } .text-muted { color: #88889a; }
-        
-        @media (max-width: 640px) {
-            .btn { padding: 0.625rem 1.25rem; font-size: 0.8rem; }
-            .card-body { padding: 1rem; }
-            .post-stats { flex-wrap: wrap; gap: 0.5rem; }
-        }
-        
-        .loader {
-            width: 40px; height: 40px; border: 3px solid #2a2a3a;
-            border-top-color: #c9a961; border-radius: 50%;
-            animation: spin 1s linear infinite; margin: 2rem auto;
-        }
+        @media (max-width: 640px) { .btn { padding: 0.5rem 1rem; font-size: 0.75rem; } .card-body { padding: 0.8rem; } }
+        .loader { width: 35px; height: 35px; border: 3px solid #2a2a3a; border-top-color: #c9a961; border-radius: 50%; animation: spin 1s linear infinite; margin: 1.5rem auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; max-width: 320px; }
-        .toast { padding: 0.875rem 1.25rem; background: #11111a; border: 1px solid #2a2a3a; border-left: 3px solid #c9a961; font-size: 0.9rem; animation: slide-up 0.3s ease-out; display: flex; align-items: center; gap: 0.75rem; }
-        .toast.error { border-left-color: #8b0000; } .toast.success { border-left-color: #2d7d4e; }
-        #modal-overlay { background: rgba(5, 5, 10, 0.92); backdrop-filter: blur(4px); }
+        #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.4rem; max-width: 300px; }
+        .toast { padding: 0.7rem 1rem; background: #11111a; border: 1px solid #2a2a3a; border-left: 3px solid #c9a961; font-size: 0.85rem; animation: slide-up 0.3s ease-out; display: flex; align-items: center; gap: 0.6rem; }
+        .toast.error { border-left-color: #8b0000; } .toast.success { border-left-color: #2d7d4e; } .toast.new { border-left-color: #60a5fa; animation: pulse-slow; }
+        #modal-overlay { background: rgba(5,5,10,0.92); backdrop-filter: blur(4px); }
+        .notification-item { padding: 0.6rem 1rem; border-bottom: 1px solid #2a2a3a; display: flex; align-items: start; gap: 0.6rem; }
+        .notification-item.unread { background: rgba(96,165,250,0.08); border-left: 3px solid #60a5fa; }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-icon { width: 28px; height: 28px; border-radius: 50%; background: #2a2a3a; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; }
+        .notification-content { flex: 1; min-width: 0; }
+        .notification-title { font-weight: 600; font-size: 0.85rem; }
+        .notification-time { font-size: 0.7rem; color: #666; }
+        .badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; font-size: 0.65rem; font-weight: 600; background: #8b0000; color: white; }
+        .badge.gold { background: #c9a961; color: #0a0a0f; }
+        .activity-item { padding: 0.5rem 0; border-bottom: 1px dashed #2a2a3a; font-size: 0.85rem; }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-user { color: #c9a961; font-weight: 500; }
+        .activity-action { color: #88889a; }
+        .activity-target { color: #e8e8f0; cursor: pointer; }
+        .activity-target:hover { color: #c9a961; }
     </style>
 </head>
 <body>
     <div id="toast-container"></div>
     <div id="app" class="min-h-screen flex flex-col">
-        
-        <!-- Header -->
+        <!-- Header with Navigation -->
         <header class="sticky top-0 z-40 bg-gothic-bg/95 border-b border-gothic-border">
-            <div class="max-w-4xl mx-auto px-4 py-3">
+            <div class="max-w-4xl mx-auto px-3 py-2">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">🎩</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">🎩</span>
                         <div>
-                            <h1 class="font-gothic text-lg font-bold text-gold tracking-wide">NOC FORUM</h1>
-                            <p class="text-xs text-muted -mt-0.5 italic">Ars Magica • Est. 2025</p>
+                            <h1 class="font-gothic text-base font-bold text-gold tracking-wide">NOC FORUM</h1>
+                            <p class="text-[10px] text-muted -mt-0.5 italic">Ars Magica</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-1">
-                        <button id="nav-home" class="nav-btn active" title="Home">⌂ Home</button>
-                        <button id="nav-back" class="nav-btn hidden" title="Kembali">← Back</button>
+                        <button id="btn-home" class="btn-nav active" title="Home">⌂</button>
+                        <button id="btn-back" class="btn-nav hidden" title="Kembali">←</button>
+                        <button id="btn-refresh" class="btn-nav" title="Refresh">⟳</button>
+                        <button id="btn-notif" class="btn-nav relative" title="Notifikasi">
+                            🔔 <span id="notif-badge" class="hidden badge absolute -top-1 -right-1">0</span>
+                        </button>
                     </div>
                 </div>
-                <div id="nav-user" class="mt-3 pt-3 border-t border-gothic-border flex items-center justify-between">
+                <div id="nav-user" class="mt-2 pt-2 border-t border-gothic-border flex items-center justify-between text-xs">
                     <div id="auth-links">
-                        <button id="btn-login" class="text-sm text-gold hover:text-gothic-goldHover transition">✦ Login</button>
-                        <span class="text-muted mx-2">•</span>
-                        <button id="btn-signup" class="text-sm text-gold hover:text-gothic-goldHover transition">✦ Daftar</button>
+                        <button id="btn-login" class="text-gold hover:underline">✦ Login</button>
+                        <span class="text-muted mx-1">•</span>
+                        <button id="btn-signup" class="text-gold hover:underline">✦ Daftar</button>
                     </div>
-                    <div id="user-info" class="hidden flex items-center gap-3">
-                        <span class="text-sm">Welcome, <span id="user-name-display" class="text-gold font-gothic"></span></span>
-                        <button id="btn-logout" class="text-xs text-muted hover:text-accent transition">[Keluar]</button>
+                    <div id="user-info" class="hidden flex items-center gap-2">
+                        <span>👤 <span id="user-name" class="text-gold font-gothic"></span></span>
+                        <button id="btn-logout" class="text-muted hover:text-accent">[Keluar]</button>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Breadcrumb -->
-        <nav id="breadcrumb" class="max-w-4xl mx-auto px-4 py-2 hidden">
-            <div class="flex items-center gap-2 text-sm text-muted">
-                <button id="crumb-home" class="hover:text-gold transition">Home</button>
-                <span>/</span>
-                <span id="crumb-current" class="text-gothic-text">Kategori</span>
-            </div>
+        <nav id="breadcrumb" class="max-w-4xl mx-auto px-3 py-1.5 hidden text-[11px] text-muted">
+            <button id="crumb-home" class="hover:text-gold">Home</button>
+            <span class="mx-1">/</span>
+            <span id="crumb-current">Kategori</span>
         </nav>
 
         <!-- Main Content -->
-        <main id="main-content" class="flex-grow max-w-4xl mx-auto w-full px-4 py-4"></main>
+        <main id="main-content" class="flex-grow max-w-4xl mx-auto w-full px-3 py-3"></main>
 
         <!-- Footer -->
-        <footer class="border-t border-gothic-border py-6 mt-4">
-            <div class="max-w-4xl mx-auto px-4 text-center">
-                <p class="font-gothic text-gold text-sm">✦ NOC FORUM ✦</p>
-                <p class="text-muted text-xs mt-1 italic">dibuat untuk happy, kalo ga happy pergi by Prof.Z — nocfams 2025</p>
-                <p class="text-muted text-xs mt-2">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
+        <footer class="border-t border-gothic-border py-4 mt-2">
+            <div class="max-w-4xl mx-auto px-3 text-center text-[10px] text-muted">
+                <p class="font-gothic text-gold">✦ NOC FORUM ✦</p>
+                <p class="italic mt-0.5">dibuat untuk happy, kalo ga happy pergi by Prof.Z — nocfams 2025</p>
+                <p class="mt-1">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
             </div>
         </footer>
     </div>
 
-    <!-- Modal -->
-    <div id="modal-overlay" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-        <div id="modal-content" class="card w-full max-w-md animate-fade"></div>
+    <!-- Notification Modal -->
+    <div id="notif-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3">
+        <div class="card w-full max-w-sm max-h-[70vh] overflow-hidden animate-fade">
+            <div class="card-header flex items-center justify-between">
+                <span class="font-gothic text-gold">🔔 Notifikasi</span>
+                <button id="notif-close" class="btn-ghost">✕</button>
+            </div>
+            <div id="notif-list" class="card-body overflow-y-auto max-h-64 space-y-0.5"></div>
+            <div class="card-footer text-center text-[10px] text-muted">
+                <button id="notif-mark-read" class="text-gold hover:underline">Tandai semua sudah dibaca</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="modal-overlay" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3">
+        <div id="modal-content" class="card w-full max-w-sm animate-fade"></div>
     </div>
 
     <script>
-        // ========================================
-        // 🔥 FIREBASE CONFIGURATION (YOUR CONFIG)
-        // ========================================
+        // 🔥 FIREBASE CONFIG (YOUR CONFIG)
         const firebaseConfig = {
             apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
             authDomain: "magicnoc-125b6.firebaseapp.com",
@@ -242,704 +184,247 @@
             messagingSenderId: "321388594743",
             appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
         };
-        
-        // Initialize Firebase
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-        
-        // Enable offline persistence
-        db.enablePersistence().catch(err => console.log('Persistence error:', err.code));
+        const db = firebase.firestore(), auth = firebase.auth();
+        db.enablePersistence().catch(e => console.log('Persistence:', e.code));
 
-        // ========================================
         // ⚙️ CONFIG & STATE
-        // ========================================
         const CONFIG = {
             CATEGORIES: [
-                { id: 'cardmagic', name: '✦ Card Magic', icon: '♠' },
-                { id: 'coinmagic', name: '✦ Coin Magic', icon: '◉' },
-                { id: 'mentalism', name: '✦ Mentalism', icon: '◈' },
-                { id: 'everydayobject', name: '✦ Everyday Object', icon: '◇' },
-                { id: 'idea', name: '✦ Idea', icon: '✧' },
-                { id: 'market', name: '✦ Market Magic', icon: '❖' }
+                {id:'cardmagic',name:'✦ Card Magic',icon:'♠'}, {id:'coinmagic',name:'✦ Coin Magic',icon:'◉'},
+                {id:'mentalism',name:'✦ Mentalism',icon:'◈'}, {id:'everydayobject',name:'✦ Everyday Object',icon:'◇'},
+                {id:'idea',name:'✦ Idea',icon:'✧'}, {id:'market',name:'✦ Market Magic',icon:'❖'}
             ]
         };
+        const App = { user:null, view:'home', history:['home'], data:{posts:[],comments:[],likes:[],users:[],notifications:[]}, params:{}, unsub:[] };
 
-        const App = {
-            user: null, 
-            view: 'home', 
-            history: ['home'],
-            data: { posts: [], comments: [], likes: [], users: [] },
-            params: {}, 
-            loading: false, 
-            unsubscribers: []
-        };
-
-        // ========================================
         // 🎨 UI RENDERERS
-        // ========================================
         const UI = {
-            toast: (msg, type = 'info') => {
-                const el = document.createElement('div');
-                el.className = `toast ${type === 'error' ? 'error' : type === 'success' ? 'success' : ''}`;
-                el.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : '•'}</span> ${msg}`;
+            toast: (msg,type='info') => {
+                const el=document.createElement('div');
+                el.className=`toast ${type==='error'?'error':type==='success'?'success':type==='new'?'new':''}`;
+                el.innerHTML=`<span>${type==='success'?'✓':type==='error'?'✕':type==='new'?'🔔':'•'}</span>${msg}`;
                 document.getElementById('toast-container').appendChild(el);
-                setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 4000);
+                setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),200);},type==='new'?6000:3500);
             },
-
-            loading: (msg = 'Memuat...') => {
-                document.getElementById('main-content').innerHTML = `
-                    <div class="text-center py-12 animate-fade">
-                        <div class="loader"></div>
-                        <p class="text-muted mt-4 italic">${msg}</p>
-                    </div>`;
-            },
-
-            renderHome: () => `
-                <div class="text-center py-8 animate-slide">
-                    <p class="font-gothic text-2xl text-gold mb-2">✦ Selamat Datang ✦</p>
-                    <p class="text-muted italic mb-6">Pilih kategori untuk menjelajahi dunia sulap</p>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        ${CONFIG.CATEGORIES.map(c => `
-                            <div class="category-card card" data-cat="${c.id}">
-                                <span class="category-icon">${c.icon}</span>
-                                <div class="category-name">${c.name}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `,
-
-            renderCategories: (categoryId) => {
-                const cat = CONFIG.CATEGORIES.find(c => c.id === categoryId);
-                const posts = App.data.posts.filter(p => p.category === categoryId)
-                    .sort((a,b) => (b.timestamp?.toDate?.() || new Date(b.timestamp)) - (a.timestamp?.toDate?.() || new Date(a.timestamp)));
-                
-                return `
-                    <div class="animate-slide">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="font-gothic text-xl text-gold">${cat?.icon} ${cat?.name}</h2>
-                            ${App.user ? `<button id="btn-new-post" class="btn btn-primary text-xs">＋ Thread</button>` : ''}
-                        </div>
-                        ${posts.length === 0 ? `
-                            <div class="card p-6 text-center text-muted italic">Belum ada thread. Jadilah yang pertama! ✨</div>
-                        ` : `
-                            <div class="space-y-3">
-                                ${posts.map(p => {
-                                    const author = App.data.users.find(u => u.userid === p.userid) || {};
-                                    const comments = App.data.comments.filter(c => c.postid === p.postid).length;
-                                    const likes = App.data.likes.filter(l => l.postid === p.postid).length;
-                                    return `
-                                        <div class="card p-4 post-item" data-post="${p.postid}">
-                                            <div class="post-title text-base mb-1">${p.title}</div>
-                                            <div class="text-xs text-muted flex flex-wrap gap-3">
-                                                <span>oleh <span class="text-gold">${author.username || 'Anon'}</span></span>
-                                                <span>•</span>
-                                                <span>${new Date(p.timestamp?.toDate?.() || p.timestamp).toLocaleDateString('id-ID')}</span>
-                                                <span>•</span><span>${comments} 💬</span><span>${likes} ❤</span>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `}
-                    </div>
-                `;
-            },
-
+            loading: (m='Memuat...') => document.getElementById('main-content').innerHTML=`<div class="text-center py-10 animate-fade"><div class="loader"></div><p class="text-muted mt-3 italic text-sm">${m}</p></div>`,
+            renderHome: () => `<div class="text-center py-6 animate-slide"><p class="font-gothic text-xl text-gold mb-1">✦ Selamat Datang ✦</p><p class="text-muted italic text-sm mb-4">Pilih kategori untuk menjelajahi</p><div class="grid grid-cols-3 gap-2">${CONFIG.CATEGORIES.map(c=>`<div class="category-card card" data-cat="${c.id}"><span class="category-icon">${c.icon}</span><div class="category-name text-[11px]">${c.name}</div></div>`).join('')}</div></div>`,
+            renderCategories: (catId) => {
+                const cat=CONFIG.CATEGORIES.find(c=>c.id===catId), posts=App.data.posts.filter(p=>p.category===catId).sort((a,b)=>(b.timestamp?.toDate?.()||new Date(b.timestamp))-(a.timestamp?.toDate?.()||new Date(a.timestamp)));
+                return `<div class="animate-slide"><div class="flex items-center justify-between mb-3"><h2 class="font-gothic text-lg text-gold">${cat?.icon} ${cat?.name}</h2>${App.user?`<button id="btn-new" class="btn btn-primary text-[10px] px-2 py-1">＋</button>`:''}</div>${posts.length===0?`<div class="card p-4 text-center text-muted italic text-sm">Belum ada thread. Jadilah yang pertama! ✨</div>`:`<div class="space-y-2">${posts.map(p=>{const au=App.data.users.find(u=>u.userid===p.userid)||{},cm=App.data.comments.filter(c=>c.postid===p.postid).length,lk=App.data.likes.filter(l=>l.postid===p.postid).length;return`<div class="card p-3 post-item" data-post="${p.postid}"><div class="post-title text-sm mb-0.5">${p.title}</div><div class="text-[10px] text-muted flex flex-wrap gap-2"><span>oleh <span class="text-gold">${au.username||'Anon'}</span></span><span>•</span><span>${new Date(p.timestamp?.toDate?.()||p.timestamp).toLocaleDateString('id-ID')}</span><span>•</span><span>${cm}💬</span><span>${lk}❤</span></div></div>`}).join('')}</div>`}</div>`,
             renderPost: (postId) => {
-                const post = App.data.posts.find(p => p.postid === postId);
-                if (!post) return '<p class="text-center text-muted py-8">Thread tidak ditemukan</p>';
-                
-                const author = App.data.users.find(u => u.userid === post.userid) || {};
-                const comments = App.data.comments.filter(c => c.postid === postId)
-                    .sort((a,b) => (a.timestamp?.toDate?.() || a.timestamp) - (b.timestamp?.toDate?.() || b.timestamp));
-                const likes = App.data.likes.filter(l => l.postid === postId);
-                const liked = App.user && likes.some(l => l.userid === App.user.userid);
-                
-                return `
-                    <div class="animate-slide">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h2 class="font-gothic text-lg">${post.title}</h2>
-                                <div class="text-xs text-muted mt-1">
-                                    oleh <span class="text-gold">${author.username || 'Anon'}</span> 
-                                    • ${new Date(post.timestamp?.toDate?.() || post.timestamp).toLocaleString('id-ID')}
-                                </div>
-                            </div>
-                            <div class="card-body"><p class="whitespace-pre-wrap">${post.content}</p></div>
-                            <div class="card-footer flex items-center justify-between">
-                                <div class="flex items-center gap-4 text-sm">
-                                    <button id="btn-like" class="${liked ? 'text-accent' : 'text-muted'} hover:text-accent transition">
-                                        ${liked ? '❤' : '♡'} ${likes.length}
-                                    </button>
-                                    <span class="text-muted">👁 ${post.views || 0}</span>
-                                </div>
-                                ${App.user?.userid === post.userid ? `<button id="btn-delete-post" class="text-xs text-muted hover:text-accent">[Hapus]</button>` : ''}
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header"><span class="font-gothic">💬 Komentar (${comments.length})</span></div>
-                            <div class="card-body space-y-4">
-                                ${App.user ? `
-                                    <form id="form-comment" class="mb-4">
-                                        <textarea id="comment-text" class="form-textarea" placeholder="Tulis komentar..." rows="2" required></textarea>
-                                        <div class="flex justify-end mt-2"><button type="submit" class="btn btn-primary text-xs">Kirim</button></div>
-                                    </form>
-                                ` : '<p class="text-center text-muted text-sm italic py-4">Login untuk berkomentar</p>'}
-                                ${comments.map(c => {
-                                    const cAuthor = App.data.users.find(u => u.userid === c.userid) || {};
-                                    const replies = comments.filter(r => r.parent_comment_id === c.commentid);
-                                    return `
-                                        <div class="comment">
-                                            <div class="comment-author" data-user="${c.userid}">${cAuthor.username || 'Anon'}</div>
-                                            <p class="text-sm mt-1">${c.content}</p>
-                                            <div class="text-xs text-muted mt-1 flex items-center gap-3">
-                                                <span>${new Date(c.timestamp?.toDate?.() || c.timestamp).toLocaleString('id-ID', {hour:'2-digit',minute:'2-digit'})}</span>
-                                                ${App.user ? `<button class="reply-btn hover:text-gold" data-cid="${c.commentid}">Balas</button>` : ''}
-                                            </div>
-                                            ${App.user ? `
-                                                <form class="reply-form hidden mt-2" data-parent="${c.commentid}">
-                                                    <textarea class="form-textarea text-sm" placeholder="Balasan..." rows="2"></textarea>
-                                                    <div class="flex justify-end gap-2 mt-1">
-                                                        <button type="button" class="btn btn-ghost text-xs cancel-reply">Batal</button>
-                                                        <button type="submit" class="btn btn-primary text-xs">Kirim</button>
-                                                    </div>
-                                                </form>
-                                            ` : ''}
-                                            ${replies.length > 0 ? `<div class="mt-3 space-y-3">${replies.map(r => {
-                                                const rAuthor = App.data.users.find(u => u.userid === r.userid) || {};
-                                                return `<div class="comment nested"><div class="comment-author" data-user="${r.userid}">${rAuthor.username || 'Anon'}</div><p class="text-sm mt-1">${r.content}</p><span class="text-xs text-muted">${new Date(r.timestamp?.toDate?.() || r.timestamp).toLocaleString('id-ID', {hour:'2-digit',minute:'2-digit'})}</span></div>`;
-                                            }).join('')}</div>` : ''}
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            },
-
+                const post=App.data.posts.find(p=>p.postid===postId); if(!post) return'<p class="text-center text-muted py-6 text-sm">Thread tidak ditemukan</p>';
+                const au=App.data.users.find(u=>u.userid===post.userid)||{}, cms=App.data.comments.filter(c=>c.postid===postId).sort((a,b)=>(a.timestamp?.toDate?.()||a.timestamp)-(b.timestamp?.toDate?.()||b.timestamp)), lks=App.data.likes.filter(l=>l.postid===postId), liked=App.user&&lks.some(l=>l.userid===App.user.userid);
+                return `<div class="animate-slide"><div class="card mb-3"><div class="card-header"><h2 class="font-gothic text-base">${post.title}</h2><div class="text-[10px] text-muted mt-0.5">oleh <span class="text-gold">${au.username||'Anon'}</span> • ${new Date(post.timestamp?.toDate?.()||post.timestamp).toLocaleString('id-ID')}</div></div><div class="card-body text-sm whitespace-pre-wrap">${post.content}</div><div class="card-footer flex items-center justify-between text-[11px]"><div class="flex items-center gap-3"><button id="btn-like" class="${liked?'text-accent':'text-muted'} hover:text-accent">${liked?'❤':'♡'} ${lks.length}</button><span class="text-muted">👁 ${post.views||0}</span></div>${App.user?.userid===post.userid?`<button id="btn-del" class="text-muted hover:text-accent">[Hapus]</button>`:''}</div></div><div class="card"><div class="card-header"><span class="font-gothic text-sm">💬 Komentar (${cms.length})</span></div><div class="card-body space-y-3">${App.user?`<form id="form-cmt"><textarea id="cmt-txt" class="form-textarea text-sm" placeholder="Tulis komentar..." rows="2" required></textarea><div class="flex justify-end mt-1"><button type="submit" class="btn btn-primary text-[10px] px-2 py-1">Kirim</button></div></form>`:'<p class="text-center text-muted text-[11px] italic py-3">Login untuk berkomentar</p>'}${cms.map(c=>{const ca=App.data.users.find(u=>u.userid===c.userid)||{}, reps=cms.filter(r=>r.parent_comment_id===c.commentid);return`<div class="comment"><div class="comment-author text-[11px]" data-user="${c.userid}">${ca.username||'Anon'}</div><p class="text-[11px] mt-0.5">${c.content}</p><div class="text-[10px] text-muted mt-0.5 flex items-center gap-2"><span>${new Date(c.timestamp?.toDate?.()||c.timestamp).toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span>${App.user?`<button class="reply-btn hover:text-gold text-[10px]" data-cid="${c.commentid}">Balas</button>`:''}</div>${App.user?`<form class="reply-form hidden mt-1" data-parent="${c.commentid}"><textarea class="form-textarea text-[10px]" placeholder="Balasan..." rows="2"></textarea><div class="flex justify-end gap-1 mt-0.5"><button type="button" class="btn btn-ghost text-[9px] cancel-reply">Batal</button><button type="submit" class="btn btn-primary text-[9px] px-1.5 py-0.5">Kirim</button></div></form>`:''}${reps.length>0?`<div class="mt-2 space-y-2">${reps.map(r=>{const ra=App.data.users.find(u=>u.userid===r.userid)||{};return`<div class="comment nested"><div class="comment-author text-[10px]" data-user="${r.userid}">${ra.username||'Anon'}</div><p class="text-[10px] mt-0.5">${r.content}</p><span class="text-[9px] text-muted">${new Date(r.timestamp?.toDate?.()||r.timestamp).toLocaleString('id-ID',{hour:'2-digit',minute:'2-digit'})}</span></div>`}).join('')}</div>`:''}</div>`}).join('')}</div></div></div>`,
             renderProfile: (userId) => {
-                const user = App.data.users.find(u => u.userid === userId) || App.user;
-                if (!user) return '<p class="text-center text-muted py-8">Profil tidak ditemukan</p>';
-                const posts = App.data.posts.filter(p => p.userid === user.userid);
-                const isOwn = App.user?.userid === user.userid;
-                
-                return `
-                    <div class="card animate-slide">
-                        <div class="card-body text-center py-6">
-                            <div class="profile-avatar">${(user.username||'?').charAt(0).toUpperCase()}</div>
-                            <h2 class="font-gothic text-xl text-gold">${user.username}</h2>
-                            ${user.lama_sulap ? `<p class="text-muted text-sm italic mt-1">🎴 ${user.lama_sulap}</p>` : ''}
-                            ${user.aliran_sulap ? `<p class="text-muted text-sm mt-1">✧ ${user.aliran_sulap}</p>` : ''}
-                            ${isOwn ? `
-                                <button id="btn-edit-profile" class="btn btn-outline text-xs mt-4">✎ Edit Profil</button>
-                            ` : `
-                                <button class="btn btn-gold text-xs mt-4">✉ Kirim Pesan</button>
-                            `}
-                        </div>
-                        <div class="divider"></div>
-                        <div class="card-body">
-                            <h3 class="font-gothic text-gold mb-3">Thread oleh ${user.username}</h3>
-                            ${posts.length === 0 ? '<p class="text-muted italic text-sm">Belum ada thread</p>' : `
-                                <div class="space-y-3">
-                                    ${posts.slice(0,5).map(p => `
-                                        <div class="p-3 border border-gothic-border hover:border-accent cursor-pointer" data-post="${p.postid}">
-                                            <div class="font-gothic text-sm">${p.title}</div>
-                                            <div class="text-xs text-muted">${new Date(p.timestamp?.toDate?.() || p.timestamp).toLocaleDateString('id-ID')}</div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            `}
-                        </div>
-                    </div>
-                `;
-            },
-
-            renderNewPost: () => `
-                <div class="card animate-slide">
-                    <div class="card-header"><span class="font-gothic">✦ Thread Baru</span></div>
-                    <form id="form-new-post" class="card-body space-y-4">
-                        <div>
-                            <label class="text-xs text-muted block mb-1">Kategori</label>
-                            <select id="np-category" class="form-select" required>
-                                ${CONFIG.CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs text-muted block mb-1">Judul</label>
-                            <input type="text" id="np-title" class="form-input" placeholder="Judul thread..." required maxlength="100">
-                        </div>
-                        <div>
-                            <label class="text-xs text-muted block mb-1">Isi</label>
-                            <textarea id="np-content" class="form-textarea" placeholder="Tulis konten thread..." rows="6" required></textarea>
-                        </div>
-                        <div class="flex justify-end gap-3 pt-2">
-                            <button type="button" id="btn-cancel-post" class="btn btn-outline text-xs">Batal</button>
-                            <button type="submit" class="btn btn-primary text-xs">Publikasi</button>
-                        </div>
-                    </form>
-                </div>
-            `,
-            
-            renderEditProfile: () => {
-                const user = App.user;
-                return `
-                    <div class="card animate-slide">
-                        <div class="card-header"><span class="font-gothic">✦ Edit Profil</span></div>
-                        <form id="form-edit-profile" class="card-body space-y-4">
-                            <div>
-                                <label class="text-xs text-muted block mb-1">Username</label>
-                                <input type="text" id="ep-username" class="form-input" value="${user.username || ''}" required>
-                            </div>
-                            <div>
-                                <label class="text-xs text-muted block mb-1">Bio</label>
-                                <textarea id="ep-bio" class="form-textarea" rows="3" placeholder="Ceritakan tentang Anda...">${user.bio || ''}</textarea>
-                            </div>
-                            <div>
-                                <label class="text-xs text-muted block mb-1">Lama Main Sulap</label>
-                                <select id="ep-lama" class="form-select">
-                                    <option value="">Pilih...</option>
-                                    <option value="Kurang dari 1 tahun" ${user.lama_sulap === 'Kurang dari 1 tahun' ? 'selected' : ''}>Kurang dari 1 tahun</option>
-                                    <option value="1-3 tahun" ${user.lama_sulap === '1-3 tahun' ? 'selected' : ''}>1-3 tahun</option>
-                                    <option value="3-5 tahun" ${user.lama_sulap === '3-5 tahun' ? 'selected' : ''}>3-5 tahun</option>
-                                    <option value="5+ tahun" ${user.lama_sulap === '5+ tahun' ? 'selected' : ''}>5+ tahun</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-muted block mb-1">Aliran Sulap</label>
-                                <select id="ep-aliran" class="form-select">
-                                    <option value="">Pilih...</option>
-                                    <option value="Mentalism" ${user.aliran_sulap === 'Mentalism' ? 'selected' : ''}>Mentalism</option>
-                                    <option value="Sleight of Hand" ${user.aliran_sulap === 'Sleight of Hand' ? 'selected' : ''}>Sleight of Hand</option>
-                                    <option value="Illusionism" ${user.aliran_sulap === 'Illusionism' ? 'selected' : ''}>Illusionism</option>
-                                    <option value="Close-up" ${user.aliran_sulap === 'Close-up' ? 'selected' : ''}>Close-up Magic</option>
-                                    <option value="Stage" ${user.aliran_sulap === 'Stage' ? 'selected' : ''}>Stage Magic</option>
-                                </select>
-                            </div>
-                            <div class="flex justify-end gap-3 pt-2">
-                                <button type="button" id="btn-cancel-edit" class="btn btn-outline text-xs">Batal</button>
-                                <button type="submit" class="btn btn-gold text-xs">Simpan Perubahan</button>
-                            </div>
-                        </form>
-                    </div>
-                `;
+                const user=App.data.users.find(u=>u.userid===userId)||App.user; if(!user) return'<p class="text-center text-muted py-6 text-sm">Profil tidak ditemukan</p>';
+                const posts=App.data.posts.filter(p=>p.userid===user.userid), isOwn=App.user?.userid===user.userid;
+                return `<div class="card animate-slide"><div class="card-body text-center py-4"><div class="profile-avatar text-lg">${(user.username||'?').charAt(0).toUpperCase()}</div><h2 class="font-gothic text-lg text-gold">${user.username}</h2>${user.lama_sulap?`<p class="text-muted text-[11px] italic mt-0.5">🎴 ${user.lama_sulap}</p>`:''}${user.aliran_sulap?`<p class="text-muted text-[11px] mt-0.5">✧ ${user.aliran_sulap}</p>`:''}${isOwn?`<button id="btn-edit" class="btn btn-outline text-[10px] mt-2 px-3 py-1">✎ Edit</button>`:`<button class="btn btn-gold text-[10px] mt-2 px-3 py-1">✉ Pesan</button>`}</div><div class="divider"></div><div class="card-body"><h3 class="font-gothic text-gold text-sm mb-2">Thread oleh ${user.username}</h3>${posts.length===0?'<p class="text-muted italic text-[11px]">Belum ada thread</p>':`<div class="space-y-2">${posts.slice(0,4).map(p=>`<div class="p-2 border border-gothic-border hover:border-accent cursor-pointer text-[11px]" data-post="${p.postid}"><div class="font-gothic">${p.title}</div><div class="text-muted">${new Date(p.timestamp?.toDate?.()||p.timestamp).toLocaleDateString('id-ID')}</div></div>`).join('')}</div>`}</div></div>`,
+            renderActivity: () => {
+                const acts = App.data.notifications.filter(n=>n.toUserId===App.user?.userid).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,20);
+                return `<div class="card animate-slide"><div class="card-header"><span class="font-gothic text-gold">📜 Riwayat Aktivitas</span></div><div class="card-body space-y-1 max-h-80 overflow-y-auto">${acts.length===0?`<p class="text-muted text-center text-sm italic py-4">Belum ada aktivitas</p>`:acts.map(n=>`<div class="activity-item"><span class="activity-user">${n.fromUser||'Sistem'}</span> <span class="activity-action">${n.action}</span> ${n.postTitle?`<span class="activity-target" data-post="${n.postId}">"${n.postTitle}"</span>`:''} <span class="text-muted text-[10px]">• ${new Date(n.timestamp).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')}</div></div>`,
+            renderNewPost: () => `<div class="card animate-slide"><div class="card-header"><span class="font-gothic text-sm">✦ Thread Baru</span></div><form id="form-new" class="card-body space-y-3"><div><label class="text-[10px] text-muted block mb-0.5">Kategori</label><select id="np-cat" class="form-select text-sm" required>${CONFIG.CATEGORIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div><div><label class="text-[10px] text-muted block mb-0.5">Judul</label><input type="text" id="np-title" class="form-input text-sm" placeholder="Judul..." required maxlength="80"></div><div><label class="text-[10px] text-muted block mb-0.5">Isi</label><textarea id="np-content" class="form-textarea text-sm" placeholder="Tulis konten..." rows="5" required></textarea></div><div class="flex justify-end gap-2 pt-1"><button type="button" id="btn-cancel" class="btn btn-outline text-[10px] px-2 py-1">Batal</button><button type="submit" class="btn btn-primary text-[10px] px-2 py-1">Publikasi</button></div></form></div>`,
+            renderEditProfile: () => {const u=App.user;return`<div class="card animate-slide"><div class="card-header"><span class="font-gothic text-sm">✦ Edit Profil</span></div><form id="form-edit" class="card-body space-y-3"><div><label class="text-[10px] text-muted block mb-0.5">Username</label><input type="text" id="ep-user" class="form-input text-sm" value="${u.username||''}" required></div><div><label class="text-[10px] text-muted block mb-0.5">Bio</label><textarea id="ep-bio" class="form-textarea text-sm" rows="2" placeholder="Tentang Anda...">${u.bio||''}</textarea></div><div><label class="text-[10px] text-muted block mb-0.5">Lama Main Sulap</label><select id="ep-lama" class="form-select text-sm"><option value="">Pilih...</option>${['Kurang dari 1 tahun','1-3 tahun','3-5 tahun','5+ tahun'].map(v=>`<option value="${v}" ${u.lama_sulap===v?'selected':''}>${v}</option>`).join('')}</select></div><div><label class="text-[10px] text-muted block mb-0.5">Aliran Sulap</label><select id="ep-aliran" class="form-select text-sm"><option value="">Pilih...</option>${['Mentalism','Sleight of Hand','Illusionism','Close-up','Stage'].map(v=>`<option value="${v}" ${u.aliran_sulap===v?'selected':''}>${v}</option>`).join('')}</select></div><div class="flex justify-end gap-2 pt-1"><button type="button" id="btn-cancel-ep" class="btn btn-outline text-[10px] px-2 py-1">Batal</button><button type="submit" class="btn btn-gold text-[10px] px-2 py-1">Simpan</button></div></form></div>`},
+            renderNotifications: () => {
+                const notifs = App.data.notifications.filter(n=>n.toUserId===App.user?.userid).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+                return notifs.length===0?`<p class="text-muted text-center text-sm italic py-4">Tidak ada notifikasi</p>`:notifs.map(n=>`<div class="notification-item ${n.read?'':'unread'}" data-nid="${n.id}"><div class="notification-icon">${n.type==='post'?'✦':n.type==='comment'?'💬':n.type==='like'?'❤':'🔔'}</div><div class="notification-content"><div class="notification-title">${n.title}</div><div class="text-[10px] text-muted mt-0.5">${n.message}</div><div class="notification-time">${new Date(n.timestamp).toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('');
             }
         };
 
-        // ========================================
-        // 🔄 FIREBASE DATA OPERATIONS
-        // ========================================
+        // 🔄 FIREBASE OPS
         const DB = {
-            subscribe: (callback) => {
-                App.unsubscribers = [
-                    db.collection('posts').orderBy('timestamp', 'desc').limit(50)
-                      .onSnapshot(s => { App.data.posts = s.docs.map(d => ({postid: d.id, ...d.data()})); callback(); }, err => console.error('Posts error:', err)),
-                    db.collection('users').onSnapshot(s => { App.data.users = s.docs.map(d => ({userid: d.id, ...d.data()})); callback(); }, err => console.error('Users error:', err)),
-                    db.collection('comments').orderBy('timestamp', 'asc')
-                      .onSnapshot(s => { App.data.comments = s.docs.map(d => ({commentid: d.id, ...d.data()})); callback(); }, err => console.error('Comments error:', err)),
-                    db.collection('likes').onSnapshot(s => { App.data.likes = s.docs.map(d => ({likeid: d.id, ...d.data()})); callback(); }, err => console.error('Likes error:', err))
+            subscribe: (cb) => {
+                App.unsub = [
+                    db.collection('posts').orderBy('timestamp','desc').limit(30).onSnapshot(s=>{App.data.posts=s.docs.map(d=>({postid:d.id,...d.data()}));cb();},e=>console.error('Posts:',e)),
+                    db.collection('users').onSnapshot(s=>{App.data.users=s.docs.map(d=>({userid:d.id,...d.data()}));cb();},e=>console.error('Users:',e)),
+                    db.collection('comments').orderBy('timestamp','asc').onSnapshot(s=>{App.data.comments=s.docs.map(d=>({commentid:d.id,...d.data()}));cb();},e=>console.error('Comments:',e)),
+                    db.collection('likes').onSnapshot(s=>{App.data.likes=s.docs.map(d=>({likeid:d.id,...d.data()}));cb();},e=>console.error('Likes:',e)),
+                    db.collection('notifications').orderBy('timestamp','desc').limit(50).onSnapshot(s=>{
+                        const notifs = s.docs.map(d=>({id:d.id,...d.data()}));
+                        // Check for new unread notifications
+                        if(App.user) {
+                            const newNotifs = notifs.filter(n=>n.toUserId===App.user.userid && !n.read && !App.data.notifications.some(x=>x.id===n.id));
+                            newNotifs.forEach(n=>UI.toast(n.title+' • '+n.message,'new'));
+                        }
+                        App.data.notifications = notifs;
+                        // Update badge
+                        const unread = App.user ? notifs.filter(n=>n.toUserId===App.user.userid && !n.read).length : 0;
+                        const badge = document.getElementById('notif-badge');
+                        badge.textContent = unread;
+                        badge.classList.toggle('hidden', unread===0);
+                        cb();
+                    },e=>console.error('Notifs:',e))
                 ];
             },
-            createPost: (data) => db.collection('posts').add({ 
-                ...data, 
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
-                views: 0 
-            }),
-            createComment: (data) => db.collection('comments').add({ 
-                ...data, 
-                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
-            }),
+            createPost: (d) => db.collection('posts').add({...d, timestamp:firebase.firestore.FieldValue.serverTimestamp(), views:0}),
+            createComment: (d) => db.collection('comments').add({...d, timestamp:firebase.firestore.FieldValue.serverTimestamp()}),
+            createNotification: (d) => db.collection('notifications').add({...d, timestamp:firebase.firestore.FieldValue.serverTimestamp(), read:false}),
             toggleLike: async (postId, userId) => {
-                const q = await db.collection('likes').where('postid', '==', postId).where('userid', '==', userId).limit(1).get();
-                if (!q.empty) { await q.docs[0].ref.delete(); return false; }
-                await db.collection('likes').add({ 
-                    postid: postId, 
-                    userid: userId, 
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp() 
-                });
+                const q = await db.collection('likes').where('postid','==',postId).where('userid','==',userId).limit(1).get();
+                if(!q.empty) { await q.docs[0].ref.delete(); return false; }
+                await db.collection('likes').add({postid:postId, userid:userId, timestamp:firebase.firestore.FieldValue.serverTimestamp()});
                 return true;
             },
-            deletePost: (postId) => db.collection('posts').doc(postId).delete(),
-            updateProfile: (userId, data) => db.collection('users').doc(userId).update({ 
-                ...data, 
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp() 
-            }),
+            deletePost: (id) => db.collection('posts').doc(id).delete(),
+            updateProfile: (uid, d) => db.collection('users').doc(uid).update({...d, updatedAt:firebase.firestore.FieldValue.serverTimestamp()}),
+            markNotifRead: (ids) => ids.forEach(id=>db.collection('notifications').doc(id).update({read:true})),
             trackView: async (postId, userId) => {
-                const q = await db.collection('views').where('postid', '==', postId).where('userid', '==', userId).limit(1).get();
-                if (q.empty) {
-                    await db.collection('views').add({ 
-                        postid: postId, 
-                        userid: userId, 
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp() 
-                    });
-                    await db.collection('posts').doc(postId).update({ 
-                        views: firebase.firestore.FieldValue.increment(1) 
-                    });
+                const q = await db.collection('views').where('postid','==',postId).where('userid','==',userId).limit(1).get();
+                if(q.empty) {
+                    await db.collection('views').add({postid:postId, userid:userId, timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+                    await db.collection('posts').doc(postId).update({views:firebase.firestore.FieldValue.increment(1)});
                 }
             }
         };
 
-        // ========================================
         // 🎮 ACTIONS
-        // ========================================
         const Actions = {
-            go: (view, params = {}) => {
-                App.view = view; 
-                App.params = { ...params };
-                if (view !== 'home') App.history.push(view);
-                
-                document.getElementById('nav-back').classList.toggle('hidden', App.history.length <= 1);
-                document.getElementById('breadcrumb').classList.toggle('hidden', view === 'home');
-                document.getElementById('crumb-current').textContent = params.title || view;
-                
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                if (view === 'home') document.getElementById('nav-home').classList.add('active');
-                
-                Actions.render(); 
-                window.scrollTo({top: 0, behavior: 'smooth'});
+            go: (view, params={}) => {
+                App.view = view; App.params = {...params};
+                if(view!=='home') App.history.push(view);
+                document.getElementById('btn-back').classList.toggle('hidden', App.history.length<=1);
+                document.getElementById('breadcrumb').classList.toggle('hidden', view==='home');
+                document.getElementById('crumb-current').textContent = params.title||view;
+                document.querySelectorAll('.btn-nav').forEach(b=>b.classList.remove('active'));
+                if(view==='home') document.getElementById('btn-home').classList.add('active');
+                Actions.render(); window.scrollTo({top:0, behavior:'smooth'});
             },
-            
-            back: () => { 
-                if (App.history.length > 1) { 
-                    App.history.pop(); 
-                    Actions.go(App.history[App.history.length-1] === 'home' ? 'home' : App.params.prevView || 'home'); 
-                } 
-            },
-            
+            back: () => { if(App.history.length>1){App.history.pop();Actions.go(App.history[App.history.length-1]==='home'?'home':App.params.prevView||'home');} },
+            refresh: () => { UI.toast('⟳ Memuat ulang...', 'info'); Actions.render(); },
             render: () => {
                 const main = document.getElementById('main-content');
                 switch(App.view) {
                     case 'home': main.innerHTML = UI.renderHome(); break;
-                    case 'category': main.innerHTML = UI.renderCategories(App.params.categoryId); break;
-                    case 'post': 
-                        main.innerHTML = UI.renderPost(App.params.postId);
-                        if (App.user) DB.trackView(App.params.postId, App.user.userid);
-                        break;
+                    case 'category': main.innerHTML = UI.renderCategories(App.params.catId); break;
+                    case 'post': main.innerHTML = UI.renderPost(App.params.postId); if(App.user) DB.trackView(App.params.postId, App.user.userid); break;
                     case 'profile': main.innerHTML = UI.renderProfile(App.params.userId); break;
                     case 'new-post': main.innerHTML = UI.renderNewPost(); break;
                     case 'edit-profile': main.innerHTML = UI.renderEditProfile(); break;
+                    case 'activity': main.innerHTML = UI.renderActivity(); break;
                     default: main.innerHTML = UI.renderHome();
                 }
-                Actions.bindEvents();
+                Actions.bind();
             },
-            
-            bindEvents: () => {
-                // Category cards
-                document.querySelectorAll('.category-card').forEach(el => {
-                    el.onclick = () => Actions.go('category', { 
-                        categoryId: el.dataset.cat, 
-                        title: CONFIG.CATEGORIES.find(c=>c.id===el.dataset.cat)?.name, 
-                        prevView: App.view 
-                    });
-                });
+            bind: () => {
+                // Nav
+                document.getElementById('btn-home').onclick = ()=>Actions.go('home');
+                document.getElementById('btn-back').onclick = ()=>Actions.back();
+                document.getElementById('btn-refresh').onclick = ()=>Actions.refresh();
+                document.getElementById('crumb-home').onclick = ()=>Actions.go('home');
                 
-                // Post items
-                document.querySelectorAll('.post-item, [data-post]').forEach(el => {
-                    el.onclick = (e) => { 
-                        if (e.target.tagName !== 'BUTTON') {
-                            Actions.go('post', { 
-                                postId: el.dataset.post, 
-                                title: 'Thread', 
-                                prevView: App.view 
-                            }); 
-                        }
-                    };
-                });
+                // Categories
+                document.querySelectorAll('.category-card').forEach(el=>{el.onclick=()=>Actions.go('category',{catId:el.dataset.cat, title:CONFIG.CATEGORIES.find(c=>c.id===el.dataset.cat)?.name, prevView:App.view});});
                 
-                // New post button
-                document.getElementById('btn-new-post')?.addEventListener('click', () => {
-                    if (!App.user) return UI.toast('Login untuk membuat thread', 'error');
-                    Actions.go('new-post', { title: 'Thread Baru', prevView: App.view });
-                });
+                // Posts
+                document.querySelectorAll('.post-item, [data-post]').forEach(el=>{el.onclick=(e)=>{if(e.target.tagName!=='BUTTON')Actions.go('post',{postId:el.dataset.post, title:'Thread', prevView:App.view});};});
                 
-                // Cancel new post
-                document.getElementById('btn-cancel-post')?.addEventListener('click', () => Actions.back());
+                // New post
+                document.getElementById('btn-new')?.addEventListener('click',()=>{if(!App.user)return UI.toast('Login untuk membuat thread','error');Actions.go('new-post',{title:'Thread Baru',prevView:App.view});});
+                document.getElementById('btn-cancel')?.addEventListener('click',()=>Actions.back());
+                document.getElementById('form-new')?.addEventListener('submit',async(e)=>{e.preventDefault();const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{const pid=await DB.createPost({userid:App.user.userid, username:App.user.username, title:document.getElementById('np-title').value, content:document.getElementById('np-content').value, category:document.getElementById('np-cat').value});
+                    // Notify followers (simplified: notify post author's followers - here we just create a general notification)
+                    UI.toast('Thread diterbitkan ✦','success');Actions.go('category',{catId:document.getElementById('np-cat').value});}catch(err){UI.toast('Gagal: '+err.message,'error');btn.disabled=false;}});
                 
-                // Submit new post
-                document.getElementById('form-new-post')?.addEventListener('submit', async (e) => {
-                    e.preventDefault(); 
-                    const btn = e.target.querySelector('button[type="submit"]'); 
-                    btn.disabled = true;
-                    try {
-                        await DB.createPost({
-                            userid: App.user.userid, 
-                            username: App.user.username,
-                            title: document.getElementById('np-title').value,
-                            content: document.getElementById('np-content').value,
-                            category: document.getElementById('np-category').value
-                        });
-                        UI.toast('Thread diterbitkan ✦', 'success');
-                        Actions.go('category', { categoryId: document.getElementById('np-category').value });
-                    } catch(err) { 
-                        UI.toast('Gagal: ' + err.message, 'error'); 
-                        btn.disabled = false; 
-                    }
-                });
-                
-                // Like button
-                document.getElementById('btn-like')?.addEventListener('click', async () => {
-                    if (!App.user) return UI.toast('Login untuk menyukai', 'error');
-                    const liked = await DB.toggleLike(App.params.postId, App.user.userid);
-                    UI.toast(liked ? '❤ Disukai!' : '♡ Like dibatalkan', 'success');
-                    Actions.render();
-                });
+                // Like
+                document.getElementById('btn-like')?.addEventListener('click',async()=>{if(!App.user)return UI.toast('Login untuk menyukai','error');const liked=await DB.toggleLike(App.params.postId, App.user.userid);
+                    // Create notification for post author
+                    const post=App.data.posts.find(p=>p.postid===App.params.postId);
+                    if(post && post.userid!==App.user.userid) await DB.createNotification({toUserId:post.userid, fromUserId:App.user.userid, fromUser:App.user.username, type:'like', postId:App.params.postId, postTitle:post.title, title:'❤️ Suka Baru', message:`${App.user.username} menyukai thread Anda`});
+                    UI.toast(liked?'❤ Disukai!':'♡ Like dibatalkan','success');Actions.render();});
                 
                 // Delete post
-                document.getElementById('btn-delete-post')?.addEventListener('click', async () => {
-                    if (!confirm('Hapus thread ini?')) return;
-                    await DB.deletePost(App.params.postId);
-                    UI.toast('Thread dihapus', 'success'); 
-                    Actions.back();
-                });
+                document.getElementById('btn-del')?.addEventListener('click',async()=>{if(!confirm('Hapus thread ini?'))return;await DB.deletePost(App.params.postId);UI.toast('Thread dihapus','success');Actions.back();});
                 
-                // Comment form
-                document.getElementById('form-comment')?.addEventListener('submit', async (e) => {
-                    e.preventDefault(); 
-                    const txt = document.getElementById('comment-text');
-                    if (!txt.value.trim()) return;
-                    await DB.createComment({ 
-                        postid: App.params.postId, 
-                        userid: App.user.userid, 
-                        username: App.user.username, 
-                        content: txt.value, 
-                        parent_comment_id: 'root' 
-                    });
-                    txt.value = ''; 
-                    Actions.render();
-                });
+                // Comment
+                document.getElementById('form-cmt')?.addEventListener('submit',async(e)=>{e.preventDefault();const txt=document.getElementById('cmt-txt');if(!txt.value.trim())return;
+                    const cid=await DB.createComment({postid:App.params.postId, userid:App.user.userid, username:App.user.username, content:txt.value, parent_comment_id:'root'});
+                    // Notify post author
+                    const post=App.data.posts.find(p=>p.postid===App.params.postId);
+                    if(post && post.userid!==App.user.userid) await DB.createNotification({toUserId:post.userid, fromUserId:App.user.userid, fromUser:App.user.username, type:'comment', postId:App.params.postId, postTitle:post.title, title:'💬 Komentar Baru', message:`${App.user.username} berkomentar di thread Anda`});
+                    txt.value='';Actions.render();});
                 
-                // Reply buttons
-                document.querySelectorAll('.reply-btn').forEach(btn => {
-                    btn.onclick = (e) => { 
-                        e.preventDefault(); 
-                        const form = btn.closest('.comment').querySelector('.reply-form'); 
-                        if (form) form.classList.toggle('hidden'); 
-                    };
-                });
-                
-                // Cancel reply
-                document.querySelectorAll('.cancel-reply').forEach(btn => {
-                    btn.onclick = (e) => { 
-                        e.preventDefault(); 
-                        btn.closest('.reply-form').classList.add('hidden'); 
-                    };
-                });
-                
-                // Reply form submit
-                document.querySelectorAll('.reply-form').forEach(form => {
-                    form.onsubmit = async (e) => {
-                        e.preventDefault(); 
-                        const txt = form.querySelector('textarea');
-                        if (!txt.value.trim()) return;
-                        await DB.createComment({ 
-                            postid: App.params.postId, 
-                            userid: App.user.userid, 
-                            username: App.user.username, 
-                            content: txt.value, 
-                            parent_comment_id: form.dataset.parent 
-                        });
-                        Actions.render();
-                    };
-                });
+                // Reply
+                document.querySelectorAll('.reply-btn').forEach(btn=>{btn.onclick=(e)=>{e.preventDefault();const form=btn.closest('.comment').querySelector('.reply-form');if(form)form.classList.toggle('hidden');};});
+                document.querySelectorAll('.cancel-reply').forEach(btn=>{btn.onclick=(e)=>{e.preventDefault();btn.closest('.reply-form').classList.add('hidden');};});
+                document.querySelectorAll('.reply-form').forEach(form=>{form.onsubmit=async(e)=>{e.preventDefault();const txt=form.querySelector('textarea');if(!txt.value.trim())return;await DB.createComment({postid:App.params.postId, userid:App.user.userid, username:App.user.username, content:txt.value, parent_comment_id:form.dataset.parent});Actions.render();};});
                 
                 // Profile links
-                document.querySelectorAll('.comment-author, [data-user]').forEach(el => {
-                    el.onclick = (e) => { 
-                        e.preventDefault(); 
-                        const uid = el.dataset.user; 
-                        if (uid) Actions.go('profile', { 
-                            userId: uid, 
-                            title: 'Profil', 
-                            prevView: App.view 
-                        }); 
-                    };
-                });
+                document.querySelectorAll('.comment-author, [data-user]').forEach(el=>{el.onclick=(e)=>{e.preventDefault();const uid=el.dataset.user;if(uid)Actions.go('profile',{userId:uid, title:'Profil', prevView:App.view});};});
                 
-                // Edit profile button
-                document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
-                    Actions.go('edit-profile', { title: 'Edit Profil', prevView: App.view });
-                });
+                // Edit profile
+                document.getElementById('btn-edit')?.addEventListener('click',()=>Actions.go('edit-profile',{title:'Edit Profil',prevView:App.view}));
+                document.getElementById('btn-cancel-ep')?.addEventListener('click',()=>Actions.back());
+                document.getElementById('form-edit')?.addEventListener('submit',async(e)=>{e.preventDefault();const btn=e.target.querySelector('button[type="submit"]');btn.disabled=true;try{await DB.updateProfile(App.user.userid,{username:document.getElementById('ep-user').value, bio:document.getElementById('ep-bio').value, lama_sulap:document.getElementById('ep-lama').value, aliran_sulap:document.getElementById('ep-aliran').value});App.user={...App.user, username:document.getElementById('ep-user').value, bio:document.getElementById('ep-bio').value, lama_sulap:document.getElementById('ep-lama').value, aliran_sulap:document.getElementById('ep-aliran').value};UI.toast('Profil diperbarui ✦','success');Actions.go('profile',{userId:App.user.userid});}catch(err){UI.toast('Gagal: '+err.message,'error');btn.disabled=false;}});
                 
-                // Cancel edit profile
-                document.getElementById('btn-cancel-edit')?.addEventListener('click', () => Actions.back());
+                // Activity targets
+                document.querySelectorAll('.activity-target').forEach(el=>{el.onclick=(e)=>{e.preventDefault();Actions.go('post',{postId:el.dataset.post, title:'Thread'});};});
                 
-                // Submit edit profile
-                document.getElementById('form-edit-profile')?.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const btn = e.target.querySelector('button[type="submit"]');
-                    btn.disabled = true;
-                    try {
-                        await DB.updateProfile(App.user.userid, {
-                            username: document.getElementById('ep-username').value,
-                            bio: document.getElementById('ep-bio').value,
-                            lama_sulap: document.getElementById('ep-lama').value,
-                            aliran_sulap: document.getElementById('ep-aliran').value
-                        });
-                        // Update local user data
-                        App.user = { ...App.user, 
-                            username: document.getElementById('ep-username').value,
-                            bio: document.getElementById('ep-bio').value,
-                            lama_sulap: document.getElementById('ep-lama').value,
-                            aliran_sulap: document.getElementById('ep-aliran').value
-                        };
-                        UI.toast('Profil diperbarui ✦', 'success');
-                        Actions.go('profile', { userId: App.user.userid });
-                    } catch(err) {
-                        UI.toast('Gagal: ' + err.message, 'error');
-                        btn.disabled = false;
+                // Notifications
+                document.getElementById('btn-notif').onclick = () => {
+                    document.getElementById('notif-list').innerHTML = UI.renderNotifications();
+                    document.getElementById('notif-modal').classList.remove('hidden');
+                    // Mark visible as read
+                    if(App.user) {
+                        const unread = App.data.notifications.filter(n=>n.toUserId===App.user.userid && !n.read).map(n=>n.id);
+                        if(unread.length) DB.markNotifRead(unread);
                     }
-                });
+                };
+                document.getElementById('notif-close').onclick = () => document.getElementById('notif-modal').classList.add('hidden');
+                document.getElementById('notif-mark-read').onclick = async () => {
+                    if(!App.user) return;
+                    const all = App.data.notifications.filter(n=>n.toUserId===App.user.userid && !n.read).map(n=>n.id);
+                    if(all.length) { DB.markNotifRead(all); UI.toast('Semua notifikasi ditandai dibaca','success'); document.getElementById('notif-list').innerHTML = UI.renderNotifications(); const badge=document.getElementById('notif-badge'); badge.classList.add('hidden'); badge.textContent='0'; }
+                };
+                
+                // Close modals on overlay click
+                document.getElementById('modal-overlay').onclick = (e)=>{if(e.target.id==='modal-overlay')document.getElementById('modal-overlay').classList.add('hidden');};
+                document.getElementById('notif-modal').onclick = (e)=>{if(e.target.id==='notif-modal')document.getElementById('notif-modal').classList.add('hidden');};
             }
         };
 
-        // ========================================
         // 🔐 AUTH
-        // ========================================
         const Auth = {
             init: () => {
-                auth.onAuthStateChanged(async (user) => {
-                    if (user) {
+                auth.onAuthStateChanged(async(user)=>{
+                    if(user) {
                         const doc = await db.collection('users').doc(user.uid).get();
-                        if (doc.exists) { 
-                            App.user = { userid: user.uid, ...doc.data() }; 
-                            UI.updateAuth(); 
-                        }
-                    } else { 
-                        App.user = null; 
-                        UI.updateAuth(); 
-                    }
+                        if(doc.exists) { App.user = {userid:user.uid, ...doc.data()}; UI.updateAuth(); }
+                    } else { App.user = null; UI.updateAuth(); }
                     Actions.render();
                 });
             },
-            login: async (email, password) => {
-                await auth.signInWithEmailAndPassword(email, password);
-                UI.toast('✅ Login berhasil!', 'success');
+            login: async(email,pass) => { await auth.signInWithEmailAndPassword(email,pass); UI.toast('✅ Login berhasil!','success'); },
+            signup: async(d) => {
+                const cred = await auth.createUserWithEmailAndPassword(d.email,d.password);
+                await db.collection('users').doc(cred.user.uid).set({username:d.username, email:d.email, lama_sulap:d.lama_sulap, aliran_sulap:d.aliran_sulap, bio:'', reputation:0, joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+                UI.toast('✅ Registrasi berhasil! Silakan login.','success');
             },
-            signup: async (data) => {
-                const cred = await auth.createUserWithEmailAndPassword(data.email, data.password);
-                await db.collection('users').doc(cred.user.uid).set({
-                    username: data.username, 
-                    email: data.email,
-                    lama_sulap: data.lama_sulap, 
-                    aliran_sulap: data.aliran_sulap,
-                    bio: '', 
-                    reputation: 0, 
-                    joinedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                UI.toast('✅ Registrasi berhasil! Silakan login.', 'success');
-            },
-            logout: async () => { 
-                await auth.signOut(); 
-                UI.toast('👋 Sampai jumpa!', 'info'); 
-            }
+            logout: async() => { await auth.signOut(); UI.toast('👋 Sampai jumpa!','info'); }
         };
-
         UI.updateAuth = () => {
-            document.getElementById('auth-links').classList.toggle('hidden', !!App.user);
-            document.getElementById('user-info').classList.toggle('hidden', !App.user);
-            if (App.user) document.getElementById('user-name-display').textContent = App.user.username;
+            document.getElementById('auth-links').classList.toggle('hidden',!!App.user);
+            document.getElementById('user-info').classList.toggle('hidden',!App.user);
+            if(App.user) document.getElementById('user-name').textContent = App.user.username;
         };
-
-        UI.showAuthModal = (mode = 'login') => {
-            const modal = document.getElementById('modal-overlay');
-            document.getElementById('modal-content').innerHTML = mode === 'login' ? `
-                <div class="p-5">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-gothic text-gold">✦ Login</h3>
-                        <button id="modal-close" class="text-muted hover:text-gold">✕</button>
-                    </div>
-                    <form id="auth-form">
-                        <input type="email" id="auth-email" class="form-input mb-3" placeholder="Email" required>
-                        <input type="password" id="auth-pass" class="form-input mb-4" placeholder="Password" required>
-                        <button type="submit" class="w-full btn btn-primary">Masuk</button>
-                    </form>
-                    <p class="text-center text-xs text-muted mt-4">
-                        Belum punya akun? <button id="switch-signup" class="text-gold hover:underline">Daftar</button>
-                    </p>
-                </div>` : `
-                <div class="p-5">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-gothic text-gold">✦ Daftar Akun</h3>
-                        <button id="modal-close" class="text-muted hover:text-gold">✕</button>
-                    </div>
-                    <form id="auth-form">
-                        <input type="text" id="auth-user" class="form-input mb-3" placeholder="Username" required minlength="3">
-                        <input type="email" id="auth-email" class="form-input mb-3" placeholder="Email" required>
-                        <input type="password" id="auth-pass" class="form-input mb-3" placeholder="Password" required minlength="6">
-                        <select id="auth-lama" class="form-select mb-3" required>
-                            <option value="">Lama main sulap...</option>
-                            <option value="Kurang dari 1 tahun">Kurang dari 1 tahun</option>
-                            <option value="1-3 tahun">1-3 tahun</option>
-                            <option value="3-5 tahun">3-5 tahun</option>
-                            <option value="5+ tahun">5+ tahun</option>
-                        </select>
-                        <select id="auth-aliran" class="form-select mb-4" required>
-                            <option value="">Aliran sulap...</option>
-                            <option value="Mentalism">Mentalism</option>
-                            <option value="Sleight of Hand">Sleight of Hand</option>
-                            <option value="Illusionism">Illusionism</option>
-                            <option value="Close-up">Close-up Magic</option>
-                        </select>
-                        <button type="submit" class="w-full btn btn-gold">Daftar</button>
-                    </form>
-                    <p class="text-center text-xs text-muted mt-4">
-                        Sudah punya akun? <button id="switch-login" class="text-gold hover:underline">Login</button>
-                    </p>
-                </div>`;
+        UI.showAuthModal = (mode='login') => {
+            const modal=document.getElementById('modal-overlay'), content=document.getElementById('modal-content');
+            content.innerHTML = mode==='login'?`<div class="p-4"><div class="flex justify-between items-center mb-3"><h3 class="font-gothic text-gold text-sm">✦ Login</h3><button id="modal-close" class="btn-ghost">✕</button></div><form id="auth-form"><input type="email" id="auth-email" class="form-input text-sm mb-2" placeholder="Email" required><input type="password" id="auth-pass" class="form-input text-sm mb-3" placeholder="Password" required><button type="submit" class="w-full btn btn-primary text-[11px]">Masuk</button></form><p class="text-center text-[10px] text-muted mt-3">Belum punya akun? <button id="switch-signup" class="text-gold hover:underline">Daftar</button></p></div>`:`<div class="p-4"><div class="flex justify-between items-center mb-3"><h3 class="font-gothic text-gold text-sm">✦ Daftar</h3><button id="modal-close" class="btn-ghost">✕</button></div><form id="auth-form"><input type="text" id="auth-user" class="form-input text-sm mb-2" placeholder="Username" required minlength="3"><input type="email" id="auth-email" class="form-input text-sm mb-2" placeholder="Email" required><input type="password" id="auth-pass" class="form-input text-sm mb-2" placeholder="Password" required minlength="6"><select id="auth-lama" class="form-select text-sm mb-2" required><option value="">Lama main sulap...</option>${['Kurang dari 1 tahun','1-3 tahun','3-5 tahun','5+ tahun'].map(v=>`<option value="${v}">${v}</option>`).join('')}</select><select id="auth-aliran" class="form-select text-sm mb-3" required><option value="">Aliran sulap...</option>${['Mentalism','Sleight of Hand','Illusionism','Close-up','Stage'].map(v=>`<option value="${v}">${v}</option>`).join('')}</select><button type="submit" class="w-full btn btn-gold text-[11px]">Daftar</button></form><p class="text-center text-[10px] text-muted mt-3">Sudah punya akun? <button id="switch-login" class="text-gold hover:underline">Login</button></p></div>`;
             modal.classList.remove('hidden');
-            document.getElementById('modal-close').onclick = () => modal.classList.add('hidden');
-            document.getElementById('switch-signup')?.onclick = () => UI.showAuthModal('signup');
-            document.getElementById('switch-login')?.onclick = () => UI.showAuthModal('login');
-            document.getElementById('auth-form').onsubmit = async (e) => {
-                e.preventDefault();
-                try {
-                    if (mode === 'login') {
-                        await Auth.login(
-                            document.getElementById('auth-email').value, 
-                            document.getElementById('auth-pass').value
-                        );
-                    } else {
-                        await Auth.signup({ 
-                            username: document.getElementById('auth-user').value, 
-                            email: document.getElementById('auth-email').value, 
-                            password: document.getElementById('auth-pass').value, 
-                            lama_sulap: document.getElementById('auth-lama').value, 
-                            aliran_sulap: document.getElementById('auth-aliran').value 
-                        });
-                    }
-                    modal.classList.add('hidden');
-                } catch(err) { 
-                    UI.toast(err.message, 'error'); 
-                }
-            };
+            document.getElementById('modal-close').onclick = ()=>modal.classList.add('hidden');
+            document.getElementById('switch-signup')?.onclick = ()=>UI.showAuthModal('signup');
+            document.getElementById('switch-login')?.onclick = ()=>UI.showAuthModal('login');
+            document.getElementById('auth-form').onsubmit = async(e)=>{e.preventDefault();try{if(mode==='login')await Auth.login(document.getElementById('auth-email').value,document.getElementById('auth-pass').value);else await Auth.signup({username:document.getElementById('auth-user').value, email:document.getElementById('auth-email').value, password:document.getElementById('auth-pass').value, lama_sulap:document.getElementById('auth-lama').value, aliran_sulap:document.getElementById('auth-aliran').value});modal.classList.add('hidden');}catch(err){UI.toast(err.message,'error');}};
         };
 
-        // ========================================
         // 🚀 INIT
-        // ========================================
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', ()=>{
             Auth.init();
-            DB.subscribe(() => { if (App.view) Actions.render(); });
-            
-            // Navigation buttons
-            document.getElementById('nav-home').onclick = () => Actions.go('home');
-            document.getElementById('nav-back').onclick = () => Actions.back();
-            document.getElementById('crumb-home').onclick = () => Actions.go('home');
-            
-            // Auth buttons
-            document.getElementById('btn-login').onclick = () => UI.showAuthModal('login');
-            document.getElementById('btn-signup').onclick = () => UI.showAuthModal('signup');
+            DB.subscribe(()=>{if(App.view)Actions.render();});
+            document.getElementById('btn-login').onclick = ()=>UI.showAuthModal('login');
+            document.getElementById('btn-signup').onclick = ()=>UI.showAuthModal('signup');
             document.getElementById('btn-logout').onclick = Auth.logout;
-            
-            // Initial render
             Actions.go('home');
-            
-            // Cleanup on unload
-            window.addEventListener('beforeunload', () => {
-                App.unsubscribers.forEach(unsub => { if (typeof unsub === 'function') unsub(); });
-            });
+            window.addEventListener('beforeunload', ()=>App.unsub.forEach(u=>{if(typeof u==='function')u();}));
         });
     </script>
 </body>
