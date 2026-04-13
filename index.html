@@ -1,735 +1,880 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOC FORUM - Magic Underground Society</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap');
-        
-        body { font-family: 'Roboto Mono', monospace; background-color: #111827; color: #d1d5db; }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .bg-grid-amber-500\/10 { background-image: linear-gradient(to right, rgba(245, 158, 11, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(245, 158, 11, 0.05) 1px, transparent 1px); background-size: 40px 40px; }
-        .glass-effect { background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(245, 158, 11, 0.2); }
-        .view { display: none; }
-        .view.active { display: block; }
-        .btn-gold { background-color: rgba(245, 158, 11, 0.8); transition: all 0.3s ease; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
-        .btn-gold:hover { background-color: rgba(251, 191, 36, 1); box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
-        .form-input { background-color: #1f2937; border: 1px solid #374151; border-radius: 0.375rem; padding: 0.75rem; width: 100%; color: #d1d5db; }
-        .form-input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5); }
-        .clickable-link { color: #fbbf24; text-decoration: underline; cursor: pointer; }
-        .clickable-link:hover { color: #f59e0b; }
-        .chat-container::-webkit-scrollbar { width: 4px; }
-        .chat-container::-webkit-scrollbar-thumb { background-color: #f59e0b; border-radius: 20px; }
-        .pinned { border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.05); }
-        .emoji-reaction { transition: transform 0.2s; cursor: pointer; }
-        .emoji-reaction:hover { transform: scale(1.2); }
-        .emoji-reaction.selected { background-color: rgba(245, 158, 11, 0.3); border-radius: 50%; padding: 2px; }
-        .unread-badge { background-color: #ef4444; color: white; border-radius: 50%; font-size: 10px; padding: 2px 5px; line-height: 1; }
-        .chat-message-container:hover .delete-msg-btn { opacity: 1; }
-        .delete-msg-btn { opacity: 0; transition: opacity 0.2s; }
-        .status-indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .status-indicator.online { background-color: #4ade80; }
-        .status-indicator.unread { background-color: #ef4444; color: white; font-size: 10px; width: auto; height: auto; min-width: 18px; padding: 2px 4px; text-align: center; line-height: 1; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NOC FORUM • Professional Magic Community</title>
+  <meta name="description" content="Komunitas pesulap profesional Indonesia">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase Compat (Stable for single-file deployment) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-card: #1a202c;
+      --bg-hover: #242b3d;
+      --border: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #a0aec0;
+      --text-muted: #718096;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --radius: 12px;
+      --shadow: 0 4px 20px rgba(0,0,0,0.4);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; font-weight: 600; line-height: 1.3; }
+    a { color: var(--accent); text-decoration: none; transition: var(--transition); }
+    a:hover { color: var(--accent-hover); }
+
+    /* Layout */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; }
+    .grid { display: grid; gap: 1.5rem; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .flex { display: flex; align-items: center; }
+    .flex-between { justify-content: space-between; }
+    .flex-center { justify-content: center; align-items: center; }
+    .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
+    .mt-4 { margin-top: 1rem; } .mb-4 { margin-bottom: 1rem; } .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+
+    /* Navbar */
+    .navbar {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(11, 15, 25, 0.9); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 0;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.75rem; }
+    .nav-logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), #8b5cf6); border-radius: 8px; display: grid; place-items: center; font-weight: 700; color: white; }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-link { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0; position: relative; }
+    .nav-link:hover, .nav-link.active { color: var(--text-primary); }
+    .nav-link.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--accent); border-radius: 2px; }
+    
+    .btn {
+      padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 500; font-size: 0.875rem;
+      cursor: pointer; border: none; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-ghost { background: transparent; color: var(--text-muted); padding: 0.5rem; }
+    .btn-ghost:hover { color: var(--text-primary); background: var(--bg-hover); }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+
+    /* Cards & UI Elements */
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.25rem; transition: var(--transition);
+    }
+    .card:hover { border-color: #4a5568; box-shadow: var(--shadow); }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      display: grid; place-items: center; font-weight: 600; color: white; font-size: 0.9rem; flex-shrink: 0;
+    }
+    .avatar-lg { width: 80px; height: 80px; font-size: 1.5rem; }
+    .badge {
+      display: inline-flex; align-items: center; padding: 0.25rem 0.6rem; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 500; background: rgba(59,130,246,0.15); color: var(--accent);
+    }
+    .badge-success { background: rgba(16,185,129,0.15); color: var(--success); }
+    .badge-warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%; background: var(--bg-secondary); border: 1px solid var(--border);
+      color: var(--text-primary); padding: 0.75rem 1rem; border-radius: 8px;
+      font-family: inherit; transition: var(--transition);
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+    .form-textarea { resize: vertical; min-height: 120px; }
+
+    /* Thread & Comment Styles */
+    .thread-item { cursor: pointer; border-left: 3px solid transparent; }
+    .thread-item:hover { border-left-color: var(--accent); background: rgba(59,130,246,0.05); }
+    .thread-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .thread-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 1rem; flex-wrap: wrap; }
+    .comment { border-left: 2px solid var(--border); padding-left: 1rem; margin-top: 1rem; }
+    .comment.nested { margin-left: 2rem; border-left-color: #4a5568; }
+    .comment-author { color: var(--accent); font-weight: 500; cursor: pointer; }
+    .comment-author:hover { text-decoration: underline; }
+
+    /* Modals & Overlays */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+      z-index: 100; display: none; place-items: center; padding: 1rem;
+    }
+    .modal-overlay.active { display: grid; }
+    .modal {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 1.5rem;
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Toast & Skeleton */
+    #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 200; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast { padding: 0.75rem 1rem; border-radius: 8px; background: var(--bg-card); border-left: 4px solid var(--accent); box-shadow: var(--shadow); animation: slideIn 0.3s ease; }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--error); }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .skeleton { background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-hover) 50%, var(--bg-secondary) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 6px; height: 1rem; }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block !important; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .hide-mobile { display: none; }
+    }
+    .mobile-menu-btn { display: none; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    
+    /* Markdown Preview */
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 { margin: 1rem 0 0.5rem; }
+    .markdown-content p { margin-bottom: 0.75rem; }
+    .markdown-content code { background: var(--bg-secondary); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+    .markdown-content blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--text-secondary); font-style: italic; }
+    .mention { color: var(--warning); font-weight: 500; cursor: pointer; }
+  </style>
 </head>
-<body class="bg-grid-amber-500/10">
+<body>
 
-    <header id="header" class="bg-gray-900/50 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-amber-500/20 py-4">
-        <div class="container mx-auto relative flex justify-between items-center px-4">
-            <div class="w-1/3">
-                <a href="https://www.instagram.com/nocmagicfams/" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors">
-                    <i class="fab fa-instagram fa-2x"></i>
-                </a>
-            </div>
-            
-            <div class="w-1/3 flex flex-col items-center">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgbt5PfE36zmXJCXbkJIx8TxlTpGRvK8AK4PyYVRv0DLcH22BYhA9rU4ti4eYSczTmggIvXE3A_0aIMb54rnwHUAygssnK96Np3780MmcaSmnBnfK1PuZPBODQm23CbAIgRaiXDF9S7KBLGpCr5dZ4gNs90phgHVaLxOf7UKnXkp_PWUp7ybXGD5Ch8RHzV/s2838/noccc.png" alt="NOC Forum Logo" id="logo-img" class="h-12 cursor-pointer"/>
-                <p class="text-amber-400/70 text-sm font-mono mt-1 tracking-widest hidden md:block">magic underground society</p>
-            </div>
-            
-            <div id="user-info-container" class="w-1/3 flex justify-end">
-                <div id="user-info" class="hidden relative">
-                    <img id="user-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-amber-400/50 cursor-pointer" />
-                    <div id="user-dropdown" class="hidden absolute top-12 right-0 w-48 glass-effect rounded-md shadow-lg z-50">
-                        <div class="p-2">
-                            <p id="user-display-name" class="px-3 py-2 text-sm text-gray-300 font-bold truncate clickable-link"></p>
-                            <hr class="border-gray-700 my-1">
-                            <button id="logout-btn" class="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-amber-500/10 rounded-md">Keluar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container flex flex-between">
+      <div class="nav-brand">
+        <div class="nav-logo">🎩</div>
+        <div>
+          <div style="font-family:'Playfair Display',serif; font-weight:700; font-size:1.1rem;">NOC FORUM</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Ars Magica Community</div>
         </div>
-    </header>
+      </div>
+      
+      <div class="nav-links">
+        <a href="#home" class="nav-link" data-route="home">Beranda</a>
+        <a href="#trending" class="nav-link" data-route="trending">Trending</a>
+        <a href="#search" class="nav-link" data-route="search">Cari</a>
+      </div>
 
-    <main class="container mx-auto p-4 md:p-6">
-        <div id="view-loading" class="view active"></div>
-        <div id="view-login" class="view">
-            <div class="flex flex-col items-center justify-center mt-16 md:mt-20">
-                <div class="glass-effect p-8 rounded-xl shadow-2xl shadow-amber-500/10 text-center w-full max-w-md">
-                    <h2 class="text-3xl font-bold mb-6 text-white font-orbitron tracking-wide">LOGIN</h2>
-                    <form id="login-form" class="space-y-4 text-left">
-                        <input type="email" id="login-email" placeholder="Email" class="form-input" required>
-                        <input type="password" id="login-password" placeholder="Password" class="form-input" required>
-                        <button type="submit" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg text-lg mt-4">Masuk</button>
-                    </form>
-                    <p class="text-sm text-gray-400 mt-6">Belum punya akun? <a href="#" id="go-to-register" class="font-bold text-amber-400 hover:underline">Daftar di sini</a></p>
-                </div>
-            </div>
+      <div class="flex gap-3">
+        <div id="auth-buttons" class="flex gap-2">
+          <button class="btn btn-outline" onclick="App.ui.openModal('login')">Login</button>
+          <button class="btn btn-primary" onclick="App.ui.openModal('register')">Daftar</button>
         </div>
-        <div id="view-register" class="view">
-            <div class="max-w-2xl mx-auto glass-effect p-8 rounded-xl shadow-2xl shadow-amber-500/10 mt-10">
-                <h2 class="text-3xl font-bold mb-6 text-amber-400 font-mono">BUAT AKUN BARU</h2>
-                <form id="register-form" class="space-y-4">
-                    <input type="text" id="register-username" placeholder="Username" class="form-input" required>
-                    <input type="email" id="register-email" placeholder="Email" class="form-input" required>
-                    <input type="password" id="register-password" placeholder="Password (minimal 6 karakter)" class="form-input" required>
-                    <hr class="border-gray-700 my-4">
-                    <label class="block pt-2 font-semibold text-gray-200 font-mono">Berapa lama bermain sulap?</label>
-                    <select id="magic-experience" class="form-input" required><option value="" disabled selected>Pilih durasi...</option><option value="Kurang dari 1 tahun">&lt; 1 Year [Novice]</option><option value="1 - 5 tahun">1 - 5 Years [Adept]</option><option value="Lebih dari 5 tahun">&gt; 5 Years [Master]</option></select>
-                    <label class="block pt-2 font-semibold text-gray-200 font-mono">Aliran sulap yang diminati:</label>
-                    <select id="magic-genre" class="form-input" required><option value="" disabled selected>Pilih aliran...</option><option>Mentalism</option><option>Sleight of Hand</option><option>Illusionism</option><option>Escapology</option><option>Bizarre Magic</option><option>Comedy Magic</option><option>Mathemagics</option><option>Storytelling Magic</option><option>Neo‑Experimental Magic</option></select>
-                    <button type="submit" class="w-full btn-gold text-white font-bold py-3 px-4 rounded-lg text-lg mt-6">Daftar & Masuk</button>
-                </form>
-                <p class="text-sm text-gray-400 mt-6 text-center">Sudah punya akun? <a href="#" id="go-to-login" class="font-bold text-amber-400 hover:underline">Masuk di sini</a></p>
-            </div>
+        
+        <div id="user-menu" class="hidden flex items-center gap-3">
+          <button class="btn btn-ghost relative" onclick="App.ui.toggleNotifications()">
+            <i class="fa-solid fa-bell"></i>
+            <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          <div class="flex items-center gap-2 cursor-pointer" onclick="App.router.go('profile', App.auth.user?.uid)">
+            <div id="user-avatar" class="avatar"></div>
+            <span id="user-name" class="font-medium hide-mobile"></span>
+          </div>
+          <button class="btn btn-ghost text-red-400" onclick="App.auth.logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
         </div>
-        <div id="view-categories" class="view">
-             <div id="announcement-section" class="mb-12">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-center text-white font-orbitron tracking-wider">⚠️InfoNoc</h2>
-                    <button id="create-announcement-btn" class="hidden btn-gold text-white font-bold py-2 px-4 rounded-md text-sm">Buat Pengumuman</button>
-                </div>
-                <div id="announcement-container" class="space-y-4"></div>
-             </div>
-             <hr class="border-amber-500/20 my-8">
-             <h2 class="text-4xl font-bold mb-8 text-center text-white font-orbitron tracking-wider">CATEGORY</h2>
-             <div id="category-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </div>
-        <div id="view-post-list" class="view">
-            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
-                <div>
-                    <button id="back-to-categories-btn" class="text-amber-400 hover:text-amber-300 font-mono">&larr; Kembali ke Kategori</button>
-                    <h2 id="post-list-title" class="text-3xl font-bold text-white font-orbitron tracking-wide"></h2>
-                </div>
-                <button id="create-post-btn" class="btn-gold text-white font-bold py-2 px-6 rounded-md">Buat Postingan</button>
-            </div>
-            <div class="mb-6"><input id="search-input" type="text" placeholder="Cari postingan..." class="form-input"/></div>
-            <div id="post-list-container" class="space-y-4"></div>
-        </div>
-        <div id="view-detail" class="view"><div id="detail-container" class="glass-effect p-4 md:p-8 rounded-xl"></div></div>
-        <div id="view-profile" class="view"><div id="profile-container" class="glass-effect p-4 md:p-8 rounded-xl"></div></div>
-    </main>
-    
-    <div id="create-post-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60] p-4">
-        <div class="bg-gray-900 border border-amber-500/30 p-6 rounded-lg shadow-2xl shadow-amber-500/10 w-full max-w-2xl">
-            <h3 id="create-post-modal-title" class="text-2xl font-bold mb-4 text-white font-mono"></h3>
-            <form id="create-post-form" class="space-y-4">
-                <input type="text" id="post-title-input" placeholder="Judul..." class="form-input" required />
-                <textarea id="post-content-input" placeholder="Isi postingan..." rows="6" class="form-input" required></textarea>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancel-post-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
-                    <button type="submit" id="submit-post-btn" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Kirim</button>
-                </div>
-            </form>
-        </div>
+        
+        <button class="btn btn-ghost mobile-menu-btn" onclick="document.querySelector('.nav-links').style.display = document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex'">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
     </div>
-    
-    <div id="create-announcement-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60] p-4">
-        <div class="bg-gray-900 border border-amber-500/30 p-6 rounded-lg shadow-2xl shadow-amber-500/10 w-full max-w-2xl">
-            <h3 class="text-2xl font-bold mb-4 text-white font-mono">Buat Pengumuman Baru</h3>
-            <form id="create-announcement-form" class="space-y-4">
-                <input type="text" id="announcement-title-input" placeholder="Judul Pengumuman..." class="form-input" required />
-                <textarea id="announcement-content-input" placeholder="Isi Pengumuman..." rows="6" class="form-input" required></textarea>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancel-announcement-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
-                    <button type="submit" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Publikasikan</button>
-                </div>
-            </form>
-        </div>
-    </div>
+  </nav>
 
-    <div id="edit-profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60] p-4">
-        <div class="bg-gray-900 border border-amber-500/30 p-6 rounded-lg shadow-2xl shadow-amber-500/10 w-full max-w-2xl">
-            <h3 class="text-2xl font-bold mb-4 text-white font-mono">Edit Profil</h3>
-            <form id="edit-profile-form" class="space-y-4">
-                <div>
-                    <label class="block mb-2 font-semibold text-gray-200 font-mono">About Me</label>
-                    <textarea id="edit-about-input" placeholder="Ceritakan tentang diri Anda..." rows="4" class="form-input"></textarea>
-                </div>
-                <div>
-                    <label class="block mb-2 font-semibold text-gray-200 font-mono">Hobi</label>
-                    <input type="text" id="edit-hobi-input" placeholder="Hobi Anda..." class="form-input" />
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancel-edit-profile-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Batal</button>
-                    <button type="submit" class="btn-gold text-white font-bold py-2 px-4 rounded-md">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <button id="chat-fab" class="hidden fixed bottom-6 right-6 btn-gold rounded-full w-16 h-16 flex items-center justify-center shadow-lg z-40">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-        <span id="online-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">0</span>
-        <span id="chat-notification-dot" class="hidden absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-gray-900"></span>
-    </button>
+  <!-- Main Content -->
+  <main id="app-content" class="container py-6">
+    <!-- Dynamic Views Rendered Here -->
+  </main>
 
-    <div id="chat-popup" class="hidden fixed bottom-24 right-6 w-[350px] h-[80vh] max-h-[500px] md:max-h-[60vh] glass-effect rounded-xl shadow-2xl shadow-amber-500/10 flex flex-col z-40">
-        <div class="p-3 border-b border-amber-500/20 flex justify-between items-center">
-            <h3 id="chat-title" class="font-bold text-white truncate">Live Chat</h3>
-            <div class="flex items-center">
-                <button id="clear-chat-btn" title="Hapus semua pesan di chat ini" class="text-gray-400 hover:text-white mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+  <!-- Footer -->
+  <footer style="border-top:1px solid var(--border); padding:2rem 0; text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:3rem;">
+    <div class="container">
+      <div style="font-family:'Playfair Display',serif; color:var(--accent); font-weight:600; margin-bottom:0.5rem;">✦ NOC FORUM ✦</div>
+      <p>dibuat untuk happy, kalo ga happy pergi by Prof.Z — nocfams 2025</p>
+      <p class="mt-2">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
+    </div>
+  </footer>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="flex flex-between mb-4">
+        <h2 id="auth-title" style="font-size:1.5rem;">Login</h2>
+        <button class="btn btn-ghost" onclick="App.ui.closeModal('auth')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="auth-form" class="space-y-4">
+        <div id="username-field" class="hidden">
+          <label class="block text-sm text-gray-400 mb-1">Username</label>
+          <input type="text" id="auth-username" class="form-input" required minlength="3">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Email</label>
+          <input type="email" id="auth-email" class="form-input" required>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Password</label>
+          <input type="password" id="auth-password" class="form-input" required minlength="6">
+        </div>
+        <div id="profile-fields" class="hidden grid grid-2 gap-3">
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Lama Main Sulap</label>
+            <select id="auth-lama" class="form-select">
+              <option value="">Pilih...</option>
+              <option value="< 1 Tahun">&lt; 1 Tahun</option>
+              <option value="1-3 Tahun">1-3 Tahun</option>
+              <option value="3-5 Tahun">3-5 Tahun</option>
+              <option value="5+ Tahun">5+ Tahun</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Aliran Sulap</label>
+            <select id="auth-aliran" class="form-select">
+              <option value="">Pilih...</option>
+              <option value="Mentalism">Mentalism</option>
+              <option value="Sleight of Hand">Sleight of Hand</option>
+              <option value="Illusionism">Illusionism</option>
+              <option value="Close-up">Close-up Magic</option>
+              <option value="Stage">Stage Magic</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" id="auth-submit" class="btn btn-primary w-full justify-center mt-4">Masuk</button>
+      </form>
+      <p class="mt-4 text-center text-sm text-gray-400">
+        <span id="auth-switch-text">Belum punya akun?</span>
+        <button onclick="App.ui.toggleAuthMode()" class="text-accent font-medium ml-1">Daftar</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- Create Thread Modal -->
+  <div id="thread-modal" class="modal-overlay">
+    <div class="modal" style="max-width:600px;">
+      <div class="flex flex-between mb-4">
+        <h2 style="font-size:1.5rem;">Buat Thread Baru</h2>
+        <button class="btn btn-ghost" onclick="App.ui.closeModal('thread')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="thread-form" class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Kategori</label>
+          <select id="thread-category" class="form-select" required>
+            <option value="">Pilih Kategori</option>
+            <option value="Card Magic">Card Magic</option>
+            <option value="Coin Magic">Coin Magic</option>
+            <option value="Mentalism">Mentalism</option>
+            <option value="Everyday Object">Everyday Object</option>
+            <option value="Idea & Theory">Idea & Theory</option>
+            <option value="Market & Gear">Market & Gear</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Judul</label>
+          <input type="text" id="thread-title" class="form-input" required maxlength="120" placeholder="Contoh: Teknik Advanced Palm untuk Coin Magic">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-1">Konten (Markdown Support: **bold**, *italic*, # heading, > quote)</label>
+          <textarea id="thread-content" class="form-textarea" required placeholder="Tulis thread Anda..."></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" class="btn btn-outline" onclick="App.ui.closeModal('thread')">Batal</button>
+          <button type="submit" class="btn btn-primary">Publikasi Thread</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <script>
+    /**
+     * NOC FORUM - Production Architecture
+     * Modular, Reactive, Realtime, Secure
+     */
+
+    // 🔥 Firebase Init
+    const firebaseConfig = {
+      apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
+      authDomain: "magicnoc-125b6.firebaseapp.com",
+      databaseURL: "https://magicnoc-125b6-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "magicnoc-125b6",
+      storageBucket: "magicnoc-125b6.firebasestorage.app",
+      messagingSenderId: "321388594743",
+      appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    db.settings({ persistence: true, cacheSizeBytes: 5242880 }); // 5MB cache
+
+    // 🧠 State Manager (Reactive)
+    const Store = {
+      state: {
+        user: null,
+        threads: [],
+        comments: new Map(), // threadId -> [comments]
+        users: new Map(),
+        likes: new Map(), // userId -> Set(targetId)
+        bookmarks: new Set(),
+        notifications: [],
+        loading: false,
+        route: 'home',
+        searchQuery: '',
+        sortBy: 'newest',
+        threadPage: 0,
+        hasMore: true,
+        listeners: {}
+      },
+      subscribers: [],
+      setState(patch) {
+        Object.assign(this.state, patch);
+        this.subscribers.forEach(fn => fn(this.state));
+      },
+      subscribe(fn) { this.subscribers.push(fn); return () => this.subscribers = this.subscribers.filter(f => f !== fn); }
+    };
+
+    // 🛠️ Utils
+    const Utils = {
+      id: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
+      timeAgo: (timestamp) => {
+        if (!timestamp) return 'Baru saja';
+        const seconds = Math.floor((new Date() - new Date(timestamp.toDate ? timestamp.toDate() : timestamp)) / 1000);
+        const intervals = [[31536000, 'tahun'], [2592000, 'bulan'], [604800, 'minggu'], [86400, 'hari'], [3600, 'jam'], [60, 'menit']];
+        for (const [sec, label] of intervals) {
+          const count = Math.floor(seconds / sec);
+          if (count >= 1) return `${count} ${label} lalu`;
+        }
+        return 'Baru saja';
+      },
+      generateAvatar: (name) => name ? name.charAt(0).toUpperCase() : '?',
+      parseMarkdown: (text) => {
+        if (!text) return '';
+        let html = text
+          .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+          .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+          .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+          .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+          .replace(/\*(.*)\*/gim, '<em>$1</em>')
+          .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+          .replace(/`(.*?)`/gim, '<code>$1</code>')
+          .replace(/\n/gim, '<br>');
+        // Mention parsing
+        html = html.replace(/@([\w]+)/g, '<span class="mention" onclick="App.router.go(\'profile\', null, {username: \'$1\'})">@$1</span>');
+        return html;
+      },
+      debounce: (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+    };
+
+    // 🔐 Auth Service
+    const AuthService = {
+      user: null,
+      init() {
+        auth.onAuthStateChanged(async (firebaseUser) => {
+          if (firebaseUser) {
+            const doc = await db.collection('users').doc(firebaseUser.uid).get();
+            this.user = { uid: firebaseUser.uid, ...doc.data() };
+            Store.setState({ user: this.user });
+            App.ui.updateAuthUI();
+            App.data.loadInitial();
+          } else {
+            this.user = null;
+            Store.setState({ user: null });
+            App.ui.updateAuthUI();
+          }
+        });
+      },
+      async login(email, password) {
+        await auth.signInWithEmailAndPassword(email, password);
+        App.ui.toast('Login berhasil', 'success');
+        App.ui.closeModal('auth');
+      },
+      async register(email, password, username, lama, aliran) {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection('users').doc(cred.user.uid).set({
+          username, email, lama_sulap: lama, aliran_sulap: aliran,
+          bio: '', createdAt: firebase.firestore.FieldValue.serverTimestamp(), role: 'user'
+        });
+        App.ui.toast('Akun dibuat! Silakan login.', 'success');
+        App.ui.toggleAuthMode();
+      },
+      async logout() {
+        await auth.signOut();
+        Store.setState({ user: null, threads: [], comments: new Map() });
+        App.ui.toast('Logout berhasil', 'info');
+      }
+    };
+
+    // 🗄️ Firestore Service
+    const DataService = {
+      unsubscribeAll() {
+        Object.values(Store.state.listeners).forEach(unsub => unsub());
+        Store.state.listeners = {};
+      },
+      loadInitial() {
+        this.unsubscribeAll();
+        Store.setState({ loading: true });
+        
+        // Threads Listener (Realtime, Pagination ready)
+        const threadsRef = db.collection('threads').orderBy('createdAt', 'desc').limit(20);
+        Store.state.listeners.threads = threadsRef.onSnapshot(snap => {
+          const threads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          Store.setState({ threads, loading: false, hasMore: threads.length === 20 });
+          this.loadUsersForThreads(threads);
+        });
+
+        // Notifications Listener
+        if (AuthService.user) {
+          Store.state.listeners.notifs = db.collection('notifications')
+            .where('toUserId', '==', AuthService.user.uid).orderBy('createdAt', 'desc').limit(10)
+            .onSnapshot(snap => {
+              Store.setState({ notifications: snap.docs.map(d => ({ id: d.id, ...d.data() })) });
+              const unread = Store.state.notifications.filter(n => !n.read).length;
+              document.getElementById('notif-badge').classList.toggle('hidden', unread === 0);
+            });
+        }
+      },
+      async loadUsersForThreads(threads) {
+        const uids = [...new Set(threads.map(t => t.authorId))];
+        const snaps = await Promise.all(uids.map(uid => db.collection('users').doc(uid).get()));
+        snaps.forEach(doc => { if(doc.exists) Store.state.users.set(doc.id, doc.data()); });
+      },
+      async loadComments(threadId) {
+        if (Store.state.comments.has(threadId)) return;
+        const ref = db.collection('comments').where('threadId', '==', threadId).orderBy('createdAt', 'asc');
+        Store.state.listeners[`comments_${threadId}`] = ref.onSnapshot(snap => {
+          Store.state.comments.set(threadId, snap.docs.map(d => ({ id: d.id, ...d.data() })));
+          Store.setState({ comments: new Map(Store.state.comments) }); // trigger reactivity
+        });
+      },
+      async createThread(title, content, category) {
+        if (!AuthService.user) throw new Error('Unauthorized');
+        const ref = await db.collection('threads').add({
+          title, content, category, authorId: AuthService.user.uid,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(), likeCount: 0, commentCount: 0, isReported: false
+        });
+        App.ui.toast('Thread dipublikasi!', 'success');
+        App.ui.closeModal('thread');
+      },
+      async toggleLike(targetId, type = 'thread') {
+        if (!AuthService.user) return App.ui.toast('Login untuk menyukai', 'error');
+        const uid = AuthService.user.uid;
+        if (!Store.state.likes.has(uid)) Store.state.likes.set(uid, new Set());
+        
+        const liked = Store.state.likes.get(uid).has(targetId);
+        const batch = db.batch();
+        
+        if (liked) {
+          const q = await db.collection('likes').where('userId', '==', uid).where('targetId', '==', targetId).limit(1).get();
+          if (!q.empty) batch.delete(q.docs[0].ref);
+          Store.state.likes.get(uid).delete(targetId);
+        } else {
+          batch.set(db.collection('likes').doc(), { userId: uid, targetId, type, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+          Store.state.likes.get(uid).add(targetId);
+        }
+        
+        // Update counter
+        const targetRef = db.collection(type === 'thread' ? 'threads' : 'comments').doc(targetId);
+        batch.update(targetRef, { likeCount: firebase.firestore.FieldValue.increment(liked ? -1 : 1) });
+        
+        await batch.commit();
+        Store.setState({ likes: new Map(Store.state.likes) });
+      },
+      async addComment(threadId, content, parentId = null) {
+        if (!AuthService.user) return;
+        await db.collection('comments').add({
+          threadId, content, authorId: AuthService.user.uid, parentId,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(), likeCount: 0
+        });
+        // Update thread comment count
+        db.collection('threads').doc(threadId).update({ commentCount: firebase.firestore.FieldValue.increment(1) });
+        // Notify author
+        const thread = Store.state.threads.find(t => t.id === threadId);
+        if (thread && thread.authorId !== AuthService.user.uid) {
+          db.collection('notifications').add({
+            toUserId: thread.authorId, fromUserId: AuthService.user.uid,
+            type: 'comment', threadId, message: `${AuthService.user.username} mengomentari thread Anda`,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(), read: false
+          });
+        }
+      },
+      async bookmarkThread(threadId) {
+        if (!AuthService.user) return;
+        const exists = Store.state.bookmarks.has(threadId);
+        if (exists) {
+          Store.state.bookmarks.delete(threadId);
+          App.ui.toast('Bookmark dihapus', 'info');
+        } else {
+          Store.state.bookmarks.add(threadId);
+          App.ui.toast('Thread disimpan ke bookmark', 'success');
+        }
+        Store.setState({ bookmarks: new Set(Store.state.bookmarks) });
+      },
+      async reportThread(threadId) {
+        if (!AuthService.user) return;
+        await db.collection('reports').add({
+          reporterId: AuthService.user.uid, targetId: threadId, type: 'thread',
+          reason: 'Pelanggaran aturan forum', createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        App.ui.toast('Laporan terkirim. Tim akan meninjau.', 'success');
+      }
+    };
+
+    // 🖼️ UI Renderer
+    const UIRenderer = {
+      toast(msg, type = 'info') {
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<i class="fa-solid ${type==='success'?'fa-check-circle':type==='error'?'fa-circle-exclamation':'fa-info-circle'} mr-2"></i>${msg}`;
+        document.getElementById('toast-container').appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+      },
+      openModal(id) { document.getElementById(`${id}-modal`).classList.add('active'); },
+      closeModal(id) { document.getElementById(`${id}-modal`).classList.remove('active'); },
+      toggleAuthMode() {
+        const isLogin = document.getElementById('auth-title').textContent === 'Login';
+        document.getElementById('auth-title').textContent = isLogin ? 'Daftar Akun' : 'Login';
+        document.getElementById('auth-submit').textContent = isLogin ? 'Daftar' : 'Masuk';
+        document.getElementById('username-field').classList.toggle('hidden', isLogin);
+        document.getElementById('profile-fields').classList.toggle('hidden', isLogin);
+        document.getElementById('auth-switch-text').textContent = isLogin ? 'Sudah punya akun?' : 'Belum punya akun?';
+        document.querySelector('#auth-switch-text + button').textContent = isLogin ? 'Login' : 'Daftar';
+      },
+      updateAuthUI() {
+        const user = Store.state.user;
+        document.getElementById('auth-buttons').classList.toggle('hidden', !!user);
+        document.getElementById('user-menu').classList.toggle('hidden', !user);
+        if (user) {
+          document.getElementById('user-name').textContent = user.username;
+          document.getElementById('user-avatar').textContent = Utils.generateAvatar(user.username);
+        }
+      },
+      toggleNotifications() {
+        const notifs = Store.state.notifications;
+        if (!notifs.length) return this.toast('Tidak ada notifikasi', 'info');
+        // Simple alert for demo, in production use a dropdown/modal
+        const html = notifs.map(n => `<div style="padding:0.5rem;border-bottom:1px solid var(--border);font-size:0.9rem;">
+          <div style="font-weight:500;">${n.type === 'like' ? '❤️' : '💬'} ${n.message}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">${Utils.timeAgo(n.createdAt)}</div>
+        </div>`).join('');
+        this.toast(html, 'info');
+      },
+      renderSkeleton(count = 3) {
+        return Array(count).fill(0).map(() => `
+          <div class="card p-4 mb-3">
+            <div class="skeleton w-1/3 h-4 mb-3"></div>
+            <div class="skeleton w-full h-4 mb-2"></div>
+            <div class="skeleton w-2/3 h-4"></div>
+            <div class="flex gap-4 mt-4">
+              <div class="skeleton w-16 h-3"></div>
+              <div class="skeleton w-16 h-3"></div>
+            </div>
+          </div>
+        `).join('');
+      },
+      renderEmpty(icon, title, desc) {
+        return `<div class="empty-state card"><i class="fa-solid ${icon}"></i><h3>${title}</h3><p>${desc}</p></div>`;
+      },
+      renderThreadCard(thread) {
+        const author = Store.state.users.get(thread.authorId) || { username: 'Anon' };
+        const isBookmarked = Store.state.bookmarks.has(thread.id);
+        return `
+          <div class="card thread-item p-4 mb-3" onclick="App.router.go('thread', '${thread.id}')">
+            <div class="flex flex-between mb-2">
+              <span class="badge">${thread.category || 'Umum'}</span>
+              <div class="flex gap-2">
+                <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); App.data.bookmarkThread('${thread.id}')">
+                  <i class="fa-solid ${isBookmarked ? 'fa-bookmark text-accent' : 'fa-bookmark'}"></i>
                 </button>
-                <button id="close-chat-btn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
-            </div>
-        </div>
-        <div class="flex flex-1 overflow-hidden">
-            <div class="w-1/3 border-r border-amber-500/20 p-2 space-y-2 overflow-y-auto chat-container">
-                <button data-chat-id="group" data-chat-name="Grup Chat" class="chat-tab-btn w-full text-left p-2 rounded-md bg-amber-500/30 text-white font-bold relative flex items-center justify-between">
-                    <span class="truncate">Grup Chat</span>
-                    <span data-chat-id="group" class="unread-badge hidden"></span>
+                <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); App.data.reportThread('${thread.id}')">
+                  <i class="fa-solid fa-flag"></i>
                 </button>
-                <h4 class="text-xs font-bold text-gray-400 uppercase pt-2">Online</h4>
-                <div id="online-users-list" class="space-y-1"></div>
+              </div>
             </div>
-            <div class="w-2/3 flex flex-col">
-                <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-3 chat-container"></div>
-                <div id="typing-indicator" class="h-5 px-3 text-xs text-gray-400 italic"></div>
-                <div class="p-3 border-t border-amber-500/20">
-                    <form id="chat-form" class="flex space-x-2">
-                        <input type="text" id="chat-input" placeholder="Ketik pesan..." class="form-input !p-2 text-sm" required>
-                        <button type="submit" class="btn-gold rounded-lg px-4 text-white">Kirim</button>
-                    </form>
-                </div>
+            <h3 class="thread-title">${thread.title}</h3>
+            <div class="thread-meta">
+              <span><i class="fa-solid fa-user mr-1"></i>${author.username}</span>
+              <span><i class="fa-solid fa-clock mr-1"></i>${Utils.timeAgo(thread.createdAt)}</span>
+              <span><i class="fa-solid fa-comment mr-1"></i>${thread.commentCount || 0}</span>
+              <span><i class="fa-solid fa-heart mr-1"></i>${thread.likeCount || 0}</span>
             </div>
-        </div>
-    </div>
-    
-    <footer class="text-center py-6 mt-10 border-t border-amber-500/10"><p class="text-gray-600 text-sm font-mono">&copy; 2024 NOC_FORUM // Data stream secured.</p></footer>
-    <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg text-sm z-50"></div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where, onSnapshot, orderBy, serverTimestamp, updateDoc, increment, deleteDoc, arrayUnion, arrayRemove, limit, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getDatabase, ref as dbRef, onValue, set, onDisconnect, serverTimestamp as rtdbServerTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-        const ADMIN_UIDS = ["Ix3gKNJPNZSnLQj2YTAfQp76IL72"]; 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
-            authDomain: "magicnoc-125b6.firebaseapp.com",
-            projectId: "magicnoc-125b6",
-            storageBucket: "magicnoc-125b6.appspot.com",
-            messagingSenderId: "321388594743",
-            appId: "1:321388594743:web:0dfc8f24d5201f138a21b2",
-            databaseURL: "https://magicnoc-125b6-default-rtdb.asia-southeast1.firebasedatabase.app"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const rtdb = getDatabase(app);
-
-        let currentUser = null, currentCategory = null, currentUnsubscribe = null, viewHistory = [];
-        let currentChatId = 'group';
-        let currentChatUnsubscribe = null;
-        let typingTimeout = null;
-        let unreadChatsUnsubscribe = null;
-        let unreadCounts = {};
-        const EMOJI_REACTIONS = ['👍', '❤️', '🔥', '🤯'];
-
-        const views = document.querySelectorAll('.view');
-        const defaultAvatar = "https://placehold.co/100x100/1f2937/d1d5db?text=NOC";
-        const userInfo = document.getElementById('user-info'), userDisplayName = document.getElementById('user-display-name'), userAvatar = document.getElementById('user-avatar');
-        
-        function showView(viewId, isNavigatingBack = false) {
-            document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === viewId));
-            if (!isNavigatingBack) {
-                history.pushState({ view: viewId }, '', `#${viewId}`);
-                if (viewHistory[viewHistory.length - 1] !== viewId) viewHistory.push(viewId);
-            }
-        }
-        
-        function linkify(text) {
-            const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\bwww\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-            return text.replace(urlRegex, function(url, fullUrl, protocol) {
-                const properUrl = protocol ? fullUrl : `http://${fullUrl}`;
-                return `<a href="${properUrl}" target="_blank" rel="noopener noreferrer" class="clickable-link">${url}</a>`;
-            });
-        }
-
-        const chatFab = document.getElementById('chat-fab'), onlineCount = document.getElementById('online-count'), chatPopup = document.getElementById('chat-popup'), chatMessages = document.getElementById('chat-messages'), onlineUsersList = document.getElementById('online-users-list'), chatTitle = document.getElementById('chat-title'), typingIndicator = document.getElementById('typing-indicator'), chatNotificationDot = document.getElementById('chat-notification-dot');
-
-        function setupPresence(user) {
-            const userStatusRef = dbRef(rtdb, `/status/${user.uid}`);
-            const isOnline = { state: 'online', name: user.displayName, last_changed: rtdbServerTimestamp() };
-            const isOffline = { state: 'offline', name: user.displayName, last_changed: rtdbServerTimestamp() };
-            onValue(dbRef(rtdb, '.info/connected'), (snapshot) => {
-                if (snapshot.val() === false) return;
-                onDisconnect(userStatusRef).set(isOffline).then(() => {
-                    set(userStatusRef, isOnline);
-                });
-            });
-        }
-
-        onValue(dbRef(rtdb, '/status'), (snapshot) => {
-            const statuses = snapshot.val() || {};
-            const onlineUsers = Object.entries(statuses)
-                .filter(([uid, data]) => data.state === 'online' && uid !== currentUser?.uid)
-                .map(([uid, data]) => ({ uid, ...data }));
-            onlineCount.textContent = onlineUsers.length + (currentUser ? 1 : 0);
-            onlineUsersList.innerHTML = onlineUsers.map(user => {
-                const myUid = currentUser?.uid;
-                if (!myUid) return '';
-                const targetUid = user.uid;
-                const privateChatId = myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`;
-                const unreadCount = unreadCounts[privateChatId] || 0;
-                return `
-                <button data-chat-id="${user.uid}" data-chat-name="${user.name}" class="chat-tab-btn w-full text-left p-2 rounded-md hover:bg-amber-500/20 text-sm truncate relative flex items-center justify-between">
-                    <span class="truncate flex items-center"><span class="status-indicator online mr-2"></span>${user.name}</span>
-                    <span data-chat-id="${privateChatId}" class="unread-badge ${unreadCount > 0 ? '' : 'hidden'}">${unreadCount}</span>
-                </button>
-            `}).join('');
-            document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.addEventListener('click', () => switchChat(btn)));
-        });
-        
-        async function switchChat(buttonElement) {
-            const chatId = buttonElement.dataset.chatId;
-            const chatName = buttonElement.dataset.chatName;
-            document.querySelectorAll('.chat-tab-btn').forEach(btn => btn.classList.remove('bg-amber-500/30', 'text-white', 'font-bold'));
-            buttonElement.classList.add('bg-amber-500/30', 'text-white', 'font-bold');
-            
-            typingIndicator.textContent = '';
-            if (currentChatUnsubscribe) currentChatUnsubscribe();
-            
-            let collectionPath;
-            let finalChatId;
-            if (chatId === 'group') {
-                currentChatId = 'group';
-                finalChatId = 'group';
-                chatTitle.textContent = 'Grup Chat';
-                collectionPath = 'live-chat';
-            } else {
-                const targetUid = chatId;
-                const myUid = currentUser.uid;
-                currentChatId = myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`;
-                finalChatId = currentChatId;
-                chatTitle.textContent = `Chat dengan ${chatName}`;
-                collectionPath = `privateChats/${currentChatId}/messages`;
-                
-                onValue(dbRef(rtdb, `/typing/${currentChatId}/${targetUid}`), (snapshot) => {
-                    if (snapshot.val() === true && currentChatId === (myUid < targetUid ? `${myUid}_${targetUid}` : `${targetUid}_${myUid}`)) {
-                        typingIndicator.textContent = `${chatName} sedang mengetik...`;
-                    } else {
-                        typingIndicator.textContent = '';
-                    }
-                });
-            }
-            listenToMessages(collectionPath);
-            await markChatAsRead(finalChatId);
-        }
-
-        function listenToMessages(collectionPath) {
-            if (currentChatUnsubscribe) currentChatUnsubscribe();
-            const q = query(collection(db, collectionPath), orderBy("createdAt", "desc"), limit(50));
-            currentChatUnsubscribe = onSnapshot(q, snapshot => {
-                chatMessages.innerHTML = snapshot.docs.reverse().map(doc => {
-                    const msg = doc.data();
-                    const isMe = msg.uid === currentUser?.uid;
-                    return `<div class="flex items-end gap-2 chat-message-container ${isMe ? 'justify-end' : 'justify-start'}">
-                                ${isMe ? `<button data-msg-id="${doc.id}" class="delete-msg-btn text-red-500/50 hover:text-red-500 text-xs">Hapus</button>` : ''}
-                                <div class="${isMe ? 'bg-amber-600' : 'bg-gray-700'} rounded-lg p-2 max-w-xs">
-                                    <p class="text-xs font-bold ${isMe ? 'hidden' : 'text-amber-300'}">${msg.authorName}</p>
-                                    <p class="text-sm text-white">${linkify(msg.text)}</p>
-                                </div>
-                            </div>`;
-                }).join('');
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-                document.querySelectorAll('.delete-msg-btn').forEach(btn => {
-                    btn.addEventListener('click', async () => {
-                        if (confirm("Hapus pesan ini?")) {
-                            await deleteDoc(doc(db, collectionPath, btn.dataset.msgId));
-                        }
-                    });
-                });
-            });
-        }
-
-        chatFab.addEventListener('click', () => chatPopup.classList.toggle('hidden'));
-        document.getElementById('close-chat-btn').addEventListener('click', () => chatPopup.classList.add('hidden'));
-        document.getElementById('chat-form').addEventListener('submit', async e => {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            if (!input.value.trim()) return;
-            const isGroup = currentChatId === 'group';
-            const collectionPath = isGroup ? 'live-chat' : `privateChats/${currentChatId}/messages`;
-            
-            const messageData = {
-                text: input.value,
-                uid: currentUser.uid,
-                authorName: currentUser.displayName,
-                createdAt: serverTimestamp()
-            };
-            await addDoc(collection(db, collectionPath), messageData);
-
-            if (!isGroup) {
-                const recipientId = currentChatId.replace(currentUser.uid, '').replace('_', '');
-                const unreadRef = doc(db, `users/${recipientId}/unreadChats/${currentChatId}`);
-                await setDoc(unreadRef, { count: increment(1), lastMessage: serverTimestamp() }, { merge: true });
-                const typingRef = dbRef(rtdb, `/typing/${currentChatId}/${currentUser.uid}`);
-                set(typingRef, false);
-            }
-            input.value = '';
-        });
-        
-        document.getElementById('chat-input').addEventListener('input', () => {
-            if (currentChatId === 'group') return;
-            const typingRef = dbRef(rtdb, `/typing/${currentChatId}/${currentUser.uid}`);
-            set(typingRef, true);
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                set(typingRef, false);
-            }, 3000);
-        });
-
-        function listenForUnreadChats(user) {
-            if (unreadChatsUnsubscribe) unreadChatsUnsubscribe();
-            const q = query(collection(db, `users/${user.uid}/unreadChats`));
-            unreadChatsUnsubscribe = onSnapshot(q, (snapshot) => {
-                unreadCounts = {};
-                let totalUnread = 0;
-                snapshot.docs.forEach(doc => {
-                    unreadCounts[doc.id] = doc.data().count;
-                    totalUnread += doc.data().count;
-                });
-                chatNotificationDot.classList.toggle('hidden', totalUnread === 0);
-                
-                document.querySelectorAll('.chat-tab-btn .unread-badge').forEach(badge => {
-                    const count = unreadCounts[badge.dataset.chatId] || 0;
-                    badge.textContent = count;
-                    badge.classList.toggle('hidden', count === 0);
-                });
-            });
-        }
-
-        async function markChatAsRead(chatId) {
-            const unreadRef = doc(db, `users/${currentUser.uid}/unreadChats/${chatId}`);
-            await deleteDoc(unreadRef).catch(() => {});
-        }
-        
-        document.getElementById('clear-chat-btn').addEventListener('click', async () => {
-            if (!currentUser) return;
-            const chatName = currentChatId === 'group' ? 'Grup Chat' : document.querySelector(`.chat-tab-btn.bg-amber-500\\/30`).dataset.chatName;
-            if (confirm(`Yakin ingin menghapus semua pesan di ${chatName}?`)) {
-                const collectionPath = currentChatId === 'group' ? 'live-chat' : `privateChats/${currentChatId}/messages`;
-                const q = query(collection(db, collectionPath));
-                const querySnapshot = await getDocs(q);
-                const batch = writeBatch(db);
-                querySnapshot.forEach((doc) => batch.delete(doc.ref));
-                await batch.commit();
-                showToast(`Riwayat chat ${chatName} dibersihkan.`);
-            }
-        });
-
-        onAuthStateChanged(auth, user => {
-            const createAnnouncementBtn = document.getElementById('create-announcement-btn');
-            if (user) {
-                currentUser = user;
-                userInfo.classList.remove('hidden'); userInfo.classList.add('flex');
-                userDisplayName.textContent = user.displayName;
-                userAvatar.src = user.photoURL || defaultAvatar;
-                chatFab.classList.remove('hidden');
-                setupPresence(user);
-                listenForUnreadChats(user);
-                if (ADMIN_UIDS.includes(user.uid)) createAnnouncementBtn.classList.remove('hidden');
-                else createAnnouncementBtn.classList.add('hidden');
-                renderAnnouncements();
-                showView('view-categories');
-                switchChat(document.querySelector('[data-chat-id="group"]'));
-            } else {
-                currentUser = null;
-                userInfo.classList.add('hidden'); userInfo.classList.remove('flex');
-                createAnnouncementBtn.classList.add('hidden');
-                chatFab.classList.add('hidden');
-                chatPopup.classList.add('hidden');
-                if (unreadChatsUnsubscribe) unreadChatsUnsubscribe();
-                showView('view-login');
-            }
-        });
-
-        document.getElementById('go-to-register').addEventListener('click', e => { e.preventDefault(); showView('view-register'); });
-        document.getElementById('go-to-login').addEventListener('click', e => { e.preventDefault(); history.back(); });
-        document.getElementById('logo-img').addEventListener('click', () => { if (currentUser) showView('view-categories'); });
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-        document.getElementById('login-form').addEventListener('submit', e => {
-            e.preventDefault();
-            signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value)
-                .catch(error => alert(`Login Gagal: ${error.message}`));
-        });
-        document.getElementById('register-form').addEventListener('submit', async e => {
-            e.preventDefault();
-            const username = document.getElementById('register-username').value, email = document.getElementById('register-email').value, password = document.getElementById('register-password').value, magicExperience = document.getElementById('magic-experience').value, magicGenre = document.getElementById('magic-genre').value;
-            try {
-                const { user } = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(user, { displayName: username, photoURL: defaultAvatar });
-                await setDoc(doc(db, "users", user.uid), { displayName: username, email: user.email, photoURL: defaultAvatar, magicExperience, magicGenre, createdAt: serverTimestamp() });
-            } catch (error) { alert(`Pendaftaran Gagal: ${error.message}`); }
-        });
-
-        const categories = [{ name: "Card Magic", desc: "Diskusi seputar trik dan teknik sulap kartu." },{ name: "Coin Magic", desc: "Semua tentang manipulasi dan ilusi dengan koin." },{ name: "Mentalism", desc: "Membaca pikiran, prediksi, dan keajaiban psikologis." },{ name: "Everyday Object", desc: "Sulap menggunakan benda-benda sehari-hari." },{ name: "Idea", desc: "Bagikan dan kembangkan ide-ide sulap baru." },{ name: "Magic Market", desc: "Jual beli alat atau lecture sulap." }];
-        document.getElementById('category-list').innerHTML = categories.map(cat => `<div data-category="${cat.name}" class="category-card glass-effect p-6 rounded-xl shadow-lg hover:shadow-amber-500/20 hover:border-amber-500/50 hover:-translate-y-2 transition-all duration-300 cursor-pointer group"><h3 class="text-2xl font-bold text-amber-400 group-hover:text-white font-orbitron transition-colors duration-300">${cat.name}</h3><p class="text-gray-400 mt-2">${cat.desc}</p></div>`).join('');
-        document.querySelectorAll('.category-card').forEach(card => card.addEventListener('click', () => {
-            currentCategory = card.dataset.category;
-            renderPosts(currentCategory);
-            showView('view-post-list');
-        }));
-
-        const postListContainer = document.getElementById('post-list-container');
-        async function renderPosts(category) {
-            document.getElementById('post-list-title').textContent = category;
-            if (currentUnsubscribe) currentUnsubscribe();
-            const q = query(collection(db, "posts"), where("category", "==", category));
-            currentUnsubscribe = onSnapshot(q, snapshot => {
-                if (snapshot.empty) { postListContainer.innerHTML = `<p class="text-center text-gray-500 py-10 font-mono">-- Belum ada postingan di kategori ini. --</p>`; return; }
-                const sortedDocs = snapshot.docs.sort((a, b) => (b.data().createdAt?.toDate() || 0) - (a.data().createdAt?.toDate() || 0));
-                postListContainer.innerHTML = sortedDocs.map(doc => {
-                    const post = doc.data();
-                    const postDate = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
-                    const reactionsHtml = EMOJI_REACTIONS.map(emoji => {
-                        const count = Object.values(post.reactions || {}).filter(r => r === emoji).length;
-                        return count > 0 ? `<span class="text-xs">${emoji} ${count}</span>` : '';
-                    }).join(' ');
-                    return `<div data-id="${doc.id}" class="post-card glass-effect p-5 rounded-lg hover:border-amber-500/50 transition-all duration-300 cursor-pointer group"><div class="flex items-center mb-3"><img src="${post.authorPhotoURL || defaultAvatar}" alt="${post.authorName}" class="w-8 h-8 rounded-full mr-3 border-2 border-gray-600 group-hover:border-amber-500/50 transition-colors" /><span class="text-sm text-gray-500 font-mono clickable-link" data-user-id="${post.authorId}">${post.authorName}</span> &bull; ${postDate}</div><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${post.title}</h3><div class="flex justify-between items-center text-sm text-gray-500 font-mono"><div class="flex space-x-4">${reactionsHtml}<span>💬 ${post.commentCount || 0}</span></div></div></div>`;
-                }).join('');
-                document.querySelectorAll('.post-card').forEach(card => card.addEventListener('click', (e) => {
-                    if (e.target.closest('[data-user-id]')) {
-                        renderProfileView(e.target.closest('[data-user-id]').dataset.userId);
-                    } else {
-                        renderDetailView('posts', card.dataset.id);
-                    }
-                }));
-            });
-        }
-        
-        document.getElementById('back-to-categories-btn').addEventListener('click', () => history.back());
-        document.getElementById('search-input').addEventListener('input', e => {
-            const searchTerm = e.target.value.toLowerCase();
-            document.querySelectorAll('.post-card').forEach(card => card.style.display = card.querySelector('h3').textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none');
-        });
-
-        const announcementContainer = document.getElementById('announcement-container');
-        function renderAnnouncements() {
-            const q = query(collection(db, "announcements"));
-            onSnapshot(q, snapshot => {
-                if (snapshot.empty) {
-                    announcementContainer.innerHTML = `<p class="text-center text-gray-500 py-4 font-mono">-- Belum ada pengumuman. --</p>`;
-                    return;
-                }
-                const sortedDocs = snapshot.docs.sort((a,b) => (b.data().isPinned ? 1 : -1) - (a.data().isPinned ? 1 : -1) || (b.data().createdAt?.toDate() || 0) - (a.data().createdAt?.toDate() || 0));
-                announcementContainer.innerHTML = sortedDocs.map(doc => {
-                    const ann = doc.data();
-                    const date = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleDateString('id-ID') : 'Baru saja';
-                    const reactionsHtml = EMOJI_REACTIONS.map(emoji => {
-                        const count = Object.values(ann.reactions || {}).filter(r => r === emoji).length;
-                        return count > 0 ? `<span class="text-xs">${emoji} ${count}</span>` : '';
-                    }).join(' ');
-                    return `<div data-id="${doc.id}" class="announcement-card glass-effect p-5 rounded-lg transition-all duration-300 cursor-pointer group ${ann.isPinned ? 'pinned' : 'hover:border-amber-500/50'}"><p class="text-sm text-gray-500 font-mono">${ann.authorName || 'Admin'} &bull; ${date}</p><h3 class="text-xl font-bold text-amber-400 group-hover:text-white mb-2 transition-colors">${ann.title}</h3><div class="flex space-x-4 text-sm text-gray-500 font-mono">${reactionsHtml}<span>💬 ${ann.commentCount || 0}</span></div></div>`;
-                }).join('');
-                document.querySelectorAll('.announcement-card').forEach(card => card.addEventListener('click', () => renderDetailView('announcements', card.dataset.id)));
-            });
-        }
-        
-        const createAnnouncementModal = document.getElementById('create-announcement-modal');
-        document.getElementById('create-announcement-btn').addEventListener('click', () => createAnnouncementModal.classList.remove('hidden'));
-        document.getElementById('cancel-announcement-btn').addEventListener('click', () => createAnnouncementModal.classList.add('hidden'));
-        document.getElementById('create-announcement-form').addEventListener('submit', async e => {
-            e.preventDefault();
-            const title = document.getElementById('announcement-title-input').value;
-            const content = document.getElementById('announcement-content-input').value;
-            if (!title.trim() || !content.trim() || !ADMIN_UIDS.includes(currentUser?.uid)) return;
-            await addDoc(collection(db, "announcements"), { title, content, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), reactions: {}, commentCount: 0, isPinned: false });
-            document.getElementById('create-announcement-form').reset();
-            createAnnouncementModal.classList.add('hidden');
-        });
-
-        const detailContainer = document.getElementById('detail-container');
-        let detailUnsubscribe = null, commentsUnsubscribe = null;
-        async function renderDetailView(collectionName, docId) {
-            showView('view-detail');
-            if (detailUnsubscribe) detailUnsubscribe(); if (commentsUnsubscribe) commentsUnsubscribe();
-            detailContainer.innerHTML = `<p class="text-center font-mono animate-pulse">Memuat...</p>`;
-            const docRef = doc(db, collectionName, docId);
-            if(collectionName === 'posts') { try { await updateDoc(docRef, { viewCount: increment(1) }); } catch (e) {} }
-            detailUnsubscribe = onSnapshot(docRef, docSnap => {
-                if (!docSnap.exists()) { detailContainer.innerHTML = `<p class="text-center text-red-500 font-mono">Konten tidak ditemukan.</p>`; return; }
-                const item = docSnap.data();
-                const isAuthor = currentUser && currentUser.uid === item.authorId;
-                const contentHtml = linkify(item.content);
-                const isAnnouncement = collectionName === 'announcements';
-
-                const reactions = item.reactions || {};
-                const myReaction = reactions[currentUser?.uid];
-                const reactionsHtml = EMOJI_REACTIONS.map(emoji => {
-                    const count = Object.values(reactions).filter(r => r === emoji).length;
-                    return `<button data-emoji="${emoji}" class="emoji-reaction p-1 text-xl ${myReaction === emoji ? 'selected' : ''}">${emoji} <span class="text-sm">${count > 0 ? count : ''}</span></button>`;
-                }).join('');
-
-                detailContainer.innerHTML = `<button id="back-to-previous-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button><div class="flex justify-between items-start"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4 font-orbitron">${item.title}</h2><div class="flex space-x-2">${(isAnnouncement && ADMIN_UIDS.includes(currentUser?.uid)) ? `<button id="pin-btn" class="bg-blue-600/50 border border-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600/80 text-sm">${item.isPinned ? 'Lepas Pin' : 'Sematkan'}</button>` : ''}${(isAuthor || (isAnnouncement && ADMIN_UIDS.includes(currentUser?.uid))) ? `<button id="delete-btn" class="bg-red-600/50 border border-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600/80 text-sm">Hapus</button>` : ''}</div></div><div class="flex items-center mb-4 text-sm text-gray-400"><img src="${item.authorPhotoURL || defaultAvatar}" alt="${item.authorName}" class="w-10 h-10 rounded-full mr-3 border-2 border-gray-600" /><div class="font-mono"><p class="font-semibold text-gray-200 clickable-link" data-user-id="${item.authorId}">${item.authorName}</p><p>${item.createdAt ? new Date(item.createdAt.toDate()).toLocaleString('id-ID') : ''}</p></div></div><p class="text-gray-300 whitespace-pre-wrap leading-relaxed mb-6 text-lg">${contentHtml}</p><div class="flex items-center space-x-4 border-t border-b border-gray-700 py-3 mb-6">${reactionsHtml}${!isAnnouncement ? `<div class="flex items-center space-x-2 text-lg text-gray-500"><span>👁️</span><span class="font-mono">${item.viewCount || 0}</span></div>` : ''}</div><div id="comment-section"></div>`;
-                renderComments(collectionName, docId);
-                document.getElementById('back-to-previous-btn').addEventListener('click', () => history.back());
-                if (document.getElementById('delete-btn')) { document.getElementById('delete-btn').addEventListener('click', async () => { if (confirm("Yakin ingin menghapus ini?")) { await deleteDoc(docRef); history.back(); } }); }
-                if (document.getElementById('pin-btn')) { document.getElementById('pin-btn').addEventListener('click', async () => { await updateDoc(docRef, { isPinned: !item.isPinned }); }); }
-                document.querySelectorAll('.emoji-reaction').forEach(btn => btn.addEventListener('click', async () => {
-                    if (!currentUser) return;
-                    const emoji = btn.dataset.emoji;
-                    const currentReactions = item.reactions || {};
-                    if (currentReactions[currentUser.uid] === emoji) {
-                        delete currentReactions[currentUser.uid];
-                    } else {
-                        currentReactions[currentUser.uid] = emoji;
-                    }
-                    await updateDoc(docRef, { reactions: currentReactions });
-                }));
-                document.querySelectorAll('[data-user-id]').forEach(el => el.addEventListener('click', (e) => renderProfileView(e.target.dataset.userId)));
-            });
-        }
-        
-        function renderComments(collectionName, docId) {
-            const commentSection = document.getElementById('comment-section');
-            const q = query(collection(db, collectionName, docId, "comments"), orderBy("createdAt", "asc"));
-            commentsUnsubscribe = onSnapshot(q, snapshot => {
-                const commentsHtml = snapshot.docs.map(doc => {
-                    const comment = doc.data();
-                    const commentTextHtml = linkify(comment.text);
-                    const repliesHtml = (comment.replies || []).map(reply => `<div class="flex space-x-3 mt-3"><img src="${reply.authorPhotoURL || defaultAvatar}" alt="${reply.authorName}" class="w-8 h-8 rounded-full mt-1 border-2 border-gray-600"/><div class="flex-grow bg-gray-700/80 p-2 rounded-lg"><p class="font-semibold text-amber-200 text-sm font-mono clickable-link" data-user-id="${reply.authorId}">${reply.authorName}</p><p class="text-gray-300 text-sm">${linkify(reply.text)}</p></div></div>`).join('');
-                    return `<div class="flex space-x-3"><img src="${comment.authorPhotoURL || defaultAvatar}" alt="${comment.authorName}" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-700"/><div class="flex-grow"><div class="bg-gray-800/70 p-3 rounded-lg"><p class="font-semibold text-amber-300 font-mono text-sm clickable-link" data-user-id="${comment.authorId}">${comment.authorName}</p><p class="text-gray-300">${commentTextHtml}</p></div><div class="text-xs text-gray-500 mt-1 flex space-x-3 font-mono"><span>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString('id-ID') : ''}</span><button class="reply-btn font-semibold hover:text-white" data-comment-id="${doc.id}">Balas</button></div><div class="pl-4 border-l-2 border-gray-700 space-y-3 mt-3">${repliesHtml}</div><div id="reply-form-${doc.id}" class="hidden mt-2 pl-4"><form class="reply-form flex space-x-2" data-comment-id="${doc.id}"><input type="text" placeholder="Tulis balasan..." class="flex-grow p-2 bg-gray-700 rounded-md border border-gray-600 text-sm font-mono"/><button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white font-bold py-1 px-3 rounded-md text-sm">Kirim</button></form></div></div></div>`;
-                }).join('');
-                commentSection.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-white font-mono">Komentar (${snapshot.size})</h3><div class="space-y-4 mb-6">${commentsHtml}</div>${currentUser ? `<form id="comment-form" class="flex space-x-3 items-start"><img src="${currentUser.photoURL || defaultAvatar}" alt="You" class="w-10 h-10 rounded-full mt-1 border-2 border-gray-600"/><textarea id="comment-input" placeholder="Tulis komentar..." rows="2" class="form-input"></textarea><button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-4 rounded-md h-full">Kirim</button></form>` : ''}`;
-                if (currentUser) document.getElementById('comment-form').addEventListener('submit', async e => { e.preventDefault(); const commentInput = document.getElementById('comment-input'); if (!commentInput.value.trim()) return; await addDoc(collection(db, collectionName, docId, "comments"), { text: commentInput.value, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), replies: [] }); await updateDoc(doc(db, collectionName, docId), { commentCount: increment(1) }); commentInput.value = ''; });
-                document.querySelectorAll('.reply-btn').forEach(btn => btn.addEventListener('click', e => document.getElementById(`reply-form-${e.target.dataset.commentId}`).classList.toggle('hidden')));
-                document.querySelectorAll('.reply-form').forEach(form => form.addEventListener('submit', async e => { e.preventDefault(); const commentId = e.target.dataset.commentId, replyText = e.target.querySelector('input').value; if (!replyText.trim()) return; const newReply = { id: crypto.randomUUID(), text: replyText, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: new Date().toISOString() }; await updateDoc(doc(db, collectionName, docId, "comments", commentId), { replies: arrayUnion(newReply) }); e.target.querySelector('input').value = ''; document.getElementById(`reply-form-${commentId}`).classList.add('hidden'); }));
-                document.querySelectorAll('[data-user-id]').forEach(el => el.addEventListener('click', (e) => renderProfileView(e.target.dataset.userId)));
-            });
-        }
-
-        const createPostModal = document.getElementById('create-post-modal');
-        document.getElementById('create-post-btn').addEventListener('click', () => { document.getElementById('create-post-modal-title').textContent = `Postingan Baru di ${currentCategory}`; createPostModal.classList.remove('hidden'); });
-        document.getElementById('cancel-post-btn').addEventListener('click', () => createPostModal.classList.add('hidden'));
-        document.getElementById('create-post-form').addEventListener('submit', async e => {
-            e.preventDefault();
-            const title = document.getElementById('post-title-input').value, content = document.getElementById('post-content-input').value;
-            if (!title.trim() || !content.trim()) return;
-            await savePost({ title, content });
-        });
-        async function savePost(postData) {
-            await addDoc(collection(db, "posts"), { ...postData, category: currentCategory, authorId: currentUser.uid, authorName: currentUser.displayName, authorPhotoURL: currentUser.photoURL, createdAt: serverTimestamp(), viewCount: 0, reactions: {}, commentCount: 0 });
-            document.getElementById('create-post-form').reset(); createPostModal.classList.add('hidden');
-        }
-        
-        async function renderProfileView(userId) {
-            showView('view-profile');
-            const profileContainer = document.getElementById('profile-container');
-            profileContainer.innerHTML = `<p class="text-center font-mono animate-pulse">Memuat profil...</p>`;
-            
-            const userDoc = await getDoc(doc(db, "users", userId));
-            if (!userDoc.exists()) {
-                profileContainer.innerHTML = `<p class="text-center text-red-500 font-mono">Profil tidak ditemukan.</p>`;
-                return;
-            }
-            const userData = userDoc.data();
-            
-            const postsQuery = query(collection(db, "posts"), where("authorId", "==", userId), orderBy("createdAt", "desc"));
-            const postsSnapshot = await getDocs(postsQuery);
-            const userPostsHtml = postsSnapshot.docs.map(doc => {
-                const post = doc.data();
-                return `<div class="p-3 border-b border-amber-500/10">${post.title}</div>`;
-            }).join('') || '<p class="text-gray-500">Belum ada postingan.</p>';
-            
-            profileContainer.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <button id="back-from-profile-btn" class="text-amber-400 hover:text-amber-300 mb-4 font-mono">&larr; Kembali</button>
-                    ${currentUser?.uid === userId ? `<button id="edit-profile-btn" class="btn-gold text-white text-sm font-bold py-2 px-4 rounded-md">Edit Profil</button>` : ''}
+          </div>
+        `;
+      },
+      renderComment(comment, threadId) {
+        const author = Store.state.users.get(comment.authorId) || { username: 'Anon' };
+        const liked = Store.state.likes.get(AuthService.user?.uid)?.has(comment.id);
+        const isNested = comment.parentId && comment.parentId !== 'root';
+        return `
+          <div class="comment ${isNested ? 'nested' : ''}">
+            <div class="flex gap-3">
+              <div class="avatar w-8 h-8 text-sm">${Utils.generateAvatar(author.username)}</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="comment-author" onclick="App.router.go('profile', '${comment.authorId}')">${author.username}</span>
+                  <span style="font-size:0.75rem;color:var(--text-muted);">${Utils.timeAgo(comment.createdAt)}</span>
                 </div>
-                <div class="flex items-center space-x-4 mb-6">
-                    <img src="${userData.photoURL || defaultAvatar}" alt="${userData.displayName}" class="w-20 h-20 rounded-full border-4 border-amber-500/50">
-                    <div>
-                        <h2 class="text-3xl font-bold font-orbitron">${userData.displayName}</h2>
-                        <p class="text-gray-400">${userData.email}</p>
-                    </div>
+                <div class="text-sm markdown-content" style="margin-bottom:0.5rem;">${Utils.parseMarkdown(comment.content)}</div>
+                <div class="flex gap-3 text-xs text-gray-400">
+                  <button class="hover:text-accent" onclick="App.data.toggleLike('${comment.id}', 'comment')">
+                    <i class="fa-solid ${liked ? 'fa-heart text-red-400' : 'fa-heart'}"></i> ${comment.likeCount || 0}
+                  </button>
+                  ${AuthService.user ? `<button class="hover:text-accent" onclick="document.getElementById('reply-${comment.id}').classList.toggle('hidden')">Balas</button>` : ''}
                 </div>
-                <div class="space-y-4">
-                    <div><strong class="text-amber-400">About:</strong> <p class="whitespace-pre-wrap">${userData.about || 'Belum diisi.'}</p></div>
-                    <div><strong class="text-amber-400">Hobi:</strong> <p>${userData.hobi || 'Belum diisi.'}</p></div>
-                    <div><strong class="text-amber-400">Pengalaman Sulap:</strong> ${userData.magicExperience}</div>
-                    <div><strong class="text-amber-400">Aliran Favorit:</strong> ${userData.magicGenre}</div>
-                </div>
-                <hr class="border-amber-500/20 my-6">
-                <h3 class="text-2xl font-bold font-orbitron mb-4">Postingan oleh ${userData.displayName}</h3>
-                <div class="space-y-2">${userPostsHtml}</div>
-            `;
-            document.getElementById('back-from-profile-btn').addEventListener('click', () => history.back());
-            if (document.getElementById('edit-profile-btn')) {
-                document.getElementById('edit-profile-btn').addEventListener('click', () => {
-                    document.getElementById('edit-about-input').value = userData.about || '';
-                    document.getElementById('edit-hobi-input').value = userData.hobi || '';
-                    document.getElementById('edit-profile-modal').classList.remove('hidden');
-                });
-            }
+                ${AuthService.user ? `
+                  <div id="reply-${comment.id}" class="hidden mt-2">
+                    <textarea class="form-textarea" rows="2" placeholder="Balas komentar..." id="reply-text-${comment.id}"></textarea>
+                    <button class="btn btn-primary btn-sm mt-2" onclick="App.data.addComment('${threadId}', document.getElementById('reply-text-${comment.id}').value, '${comment.id}')">Kirim Balasan</button>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    };
+
+    // 🧭 Router & View Controller
+    const Router = {
+      routes: {
+        home: () => App.views.home(),
+        trending: () => App.views.trending(),
+        search: () => App.views.search(),
+        thread: (id) => App.views.thread(id),
+        profile: (uid) => App.views.profile(uid)
+      },
+      init() {
+        window.addEventListener('hashchange', () => this.handle());
+        this.handle();
+      },
+      handle() {
+        const hash = location.hash.slice(1) || 'home';
+        const [route, param] = hash.split('/');
+        Store.setState({ route });
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.toggle('active', el.dataset.route === route));
+        
+        const renderer = this.routes[route];
+        if (renderer) renderer(param);
+      },
+      go(route, param, query = {}) {
+        location.hash = query.username ? `search?user=${query.username}` : (param ? `${route}/${param}` : route);
+      }
+    };
+
+    // 📄 Views
+    const Views = {
+      home() {
+        const main = document.getElementById('app-content');
+        if (Store.state.loading) return main.innerHTML = UIRenderer.renderSkeleton(4);
+        if (!Store.state.threads.length) return main.innerHTML = UIRenderer.renderEmpty('fa-wand-magic-sparkles', 'Belum ada thread', 'Jadilah yang pertama memulai diskusi!');
+        
+        const sorted = Store.state.sortBy === 'popular' 
+          ? [...Store.state.threads].sort((a,b) => (b.likeCount||0) - (a.likeCount||0))
+          : Store.state.threads;
+          
+        main.innerHTML = `
+          <div class="flex flex-between mb-6">
+            <h2 class="text-2xl font-bold">Diskusi Terbaru</h2>
+            <div class="flex gap-2">
+              <button class="btn btn-sm ${Store.state.sortBy==='newest'?'btn-primary':'btn-outline'}" onclick="Store.setState({sortBy:'newest'}); App.router.go('home')">Terbaru</button>
+              <button class="btn btn-sm ${Store.state.sortBy==='popular'?'btn-primary':'btn-outline'}" onclick="Store.setState({sortBy:'popular'}); App.router.go('home')">Terpopuler</button>
+              ${AuthService.user ? `<button class="btn btn-primary btn-sm ml-2" onclick="App.ui.openModal('thread')"><i class="fa-solid fa-plus mr-1"></i> Thread</button>` : ''}
+            </div>
+          </div>
+          <div class="grid">${sorted.map(t => UIRenderer.renderThreadCard(t)).join('')}</div>
+          ${Store.state.hasMore ? `<div class="text-center mt-4"><button class="btn btn-outline" onclick="alert('Infinite scroll: load next 20 threads')">Muat Lebih Banyak</button></div>` : ''}
+        `;
+      },
+      trending() {
+        const main = document.getElementById('app-content');
+        const trending = [...Store.state.threads].sort((a,b) => (b.likeCount||0) - (a.likeCount||0)).slice(0, 10);
+        main.innerHTML = `
+          <h2 class="text-2xl font-bold mb-6">🔥 Trending Thread</h2>
+          ${trending.length ? `<div class="grid">${trending.map(t => UIRenderer.renderThreadCard(t)).join('')}</div>` : UIRenderer.renderEmpty('fa-fire', 'Belum ada trending', 'Interaksi lebih untuk memicu trending!')}
+        `;
+      },
+      search() {
+        const main = document.getElementById('app-content');
+        const params = new URLSearchParams(location.hash.split('?')[1] || '');
+        const query = params.get('q') || '';
+        const userFilter = params.get('user');
+        
+        let results = Store.state.threads;
+        if (query) {
+          const q = query.toLowerCase();
+          results = results.filter(t => t.title.toLowerCase().includes(q) || t.content.toLowerCase().includes(q));
+        }
+        if (userFilter) {
+          const author = [...Store.state.users.entries()].find(([_, u]) => u.username.toLowerCase() === userFilter.toLowerCase());
+          if (author) results = results.filter(t => t.authorId === author[0]);
         }
         
-        document.getElementById('user-display-name').addEventListener('click', () => renderProfileView(currentUser.uid));
-        document.getElementById('user-avatar').addEventListener('click', () => {
-            const dropdown = document.getElementById('user-dropdown');
-            dropdown.classList.toggle('hidden');
-        });
+        main.innerHTML = `
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold mb-4">🔍 Cari Thread</h2>
+            <div class="flex gap-2">
+              <input type="text" id="search-input" class="form-input" placeholder="Cari judul atau konten..." value="${query}">
+              <button class="btn btn-primary" onclick="location.hash=`search?q=${document.getElementById('search-input').value}`">Cari</button>
+            </div>
+          </div>
+          ${results.length ? `<div class="grid">${results.map(t => UIRenderer.renderThreadCard(t)).join('')}</div>` : UIRenderer.renderEmpty('fa-search', 'Tidak ditemukan', 'Coba kata kunci lain atau filter berbeda.')}
+        `;
         
-        document.addEventListener('click', (e) => {
-            const dropdown = document.getElementById('user-dropdown');
-            const avatar = document.getElementById('user-avatar');
-            if (!dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && !avatar.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
+        // Debounced live search
+        document.getElementById('search-input').addEventListener('input', Utils.debounce(e => {
+          location.hash = `search?q=${e.target.value}`;
+        }, 300));
+      },
+      thread(id) {
+        const main = document.getElementById('app-content');
+        const thread = Store.state.threads.find(t => t.id === id);
+        if (!thread) return main.innerHTML = UIRenderer.renderEmpty('fa-circle-exclamation', 'Thread tidak ditemukan', 'Mungkin sudah dihapus atau link salah.');
         
-        const editProfileModal = document.getElementById('edit-profile-modal');
-        document.getElementById('cancel-edit-profile-btn').addEventListener('click', () => editProfileModal.classList.add('hidden'));
-        document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const about = document.getElementById('edit-about-input').value;
-            const hobi = document.getElementById('edit-hobi-input').value;
+        DataService.loadComments(id);
+        const author = Store.state.users.get(thread.authorId) || { username: 'Anon' };
+        const comments = Store.state.comments.get(id) || [];
+        const isBookmarked = Store.state.bookmarks.has(id);
+        
+        main.innerHTML = `
+          <button class="btn btn-ghost mb-4" onclick="history.back()"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>
+          <div class="card p-6 mb-6">
+            <div class="flex flex-between mb-3">
+              <span class="badge">${thread.category}</span>
+              <div class="flex gap-2">
+                <button class="btn btn-ghost" onclick="App.data.bookmarkThread('${id}')"><i class="fa-solid ${isBookmarked?'fa-bookmark text-accent':'fa-bookmark'}"></i> Bookmark</button>
+                <button class="btn btn-ghost text-red-400" onclick="App.data.reportThread('${id}')"><i class="fa-solid fa-flag"></i> Report</button>
+              </div>
+            </div>
+            <h1 class="text-3xl font-bold mb-3">${thread.title}</h1>
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
+              <div class="avatar">${Utils.generateAvatar(author.username)}</div>
+              <div>
+                <div class="font-medium" onclick="App.router.go('profile','${thread.authorId}')" style="cursor:pointer;color:var(--accent);">${author.username}</div>
+                <div class="text-sm text-gray-400">${Utils.timeAgo(thread.createdAt)}</div>
+              </div>
+            </div>
+            <div class="markdown-content text-gray-300 mb-6" style="line-height:1.8;">${Utils.parseMarkdown(thread.content)}</div>
+            <div class="flex items-center gap-4 text-gray-400">
+              <button class="btn btn-outline" onclick="App.data.toggleLike('${id}')">
+                <i class="fa-solid fa-heart"></i> ${thread.likeCount || 0} Suka
+              </button>
+              <span><i class="fa-solid fa-comment"></i> ${comments.length} Komentar</span>
+            </div>
+          </div>
+          
+          <div class="card p-6">
+            <h3 class="text-xl font-bold mb-4">💬 Komentar (${comments.length})</h3>
+            ${AuthService.user ? `
+              <div class="mb-6">
+                <textarea id="main-comment" class="form-textarea" placeholder="Tulis komentar... (Gunakan @username untuk mention)"></textarea>
+                <button class="btn btn-primary mt-2" onclick="App.data.addComment('${id}', document.getElementById('main-comment').value)">Kirim Komentar</button>
+              </div>
+            ` : '<div class="bg-gray-800 p-3 rounded mb-4 text-center text-gray-400">Login untuk berkomentar</div>'}
             
-            const userRef = doc(db, "users", currentUser.uid);
-            await updateDoc(userRef, { about, hobi });
-            
-            editProfileModal.classList.add('hidden');
-            renderProfileView(currentUser.uid);
-            showToast("Profil berhasil diperbarui!");
-        });
+            <div class="space-y-4">
+              ${comments.length ? comments.map(c => UIRenderer.renderComment(c, id)).join('') : '<p class="text-gray-400 text-center py-4">Belum ada komentar. Jadilah yang pertama!</p>'}
+            </div>
+          </div>
+        `;
+      },
+      profile(uid) {
+        const main = document.getElementById('app-content');
+        const user = uid ? Store.state.users.get(uid) || AuthService.user : AuthService.user;
+        if (!user) return main.innerHTML = UIRenderer.renderEmpty('fa-user-slash', 'User tidak ditemukan', '');
+        
+        const threads = Store.state.threads.filter(t => t.authorId === user.uid);
+        const isOwn = AuthService.user?.uid === user.uid;
+        
+        main.innerHTML = `
+          <div class="card p-6 mb-6">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+              <div class="avatar avatar-lg">${Utils.generateAvatar(user.username)}</div>
+              <div class="flex-1 text-center md:text-left">
+                <h2 class="text-2xl font-bold">${user.username}</h2>
+                <p class="text-gray-400 text-sm mb-2">${user.email}</p>
+                <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                  <span class="badge badge-success">✦ Member</span>
+                  ${user.lama_sulap ? `<span class="badge">🎴 ${user.lama_sulap}</span>` : ''}
+                  ${user.aliran_sulap ? `<span class="badge">✨ ${user.aliran_sulap}</span>` : ''}
+                </div>
+              </div>
+              ${isOwn ? `<button class="btn btn-outline" onclick="alert('Fitur edit profil: update bio, username, dll via Firestore')"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit Profil</button>` : ''}
+            </div>
+            <div class="divider my-4"></div>
+            <div class="grid grid-2 gap-4 text-center">
+              <div class="bg-gray-800 p-3 rounded"><div class="text-2xl font-bold text-accent">${threads.length}</div><div class="text-sm text-gray-400">Thread</div></div>
+              <div class="bg-gray-800 p-3 rounded"><div class="text-2xl font-bold text-accent">${threads.reduce((a,t)=>a+(t.likeCount||0),0)}</div><div class="text-sm text-gray-400">Total Likes</div></div>
+            </div>
+            ${user.bio ? `<div class="mt-4 pt-4 border-t border-gray-700"><h4 class="font-medium mb-2">Bio</h4><p class="text-gray-300">${user.bio}</p></div>` : ''}
+          </div>
+          <h3 class="text-xl font-bold mb-4">Thread oleh ${user.username}</h3>
+          ${threads.length ? `<div class="grid">${threads.map(t => UIRenderer.renderThreadCard(t)).join('')}</div>` : UIRenderer.renderEmpty('fa-file-circle-xmark', 'Belum ada thread', '')}
+        `;
+      }
+    };
 
-        let canExit = false;
-        const toast = document.getElementById('toast');
-        function showToast(message) { toast.textContent = message; toast.classList.remove('hidden'); setTimeout(() => { toast.classList.add('hidden'); }, 2000); }
-        window.addEventListener('popstate', () => {
-            if (viewHistory.length > 1) {
-                viewHistory.pop();
-                const previousView = viewHistory[viewHistory.length - 1];
-                showView(previousView, true);
-            } else {
-                if (canExit) { window.close(); } 
-                else { canExit = true; showToast('Tekan kembali lagi untuk keluar'); history.pushState(null, '', location.href); setTimeout(() => { canExit = false; }, 2000); }
-            }
+    // 🚀 App Bootstrap
+    const App = {
+      auth: AuthService,
+      data: DataService,
+      ui: UIRenderer,
+      router: Router,
+      views: Views,
+      init() {
+        this.auth.init();
+        this.router.init();
+        
+        // Global Event Delegation
+        document.addEventListener('submit', e => {
+          if (e.target.id === 'auth-form') {
+            e.preventDefault();
+            const mode = document.getElementById('auth-title').textContent;
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-password').value;
+            if (mode === 'Login') this.auth.login(email, pass);
+            else this.auth.register(email, pass, document.getElementById('auth-username').value, document.getElementById('auth-lama').value, document.getElementById('auth-aliran').value);
+          }
+          if (e.target.id === 'thread-form') {
+            e.preventDefault();
+            this.data.createThread(document.getElementById('thread-title').value, document.getElementById('thread-content').value, document.getElementById('thread-category').value);
+          }
         });
-    </script>
+      }
+    };
+
+    // Start App
+    document.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
 </body>
 </html>
-
-
-
-
-
