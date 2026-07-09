@@ -1,628 +1,1406 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOC FORUM • Professional Magic Community</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grimoire of Arcana — Conjuring Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <style>
-    :root {
-      --bg-primary: #0b0f19;
-      --bg-secondary: #111827;
-      --bg-card: #1a202c;
-      --bg-hover: #242b3d;
-      --border: #2d3748;
-      --text-primary: #f7fafc;
-      --text-secondary: #a0aec0;
-      --text-muted: #718096;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --success: #10b981;
-      --error: #ef4444;
-    }
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-card: #1a1a2e;
+    --bg-card-hover: #22223a;
+    --accent-gold: #d4af37;
+    --accent-gold-dim: #b8941f;
+    --accent-purple: #8b5cf6;
+    --accent-purple-dim: #6d28d9;
+    --accent-cyan: #06b6d4;
+    --accent-rose: #f43f5e;
+    --accent-emerald: #10b981;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: rgba(212, 175, 55, 0.15);
+    --border-hover: rgba(212, 175, 55, 0.35);
+    --glow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
+    --glow-purple: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-    }
+  html { scroll-behavior: smooth; }
 
-    h1, h2, h3 { font-family: 'Playfair Display', serif; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { color: var(--accent-hover); }
-    
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; }
-    .grid { display: grid; gap: 1.5rem; }
-    .flex { display: flex; align-items: center; }
-    .flex-between { justify-content: space-between; }
-    .flex-center { justify-content: center; align-items: center; }
-    .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; }
-    .py-6 { padding: 1.5rem 0; }
-    .mt-4 { margin-top: 1rem; } .mb-4 { margin-bottom: 1rem; }
-    
-    .navbar {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(11, 15, 25, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0.75rem 0;
-    }
-    
-    .nav-brand { display: flex; align-items: center; gap: 0.75rem; }
-    .nav-logo { 
-      width: 36px; height: 36px; 
-      background: linear-gradient(135deg, var(--accent), #8b5cf6); 
-      border-radius: 8px; 
-      display: grid; place-items: center; 
-      font-weight: 700; color: white; 
-    }
-    
-    .nav-links { display: flex; gap: 1.5rem; }
-    .nav-link { 
-      color: var(--text-secondary); 
-      font-size: 0.9rem; 
-      font-weight: 500; 
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .nav-link:hover, .nav-link.active { color: var(--text-primary); }
-    .nav-link.active { border-bottom: 2px solid var(--accent); }
-    
-    .btn {
-      padding: 0.6rem 1.2rem; 
-      border-radius: 8px; 
-      font-weight: 500; 
-      font-size: 0.875rem;
-      cursor: pointer; 
-      border: none; 
-      transition: all 0.2s;
-      display: inline-flex; 
-      align-items: center; 
-      gap: 0.5rem;
-    }
-    .btn-primary { background: var(--accent); color: white; }
-    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-ghost { background: transparent; color: var(--text-muted); padding: 0.5rem; }
-    .btn-ghost:hover { color: var(--text-primary); background: var(--bg-hover); }
-    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-    
-    .card {
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: 12px;
-      padding: 1.25rem;
-      transition: all 0.2s;
-    }
-    .card:hover { border-color: #4a5568; }
-    
-    .avatar {
-      width: 40px; height: 40px; 
-      border-radius: 50%; 
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      display: grid; place-items: center; 
-      font-weight: 600; color: white;
-      flex-shrink: 0;
-    }
-    .avatar-lg { width: 80px; height: 80px; font-size: 1.5rem; }
-    
-    .badge {
-      display: inline-flex; 
-      padding: 0.25rem 0.6rem; 
-      border-radius: 999px;
-      font-size: 0.75rem; 
-      font-weight: 500; 
-      background: rgba(59,130,246,0.15); 
-      color: var(--accent);
-    }
-    
-    .form-input, .form-textarea, .form-select {
-      width: 100%; 
-      background: var(--bg-secondary); 
-      border: 1px solid var(--border);
-      color: var(--text-primary); 
-      padding: 0.75rem 1rem; 
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      font-family: inherit;
-    }
-    .form-input:focus, .form-textarea:focus, .form-select:focus {
-      outline: none; 
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
-    }
-    .form-textarea { resize: vertical; min-height: 120px; }
-    
-    .modal-overlay {
-      position: fixed; inset: 0; 
-      background: rgba(0,0,0,0.8); 
-      backdrop-filter: blur(4px);
-      z-index: 100; 
-      display: none; 
-      place-items: center; 
-      padding: 1rem;
-    }
-    .modal-overlay.active { display: grid; }
-    .modal {
-      background: var(--bg-card); 
-      border: 1px solid var(--border); 
-      border-radius: 12px;
-      width: 100%; max-width: 600px; 
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 1.5rem;
-      animation: modalIn 0.2s ease;
-    }
-    @keyframes modalIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 200; display: flex; flex-direction: column; gap: 0.5rem; }
-    .toast { 
-      padding: 0.75rem 1rem; 
-      border-radius: 8px; 
-      background: var(--bg-card); 
-      border-left: 4px solid var(--accent); 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      animation: slideIn 0.3s ease;
-      max-width: 350px;
-    }
-    .toast.success { border-left-color: var(--success); }
-    .toast.error { border-left-color: var(--error); }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    
-    .hidden { display: none !important; }
-    .text-accent { color: var(--accent); }
-    .text-muted { color: var(--text-muted); }
-    .text-success { color: var(--success); }
-    .text-error { color: var(--error); }
-    
-    .thread-item { cursor: pointer; border-left: 3px solid transparent; }
-    .thread-item:hover { border-left-color: var(--accent); background: rgba(59,130,246,0.05); }
-    .thread-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
-    .thread-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 1rem; flex-wrap: wrap; }
-    
-    .comment { border-left: 2px solid var(--border); padding-left: 1rem; margin-top: 1rem; }
-    .comment.nested { margin-left: 2rem; border-left-color: #4a5568; }
-    .comment-author { color: var(--accent); font-weight: 500; cursor: pointer; }
-    .comment-author:hover { text-decoration: underline; }
-    
-    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
-    .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
-    
-    .markdown-content h1, .markdown-content h2, .markdown-content h3 { margin: 1rem 0 0.5rem; }
-    .markdown-content p { margin-bottom: 0.75rem; }
-    .markdown-content code { background: var(--bg-secondary); padding: 0.2rem 0.4rem; border-radius: 4px; }
-    .markdown-content blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--text-secondary); font-style: italic; }
-    
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .hide-mobile { display: none; }
-      .grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ====== ANIMATED BACKGROUND ====== */
+  .bg-effects {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .bg-effects::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+    animation: bgShift 20s ease-in-out infinite;
+  }
+
+  @keyframes bgShift {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(-2%, 1%) rotate(1deg); }
+    66% { transform: translate(1%, -1%) rotate(-0.5deg); }
+  }
+
+  .floating-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatParticle linear infinite;
+  }
+
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ====== HEADER ====== */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    box-shadow: var(--glow-gold);
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes logoPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.5), 0 0 60px rgba(139, 92, 246, 0.2); }
+  }
+
+  .logo-text h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-gold), #f5e6a3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .logo-text span {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .search-container {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  }
+
+  .search-input::placeholder { color: var(--text-muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dim));
+    color: #0a0a0f;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
+  }
+
+  .btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+  }
+
+  .btn-danger {
+    background: rgba(244, 63, 94, 0.15);
+    color: var(--accent-rose);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+  }
+
+  .btn-danger:hover {
+    background: rgba(244, 63, 94, 0.25);
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    border-radius: 8px;
+  }
+
+  /* ====== STATS BAR ====== */
+  .stats-bar {
+    max-width: 1400px;
+    margin: 1.5rem auto 0;
+    padding: 0 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.8rem;
+  }
+
+  .stat-chip .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--accent-gold);
+  }
+
+  .stat-chip .stat-label {
+    color: var(--text-muted);
+  }
+
+  /* ====== CATEGORY FILTERS ====== */
+  .filters {
+    max-width: 1400px;
+    margin: 1.25rem auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-right: 0.5rem;
+  }
+
+  .filter-chip {
+    padding: 0.45rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .filter-chip:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  .filter-chip.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(139, 92, 246, 0.2));
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+  }
+
+  /* ====== MAIN CONTENT ====== */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  /* ====== NOTE CARD ====== */
+  .note-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    animation: cardFadeIn 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .note-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .note-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(212, 175, 55, 0.05);
+  }
+
+  .note-card:hover::before { opacity: 1; }
+
+  .note-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .note-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+
+  .cat-teknik { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+  .cat-trik { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.3); }
+  .cat-sejarah { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+  .cat-sumber { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .cat-penemu { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+  .note-card-actions {
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .note-card:hover .note-card-actions { opacity: 1; }
+
+  .note-action-btn {
+    width: 30px; height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+  }
+
+  .note-action-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+  }
+
+  .note-action-btn.delete:hover {
+    background: rgba(244, 63, 94, 0.2);
+    color: var(--accent-rose);
+    border-color: rgba(244, 63, 94, 0.3);
+  }
+
+  .note-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .note-inventor {
+    font-size: 0.78rem;
+    color: var(--accent-gold);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .note-content {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .note-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .note-tag {
+    padding: 0.2rem 0.55rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .note-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .note-date {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ====== MODAL ====== */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.1);
+  }
+
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-header {
+    padding: 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--accent-gold), #f5e6a3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .modal-close {
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.1rem;
+  }
+
+  .modal-close:hover {
+    background: rgba(244, 63, 94, 0.15);
+    color: var(--accent-rose);
+  }
+
+  .modal-body { padding: 1.75rem; }
+
+  .form-group { margin-bottom: 1.25rem; }
+
+  .form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  }
+
+  .form-textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  .form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  .form-select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+
+  .form-hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+  }
+
+  .modal-footer {
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  /* ====== DETAIL MODAL ====== */
+  .detail-content {
+    padding: 1.75rem;
+  }
+
+  .detail-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+
+  .detail-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .detail-inventor {
+    font-size: 0.9rem;
+    color: var(--accent-gold);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .detail-body {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    white-space: pre-wrap;
+  }
+
+  .detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .detail-meta {
+    display: flex;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ====== EMPTY STATE ====== */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+  }
+
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+
+  .empty-state h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state p { font-size: 0.9rem; }
+
+  /* ====== LOADING ====== */
+  .loading-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+  }
+
+  .loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .loading-spinner {
+    width: 60px; height: 60px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--accent-gold);
+    letter-spacing: 3px;
+  }
+
+  /* ====== TOAST ====== */
+  .toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .toast {
+    padding: 0.85rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: toastIn 0.4s ease;
+    min-width: 250px;
+  }
+
+  .toast.success { border-left: 3px solid var(--accent-emerald); }
+  .toast.error { border-left: 3px solid var(--accent-rose); }
+  .toast.info { border-left: 3px solid var(--accent-cyan); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ====== HIGHLIGHT ====== */
+  mark {
+    background: rgba(212, 175, 55, 0.3);
+    color: var(--accent-gold);
+    padding: 0.1rem 0.2rem;
+    border-radius: 3px;
+  }
+
+  /* ====== SCROLLBAR ====== */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--bg-card-hover); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold-dim); }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 768px) {
+    .header { padding: 0.75rem 1rem; }
+    .header-inner { gap: 0.75rem; }
+    .logo-text h1 { font-size: 1rem; }
+    .search-container { min-width: 100%; order: 3; }
+    .main { padding: 1rem; }
+    .notes-grid { grid-template-columns: 1fr; }
+    .stats-bar { padding: 0 1rem; }
+    .filters { padding: 0 1rem; }
+    .modal { border-radius: 16px; margin: 0.5rem; }
+    .detail-title { font-size: 1.2rem; }
+  }
+
+  @media (max-width: 480px) {
+    .header-actions { width: 100%; }
+    .btn span.btn-text { display: none; }
+  }
+
+  /* ====== SEED BUTTON ====== */
+  .seed-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 50;
+    padding: 0.6rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .seed-btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+  }
+
+  .seed-btn.hidden { display: none; }
+</style>
 </head>
 <body>
 
-  <nav class="navbar">
-    <div class="container flex flex-between">
-      <div class="nav-brand">
-        <div class="nav-logo">🎩</div>
-        <div>
-          <div style="font-family:'Playfair Display'; font-weight:700; font-size:1.1rem;">NOC FORUM</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Ars Magica Community</div>
-        </div>
-      </div>
-      
-      <div class="nav-links">
-        <span class="nav-link active" onclick="App.router.go('home')">Beranda</span>
-        <span class="nav-link" onclick="App.router.go('trending')">Trending</span>
-        <span class="nav-link" onclick="App.router.go('search')">Cari</span>
-      </div>
+<!-- Loading Screen -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">GRIMOIRE OF ARCANA</div>
+</div>
 
-      <div class="flex gap-3">
-        <div id="auth-buttons">
-          <button class="btn btn-outline" onclick="App.ui.openModal('login')">Login</button>
-          <button class="btn btn-primary" onclick="App.ui.openModal('register')">Daftar</button>
-        </div>
-        
-        <div id="user-menu" class="hidden flex gap-3">
-          <button class="btn btn-ghost" onclick="App.router.go('profile')"><i class="fa-solid fa-user"></i> <span class="hide-mobile">Profil</span></button>
-          <button class="btn btn-ghost text-red-400" onclick="App.auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> <span class="hide-mobile">Logout</span></button>
-        </div>
+<!-- Background Effects -->
+<div class="bg-effects" id="bgEffects"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🎴</div>
+      <div class="logo-text">
+        <h1>Grimoire of Arcana</h1>
+        <span>Conjuring Notes</span>
       </div>
     </div>
-  </nav>
-
-  <main id="app-content" class="container py-6" style="min-height:60vh;">
-    <!-- Dynamic Content -->
-  </main>
-
-  <footer style="border-top:1px solid var(--border); padding:2rem 0; text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:3rem;">
-    <div class="container">
-      <div style="color:var(--accent); font-weight:600; margin-bottom:0.5rem;">✦ NOC FORUM ✦</div>
-      <p>dibuat untuk happy, kalo ga happy pergi by Prof.Z — nocfams 2025</p>
-      <p class="mt-2">join whatsapp nocfams ? hubungi prof.Z , mudahan dia lagi mood :)</p>
-    </div>
-  </footer>
-
-  <!-- Auth Modal -->
-  <div id="auth-modal" class="modal-overlay">
-    <div class="modal">
-      <div class="flex flex-between mb-4">
-        <h2 id="auth-title" style="font-size:1.5rem;">Login</h2>
-        <button class="btn btn-ghost" onclick="App.ui.closeModal('auth')"><i class="fa-solid fa-xmark"></i></button>
+    <div class="header-actions">
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="Cari trik, teknik, penemu...">
       </div>
-      <form id="auth-form">
-        <div id="username-field" class="hidden">
-          <label class="block text-sm text-gray-400 mb-1">Username</label>
-          <input type="text" id="auth-username" class="form-input" required minlength="3">
-        </div>
-        <label class="block text-sm text-gray-400 mb-1">Email</label>
-        <input type="email" id="auth-email" class="form-input" required>
-        <label class="block text-sm text-gray-400 mb-1">Password</label>
-        <input type="password" id="auth-password" class="form-input" required minlength="6">
-        <div id="profile-fields" class="hidden">
-          <label class="block text-sm text-gray-400 mb-1">Lama Main Sulap</label>
-          <select id="auth-lama" class="form-select">
-            <option value="">Pilih...</option>
-            <option value="< 1 Tahun">&lt; 1 Tahun</option>
-            <option value="1-3 Tahun">1-3 Tahun</option>
-            <option value="3-5 Tahun">3-5 Tahun</option>
-            <option value="5+ Tahun">5+ Tahun</option>
-          </select>
-          <label class="block text-sm text-gray-400 mb-1">Aliran Sulap</label>
-          <select id="auth-aliran" class="form-select">
-            <option value="">Pilih...</option>
-            <option value="Mentalism">Mentalism</option>
-            <option value="Sleight of Hand">Sleight of Hand</option>
-            <option value="Illusionism">Illusionism</option>
-            <option value="Close-up">Close-up Magic</option>
-            <option value="Stage">Stage Magic</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary w-full mt-4" style="justify-content:center;">Masuk</button>
-      </form>
-      <p class="mt-4 text-center text-sm text-muted">
-        <span id="auth-switch-text">Belum punya akun?</span>
-        <span class="text-accent" style="cursor:pointer;margin-left:0.25rem;" onclick="App.ui.toggleAuthMode()">Daftar</span>
-      </p>
+      <button class="btn btn-primary" onclick="openAddModal()">
+        <span>✨</span>
+        <span class="btn-text">Catatan Baru</span>
+      </button>
     </div>
   </div>
+</header>
 
-  <!-- Create Thread Modal -->
-  <div id="thread-modal" class="modal-overlay">
-    <div class="modal">
-      <div class="flex flex-between mb-4">
-        <h2 style="font-size:1.5rem;">Buat Thread Baru</h2>
-        <button class="btn btn-ghost" onclick="App.ui.closeModal('thread')"><i class="fa-solid fa-xmark"></i></button>
+<!-- Stats Bar -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-chip">
+    <span class="stat-num" id="statTotal">0</span>
+    <span class="stat-label">Total Catatan</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-num" id="statTeknik">0</span>
+    <span class="stat-label">Teknik</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-num" id="statTrik">0</span>
+    <span class="stat-label">Trik</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-num" id="statSejarah">0</span>
+    <span class="stat-label">Sejarah</span>
+  </div>
+</div>
+
+<!-- Category Filters -->
+<div class="filters">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-chip active" data-category="all" onclick="filterCategory('all', this)">Semua</button>
+  <button class="filter-chip" data-category="Teknik" onclick="filterCategory('Teknik', this)">🎯 Teknik</button>
+  <button class="filter-chip" data-category="Trik" onclick="filterCategory('Trik', this)">🎪 Trik</button>
+  <button class="filter-chip" data-category="Sejarah" onclick="filterCategory('Sejarah', this)">📜 Sejarah</button>
+  <button class="filter-chip" data-category="Sumber" onclick="filterCategory('Sumber', this)">📚 Sumber</button>
+  <button class="filter-chip" data-category="Penemu" onclick="filterCategory('Penemu', this)">👤 Penemu</button>
+</div>
+
+<!-- Main Content -->
+<main class="main">
+  <div class="notes-grid" id="notesGrid"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-state-icon">🔮</div>
+    <h3>Tidak ada catatan ditemukan</h3>
+    <p>Coba ubah kata kunci pencarian atau filter kategori</p>
+  </div>
+</main>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">✨ Catatan Baru</h2>
+      <button class="modal-close" onclick="closeModal('formModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label class="form-label">Judul</label>
+        <input type="text" class="form-input" id="noteTitle" placeholder="Nama trik, teknik, atau topik...">
       </div>
-      <form id="thread-form">
-        <label class="block text-sm text-gray-400 mb-1">Kategori</label>
-        <select id="thread-category" class="form-select" required>
-          <option value="">Pilih Kategori</option>
-          <option value="Card Magic">Card Magic</option>
-          <option value="Coin Magic">Coin Magic</option>
-          <option value="Mentalism">Mentalism</option>
-          <option value="Everyday Object">Everyday Object</option>
-          <option value="Idea & Theory">Idea & Theory</option>
-          <option value="Market & Gear">Market & Gear</option>
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <select class="form-select" id="noteCategory">
+          <option value="Teknik">🎯 Teknik (Sleight of Hand)</option>
+          <option value="Trik">🎪 Trik (Effect/Routine)</option>
+          <option value="Sejarah">📜 Sejarah</option>
+          <option value="Sumber">📚 Sumber Buku</option>
+          <option value="Penemu">👤 Penemu</option>
         </select>
-        <label class="block text-sm text-gray-400 mb-1">Judul</label>
-        <input type="text" id="thread-title" class="form-input" required maxlength="120" placeholder="Contoh: Teknik Advanced Palm untuk Coin Magic">
-        <label class="block text-sm text-gray-400 mb-1">Konten</label>
-        <textarea id="thread-content" class="form-textarea" required placeholder="Tulis thread Anda... (Gunakan **bold** untuk tebal, *italic* untuk miring)"></textarea>
-        <div class="flex justify-end gap-3 mt-4">
-          <button type="button" class="btn btn-outline" onclick="App.ui.closeModal('thread')">Batal</button>
-          <button type="submit" class="btn btn-primary">Publikasi Thread</button>
-        </div>
-      </form>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Penemu / Pencipta</label>
+        <input type="text" class="form-input" id="noteInventor" placeholder="Nama pencipta trik/teknik...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Konten / Deskripsi</label>
+        <textarea class="form-textarea" id="noteContent" placeholder="Tuliskan detail catatan konjuring..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags</label>
+        <input type="text" class="form-input" id="noteTags" placeholder="Pisahkan dengan koma: pass, card, classic">
+        <div class="form-hint">Gunakan koma untuk memisahkan beberapa tag</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('formModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveNote()">💾 Simpan</button>
     </div>
   </div>
+</div>
 
-  <div id="toast-container"></div>
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📖 Detail Catatan</h2>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="detail-content" id="detailContent"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="detailDeleteBtn" onclick="deleteFromDetail()">🗑️ Hapus</button>
+      <button class="btn btn-primary btn-sm" id="detailEditBtn" onclick="editFromDetail()">✏️ Edit</button>
+    </div>
+  </div>
+</div>
 
-  <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
-      authDomain: "magicnoc-125b6.firebaseapp.com",
-      projectId: "magicnoc-125b6",
-      storageBucket: "magicnoc-125b6.firebasestorage.app",
-      messagingSenderId: "321388594743",
-      appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
-    };
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Seed Button -->
+<button class="seed-btn" id="seedBtn" onclick="seedInitialData()">🌱 Seed Data Awal</button>
+
+<!-- Firebase & App Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, writeBatch, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
+    authDomain: "magicnoc-125b6.firebaseapp.com",
+    databaseURL: "https://magicnoc-125b6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "magicnoc-125b6",
+    storageBucket: "magicnoc-125b6.firebasestorage.app",
+    messagingSenderId: "321388594743",
+    appId: "1:321388594743:web:0dfc8f24d5201f138a21b2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const notesCollection = collection(db, "magicNotes");
+
+  // ====== STATE ======
+  let allNotes = [];
+  let currentFilter = 'all';
+  let currentSearch = '';
+  let currentDetailId = null;
+
+  // ====== BACKGROUND PARTICLES ======
+  function createParticles() {
+    const bg = document.getElementById('bgEffects');
+    const colors = ['rgba(212,175,55,0.3)', 'rgba(139,92,246,0.3)', 'rgba(6,182,212,0.2)'];
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'floating-particle';
+      const size = Math.random() * 4 + 2;
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      particle.style.animationDelay = (Math.random() * 10) + 's';
+      bg.appendChild(particle);
+    }
+  }
+  createParticles();
+
+  // ====== LOAD NOTES ======
+  async function loadNotes() {
+    try {
+      const q = query(notesCollection, orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
+      allNotes = [];
+      snapshot.forEach(docSnap => {
+        allNotes.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      renderNotes();
+      updateStats();
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      checkIfSeedNeeded();
+    } catch (err) {
+      console.error("Error loading notes:", err);
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      showToast('Gagal memuat catatan. Cek koneksi.', 'error');
+    }
+  }
+
+  // ====== RENDER ======
+  function renderNotes() {
+    const grid = document.getElementById('notesGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    let filtered = allNotes;
+
+    if (currentFilter !== 'all') {
+      filtered = filtered.filter(n => n.category === currentFilter);
+    }
+
+    if (currentSearch) {
+      const s = currentSearch.toLowerCase();
+      filtered = filtered.filter(n => {
+        return (n.title || '').toLowerCase().includes(s) ||
+               (n.content || '').toLowerCase().includes(s) ||
+               (n.inventor || '').toLowerCase().includes(s) ||
+               (n.tags || []).some(t => t.toLowerCase().includes(s));
+      });
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    emptyState.style.display = 'none';
+
+    grid.innerHTML = filtered.map((note, i) => {
+      const catClass = getCatClass(note.category);
+      const dateStr = formatDate(note.createdAt);
+      const content = currentSearch ? highlightText(note.content || '', currentSearch) : escapeHtml(note.content || '');
+      const title = currentSearch ? highlightText(note.title || '', currentSearch) : escapeHtml(note.title || '');
+
+      return `
+        <div class="note-card" style="animation-delay: ${i * 0.05}s" onclick="showDetail('${note.id}')">
+          <div class="note-card-header">
+            <span class="note-category ${catClass}">${getCatIcon(note.category)} ${note.category || 'Umum'}</span>
+            <div class="note-card-actions">
+              <button class="note-action-btn" onclick="event.stopPropagation(); openEditModal('${note.id}')" title="Edit">✏️</button>
+              <button class="note-action-btn delete" onclick="event.stopPropagation(); confirmDelete('${note.id}')" title="Hapus">🗑️</button>
+            </div>
+          </div>
+          <div class="note-title">${title}</div>
+          ${note.inventor ? `<div class="note-inventor">👤 ${escapeHtml(note.inventor)}</div>` : ''}
+          <div class="note-content">${content}</div>
+          ${(note.tags && note.tags.length) ? `
+            <div class="note-tags">
+              ${note.tags.slice(0, 5).map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('')}
+              ${note.tags.length > 5 ? `<span class="note-tag">+${note.tags.length - 5}</span>` : ''}
+            </div>
+          ` : ''}
+          <div class="note-meta">
+            <span class="note-date">${dateStr}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function updateStats() {
+    document.getElementById('statTotal').textContent = allNotes.length;
+    document.getElementById('statTeknik').textContent = allNotes.filter(n => n.category === 'Teknik').length;
+    document.getElementById('statTrik').textContent = allNotes.filter(n => n.category === 'Trik').length;
+    document.getElementById('statSejarah').textContent = allNotes.filter(n => n.category === 'Sejarah').length;
+  }
+
+  // ====== HELPERS ======
+  function getCatClass(cat) {
+    const map = { 'Teknik': 'cat-teknik', 'Trik': 'cat-trik', 'Sejarah': 'cat-sejarah', 'Sumber': 'cat-sumber', 'Penemu': 'cat-penemu' };
+    return map[cat] || 'cat-trik';
+  }
+
+  function getCatIcon(cat) {
+    const map = { 'Teknik': '🎯', 'Trik': '🎪', 'Sejarah': '📜', 'Sumber': '📚', 'Penemu': '👤' };
+    return map[cat] || '📝';
+  }
+
+  function formatDate(ts) {
+    if (!ts) return 'Baru saja';
+    try {
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch { return 'Baru saja'; }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function highlightText(text, search) {
+    if (!search) return escapeHtml(text);
+    const escaped = escapeHtml(text);
+    const regex = new RegExp(`(${search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return escaped.replace(regex, '<mark>$1</mark>');
+  }
+
+  // ====== MODAL FUNCTIONS ======
+  window.openAddModal = function() {
+    document.getElementById('modalTitle').textContent = '✨ Catatan Baru';
+    document.getElementById('editId').value = '';
+    document.getElementById('noteTitle').value = '';
+    document.getElementById('noteCategory').value = 'Teknik';
+    document.getElementById('noteInventor').value = '';
+    document.getElementById('noteContent').value = '';
+    document.getElementById('noteTags').value = '';
+    document.getElementById('formModal').classList.add('active');
+  };
+
+  window.openEditModal = function(id) {
+    const note = allNotes.find(n => n.id === id);
+    if (!note) return;
+    document.getElementById('modalTitle').textContent = '✏️ Edit Catatan';
+    document.getElementById('editId').value = id;
+    document.getElementById('noteTitle').value = note.title || '';
+    document.getElementById('noteCategory').value = note.category || 'Teknik';
+    document.getElementById('noteInventor').value = note.inventor || '';
+    document.getElementById('noteContent').value = note.content || '';
+    document.getElementById('noteTags').value = (note.tags || []).join(', ');
+    document.getElementById('formModal').classList.add('active');
+  };
+
+  window.closeModal = function(id) {
+    document.getElementById(id).classList.remove('active');
+  };
+
+  window.showDetail = function(id) {
+    const note = allNotes.find(n => n.id === id);
+    if (!note) return;
+    currentDetailId = id;
+    const catClass = getCatClass(note.category);
+    const content = currentSearch ? highlightText(note.content || '', currentSearch) : escapeHtml(note.content || '');
+
+    document.getElementById('detailContent').innerHTML = `
+      <span class="detail-category ${catClass}">${getCatIcon(note.category)} ${note.category || 'Umum'}</span>
+      <div class="detail-title">${currentSearch ? highlightText(note.title || '', currentSearch) : escapeHtml(note.title || '')}</div>
+      ${note.inventor ? `<div class="detail-inventor">👤 ${escapeHtml(note.inventor)}</div>` : ''}
+      <div class="detail-body">${content}</div>
+      ${(note.tags && note.tags.length) ? `
+        <div class="detail-tags">
+          ${note.tags.map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('')}
+        </div>
+      ` : ''}
+      <div class="detail-meta">
+        <span>📅 Dibuat: ${formatDate(note.createdAt)}</span>
+        ${note.updatedAt ? `<span>🔄 Diperbarui: ${formatDate(note.updatedAt)}</span>` : ''}
+      </div>
+    `;
+    document.getElementById('detailModal').classList.add('active');
+  };
+
+  window.editFromDetail = function() {
+    closeModal('detailModal');
+    if (currentDetailId) openEditModal(currentDetailId);
+  };
+
+  window.deleteFromDetail = function() {
+    if (currentDetailId) {
+      closeModal('detailModal');
+      confirmDelete(currentDetailId);
+    }
+  };
+
+  // ====== SAVE NOTE ======
+  window.saveNote = async function() {
+    const editId = document.getElementById('editId').value;
+    const title = document.getElementById('noteTitle').value.trim();
+    const category = document.getElementById('noteCategory').value;
+    const inventor = document.getElementById('noteInventor').value.trim();
+    const content = document.getElementById('noteContent').value.trim();
+    const tagsRaw = document.getElementById('noteTags').value.trim();
+    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(t => t) : [];
+
+    if (!title) { showToast('Judul wajib diisi!', 'error'); return; }
+    if (!content) { showToast('Konten wajib diisi!', 'error'); return; }
+
+    const data = { title, category, inventor, content, tags, updatedAt: serverTimestamp() };
 
     try {
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    } catch (e) { console.error('Firebase error:', e); }
-
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    const App = {
-      state: { user: null, threads: [], comments: {}, users: new Map(), currentView: 'home', currentThreadId: null },
-
-      init() {
-        this.auth.init();
-        this.router.init();
-        this.ui.setupEvents();
-      },
-
-      auth: {
-        init() {
-          auth.onAuthStateChanged(async (user) => {
-            if (user) {
-              try {
-                const doc = await db.collection('users').doc(user.uid).get();
-                App.state.user = { uid: user.uid, ...doc.data() };
-                App.ui.updateAuthUI();
-                App.data.loadThreads();
-              } catch (e) { console.error('Load user error:', e); }
-            } else {
-              App.state.user = null;
-              App.ui.updateAuthUI();
-              App.data.loadThreads();
-            }
-          });
-        },
-        async login(email, pass) {
-          try {
-            await auth.signInWithEmailAndPassword(email, pass);
-            App.ui.toast('Login berhasil!', 'success');
-            App.ui.closeModal('auth');
-          } catch (e) { App.ui.toast('Login gagal: ' + e.message, 'error'); }
-        },
-        async register(email, pass, username, lama, aliran) {
-          try {
-            const cred = await auth.createUserWithEmailAndPassword(email, pass);
-            await db.collection('users').doc(cred.user.uid).set({
-              username, email, lama_sulap: lama, aliran_sulap: aliran,
-              bio: '', createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            App.ui.toast('Akun dibuat! Silakan login.', 'success');
-            setTimeout(() => { auth.signOut(); App.ui.toggleAuthMode(); }, 1500);
-          } catch (e) { App.ui.toast('Registrasi gagal: ' + e.message, 'error'); }
-        },
-        async logout() { await auth.signOut(); App.ui.toast('Logout berhasil', 'info'); }
-      },
-
-      data: {
-        async loadThreads() {
-          try {
-            const snap = await db.collection('threads').orderBy('createdAt', 'desc').limit(20).get();
-            App.state.threads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            App.router.render();
-          } catch (e) { console.error('Load threads:', e); App.ui.toast('Gagal memuat thread', 'error'); }
-        },
-        async createThread(title, content, category) {
-          if (!App.state.user) return App.ui.toast('Login untuk membuat thread', 'error');
-          try {
-            await db.collection('threads').add({
-              title, content, category,
-              authorId: App.state.user.uid,
-              authorName: App.state.user.username,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-              likeCount: 0, commentCount: 0
-            });
-            App.ui.toast('Thread dipublikasi!', 'success');
-            App.ui.closeModal('thread');
-            App.data.loadThreads();
-          } catch (e) { App.ui.toast('Gagal: ' + e.message, 'error'); }
-        },
-        async loadComments(threadId) {
-          try {
-            const snap = await db.collection('comments').where('threadId', '==', threadId).orderBy('createdAt', 'asc').get();
-            App.state.comments[threadId] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            App.router.render();
-          } catch (e) { console.error('Load comments:', e); }
-        },
-        async addComment(threadId, content) {
-          if (!App.state.user) return;
-          try {
-            await db.collection('comments').add({
-              threadId, content,
-              authorId: App.state.user.uid,
-              authorName: App.state.user.username,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            await db.collection('threads').doc(threadId).update({ commentCount: firebase.firestore.FieldValue.increment(1) });
-            App.data.loadComments(threadId);
-            App.ui.toast('Komentar terkirim', 'success');
-          } catch (e) { App.ui.toast('Gagal kirim komentar', 'error'); }
-        },
-        async toggleLike(threadId) {
-          if (!App.state.user) return App.ui.toast('Login untuk menyukai', 'error');
-          try {
-            const q = await db.collection('likes').where('userId', '==', App.state.user.uid).where('threadId', '==', threadId).limit(1).get();
-            if (!q.empty) {
-              await q.docs[0].ref.delete();
-              await db.collection('threads').doc(threadId).update({ likeCount: firebase.firestore.FieldValue.increment(-1) });
-            } else {
-              await db.collection('likes').add({ userId: App.state.user.uid, threadId });
-              await db.collection('threads').doc(threadId).update({ likeCount: firebase.firestore.FieldValue.increment(1) });
-            }
-            App.data.loadThreads();
-            if (App.state.currentView === 'thread') App.data.loadThreadDetail(threadId);
-          } catch (e) { console.error('Like error:', e); }
-        },
-        async loadThreadDetail(threadId) {
-          try {
-            const doc = await db.collection('threads').doc(threadId).get();
-            if (doc.exists) {
-              App.state.currentThread = { id: doc.id, ...doc.data() };
-              App.data.loadComments(threadId);
-            }
-          } catch (e) { console.error('Load thread:', e); }
-        }
-      },
-
-      ui: {
-        toast(msg, type = 'info') {
-          const div = document.createElement('div');
-          div.className = 'toast ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
-          div.textContent = msg;
-          document.getElementById('toast-container').appendChild(div);
-          setTimeout(() => div.remove(), 3500);
-        },
-        openModal(type) { document.getElementById(type + '-modal').classList.add('active'); },
-        closeModal(type) { document.getElementById(type + '-modal').classList.remove('active'); },
-        toggleAuthMode() {
-          const isLogin = document.getElementById('auth-title').textContent === 'Login';
-          document.getElementById('auth-title').textContent = isLogin ? 'Daftar Akun' : 'Login';
-          document.getElementById('username-field').classList.toggle('hidden', isLogin);
-          document.getElementById('profile-fields').classList.toggle('hidden', isLogin);
-          document.getElementById('auth-switch-text').textContent = isLogin ? 'Sudah punya akun?' : 'Belum punya akun?';
-        },
-        updateAuthUI() {
-          const user = App.state.user;
-          document.getElementById('auth-buttons').classList.toggle('hidden', !!user);
-          document.getElementById('user-menu').classList.toggle('hidden', !user);
-          if (user) {
-            document.getElementById('user-name').textContent = user.username;
-          }
-        },
-        setupEvents() {
-          document.getElementById('auth-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const mode = document.getElementById('auth-title').textContent;
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
-            if (mode === 'Login') App.auth.login(email, pass);
-            else App.auth.register(email, pass, document.getElementById('auth-username').value, document.getElementById('auth-lama').value, document.getElementById('auth-aliran').value);
-          });
-          document.getElementById('thread-form').addEventListener('submit', e => {
-            e.preventDefault();
-            App.data.createThread(document.getElementById('thread-title').value, document.getElementById('thread-content').value, document.getElementById('thread-category').value);
-          });
-        },
-        parseMarkdown(text) {
-          if (!text) return '';
-          return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
-        }
-      },
-
-      router: {
-        init() {
-          window.addEventListener('hashchange', () => this.render());
-          this.render();
-        },
-        go(route, param) {
-          location.hash = param ? route + '/' + param : route;
-        },
-        render() {
-          const hash = location.hash.slice(1) || 'home';
-          const [route, param] = hash.split('/');
-          App.state.currentView = route;
-          if (route === 'thread' && param) {
-            App.state.currentThreadId = param;
-            App.data.loadThreadDetail(param);
-          }
-          
-          const main = document.getElementById('app-content');
-          document.querySelectorAll('.nav-link').forEach(el => el.classList.toggle('active', el.textContent.toLowerCase().includes(route)));
-          
-          try {
-            switch(route) {
-              case 'home': main.innerHTML = this.views.home(); break;
-              case 'trending': main.innerHTML = this.views.trending(); break;
-              case 'search': main.innerHTML = this.views.search(); break;
-              case 'thread': main.innerHTML = this.views.thread(); break;
-              case 'profile': main.innerHTML = this.views.profile(); break;
-              default: main.innerHTML = this.views.home();
-            }
-          } catch (e) {
-            console.error('Render error:', e);
-            main.innerHTML = '<div class="empty-state"><i class="fa-solid fa-circle-exclamation"></i><h3>Error</h3><p>' + e.message + '</p></div>';
-          }
-        },
-        views: {
-          home() {
-            const user = App.state.user;
-            const threads = App.state.threads;
-            return `
-              <div class="flex flex-between mb-6">
-                <h2 style="font-size:1.5rem;">Diskusi Terbaru</h2>
-                ${user ? `<button class="btn btn-primary" onclick="App.ui.openModal('thread')"><i class="fa-solid fa-plus"></i> <span class="hide-mobile">Thread</span></button>` : ''}
-              </div>
-              ${!threads.length ? '<div class="empty-state card"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Belum ada thread</h3><p>Jadilah yang pertama!</p></div>' : 
-                `<div class="grid">${threads.map(t => App.ui.views.threadCard(t)).join('')}</div>`}
-            `;
-          },
-          trending() {
-            const trending = [...App.state.threads].sort((a,b) => (b.likeCount||0) - (a.likeCount||0)).slice(0, 10);
-            return `<h2 style="font-size:1.5rem;margin-bottom:1.5rem;">🔥 Trending</h2>${trending.length ? `<div class="grid">${trending.map(t => App.ui.views.threadCard(t)).join('')}</div>` : '<div class="empty-state card"><p>Belum ada trending</p></div>'}`;
-          },
-          search() {
-            return `<h2 style="font-size:1.5rem;margin-bottom:1.5rem;">🔍 Cari Thread</h2><div class="card"><input type="text" class="form-input" placeholder="Ketik untuk mencari..." id="search-input"><div id="search-results" class="mt-4"></div></div>`;
-          },
-          thread() {
-            const thread = App.state.currentThread;
-            if (!thread) return '<div class="empty-state">Loading...</div>';
-            const comments = App.state.comments[thread.id] || [];
-            return `
-              <button class="btn btn-ghost mb-4" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
-              <div class="card mb-4">
-                <div class="mb-3"><span class="badge">${thread.category}</span></div>
-                <h1 style="font-size:1.8rem;margin-bottom:1rem;">${thread.title}</h1>
-                <div class="flex gap-3 mb-4 pb-4 border-b" style="border-color:var(--border);">
-                  <div class="avatar">${thread.authorName?.charAt(0)||'?'}</div>
-                  <div><div style="font-weight:500;color:var(--accent);">${thread.authorName}</div><div class="text-sm text-muted">${thread.createdAt ? new Date(thread.createdAt.toDate()).toLocaleString('id-ID') : '-'}</div></div>
-                </div>
-                <div class="markdown-content mb-6" style="line-height:1.8;">${App.ui.parseMarkdown(thread.content)}</div>
-                <div class="flex gap-4">
-                  <button class="btn btn-outline" onclick="App.data.toggleLike('${thread.id}')"><i class="fa-solid fa-heart"></i> ${thread.likeCount||0} Suka</button>
-                  <span class="text-muted"><i class="fa-solid fa-comment"></i> ${comments.length} Komentar</span>
-                </div>
-              </div>
-              <div class="card">
-                <h3 style="margin-bottom:1rem;">💬 Komentar (${comments.length})</h3>
-                ${App.state.user ? `<div class="mb-4"><textarea id="comment-input" class="form-textarea" placeholder="Tulis komentar..." rows="2"></textarea><button class="btn btn-primary btn-sm" onclick="App.data.addComment('${thread.id}', document.getElementById('comment-input').value)">Kirim</button></div>` : '<p class="text-muted mb-4">Login untuk berkomentar</p>'}
-                <div>${comments.length ? comments.map(c => App.ui.views.comment(c)).join('') : '<p class="text-muted text-center py-4">Belum ada komentar</p>'}</div>
-              </div>
-            `;
-          },
-          profile() {
-            const user = App.state.user;
-            if (!user) return '<div class="empty-state"><p>Silakan login</p></div>';
-            const threads = App.state.threads.filter(t => t.authorId === user.uid);
-            return `
-              <div class="card mb-6">
-                <div class="flex gap-4 mb-4">
-                  <div class="avatar avatar-lg">${user.username?.charAt(0)||'?'}</div>
-                  <div><h2 style="font-size:1.5rem;">${user.username}</h2><p class="text-muted">${user.email}</p></div>
-                </div>
-                <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:1rem;">
-                  <div class="card text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--accent);">${threads.length}</div><div class="text-sm text-muted">Thread</div></div>
-                  <div class="card text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--accent);">${user.lama_sulap||'-'}</div><div class="text-sm text-muted">Lama Main</div></div>
-                  <div class="card text-center"><div style="font-size:1.5rem;font-weight:700;color:var(--accent);">${user.aliran_sulap||'-'}</div><div class="text-sm text-muted">Aliran</div></div>
-                </div>
-              </div>
-              <h3 style="margin-bottom:1rem;">Thread Saya</h3>
-              ${threads.length ? `<div class="grid">${threads.map(t => App.ui.views.threadCard(t)).join('')}</div>` : '<p class="text-muted">Belum ada thread</p>'}
-            `;
-          },
-          threadCard(t) {
-            return `<div class="card thread-item" onclick="App.router.go('thread','${t.id}')"><div class="mb-2"><span class="badge">${t.category||'Umum'}</span></div><div class="thread-title">${t.title}</div><div class="thread-meta"><span><i class="fa-solid fa-user"></i> ${t.authorName||'Anon'}</span><span><i class="fa-solid fa-clock"></i> ${t.createdAt ? new Date(t.createdAt.toDate ? t.createdAt.toDate() : t.createdAt).toLocaleDateString('id-ID') : '-'}</span><span><i class="fa-solid fa-heart"></i> ${t.likeCount||0}</span><span><i class="fa-solid fa-comment"></i> ${t.commentCount||0}</span></div></div>`;
-          },
-          comment(c) {
-            return `<div class="comment"><div class="comment-author">${c.authorName||'Anon'}</div><div class="text-sm mt-1">${App.ui.parseMarkdown(c.content)}</div><div class="text-xs text-muted mt-1">${c.createdAt ? new Date(c.createdAt.toDate()).toLocaleString('id-ID') : ''}</div></div>`;
-          }
-        }
+      if (editId) {
+        await updateDoc(doc(db, "magicNotes", editId), data);
+        showToast('Catatan berhasil diperbarui!', 'success');
+      } else {
+        data.createdAt = serverTimestamp();
+        await addDoc(notesCollection, data);
+        showToast('Catatan baru berhasil ditambahkan!', 'success');
       }
-    };
+      closeModal('formModal');
+      await loadNotes();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menyimpan catatan.', 'error');
+    }
+  };
 
-    document.addEventListener('DOMContentLoaded', () => App.init());
-  </script>
+  // ====== DELETE ======
+  window.confirmDelete = async function(id) {
+    const note = allNotes.find(n => n.id === id);
+    if (!note) return;
+    if (!confirm(`Hapus catatan "${note.title}"?`)) return;
+    try {
+      await deleteDoc(doc(db, "magicNotes", id));
+      showToast('Catatan berhasil dihapus.', 'success');
+      await loadNotes();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menghapus catatan.', 'error');
+    }
+  };
+
+  // ====== FILTER & SEARCH ======
+  window.filterCategory = function(cat, el) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    renderNotes();
+  };
+
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    currentSearch = e.target.value.trim();
+    renderNotes();
+  });
+
+  // ====== TOAST ======
+  window.showToast = function(msg, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+    toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(20px)';
+      toast.style.transition = 'all 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  };
+
+  // ====== SEED DATA ======
+  const initialData = [
+    { title: "Srechko Howard Pop-Out", content: "Pop out dari tengah menggunakan telunjuk dan kelingking untuk membuat lengkungan.", category: "Teknik", tags: ["pop-out", "finger manipulation"], inventor: "Srechko Howard" },
+    { title: "All Alike Display / Diminishing Lift Display", content: "Istilah lama yang merujuk pada efek 'semua kartu terlihat sama'. Ed Marlo awal, selanjutnya Larry Jennings yang mempopulerkannya.", category: "Teknik", tags: ["display", "lift", "diminishing"], inventor: "Ed Marlo, Larry Jennings" },
+    { title: "Slop Shuffle Triumph", content: "Trik aslinya adalah SL. Reverse Card by Sid Lorraine.", category: "Trik", tags: ["triumph", "shuffle", "reverse"], inventor: "Sid Lorraine" },
+    { title: "Stuart Gordon Double Lift", content: "Variasi double lift oleh Stuart Gordon.", category: "Teknik", tags: ["double lift", "sleight"], inventor: "Stuart Gordon" },
+    { title: "Las Vegas Leaper", content: "Efek kartu melompat oleh Paul Harris.", category: "Trik", tags: ["leap", "card", "visual"], inventor: "Paul Harris" },
+    { title: "P.A.T.E.O Force", content: "Pick Any Two Eliminate One by Roy Baker in Banox Baker.", category: "Teknik", tags: ["force", "psychological"], inventor: "Roy Baker" },
+    { title: "A.C.A.A.N - Any Card at Any Number", content: "Trik legendaris di mana penonton memilih kartu apa saja dan nomor berapa saja, lalu kartu tersebut ditemukan pada posisi yang dipilih.", category: "Trik", tags: ["acan", "classic"], inventor: "Various" },
+    { title: "The Glide", content: "Jog bottom card for count, hold one card. Teknik kontrol kartu bawah.", category: "Teknik", tags: ["glide", "bottom card", "control"], inventor: "Unknown" },
+    { title: "Rub a Dub Vanish", content: "Teknik menghilangkan objek dengan gerakan menggosok.", category: "Teknik", tags: ["vanish", "rub", "close-up"], inventor: "Unknown" },
+    { title: "Bow to Stern Card Control", content: "Kontrol kartu oleh Ernest Earick.", category: "Teknik", tags: ["control", "card"], inventor: "Ernest Earick" },
+    { title: "Real Dribble Toss", content: "Teknik oleh Steve Bedwell.", category: "Teknik", tags: ["dribble", "toss"], inventor: "Steve Bedwell" },
+    { title: "Swing Set Control", content: "Kontrol kartu oleh Terry Gerald.", category: "Teknik", tags: ["swing", "control"], inventor: "Terry Gerald" },
+    { title: "Hammond Count", content: "Teknik menghitung kartu secara palsu.", category: "Teknik", tags: ["count", "false count"], inventor: "Hammond" },
+    { title: "Shuffle Bored", content: "Trik klasik oleh Simon Aronson.", category: "Trik", tags: ["shuffle", "stack", "aronson"], inventor: "Simon Aronson" },
+    { title: "Cascade Control", content: "Kontrol kartu oleh Charlie Miller.", category: "Teknik", tags: ["cascade", "control"], inventor: "Charlie Miller" },
+    { title: "Roll Over Count", content: "Menggunakan 5 kartu sebagai 4. Teknik hitungan palsu.", category: "Teknik", tags: ["count", "false", "5 as 4"], inventor: "Unknown" },
+    { title: "3 Card Monte (This and That)", content: "Trik klasik 3 Card Monte.", category: "Trik", tags: ["monte", "3 card", "gambling"], inventor: "Traditional" },
+    { title: "Biddle Move / Biddle Grip", content: "Menggunakan Biddle grip atau sebelumnya bernama End Grip. Digunakan dalam Biddle Card Trick, Braue Addition by Fred Braue, Secret Subtraction by JK Hartman.", category: "Teknik", tags: ["biddle", "grip", "addition"], inventor: "Elmer Biddle" },
+    { title: "Out of Sight Out of Mind", content: "Trik oleh Dai Vernon.", category: "Trik", tags: ["vernon", "mental", "classic"], inventor: "Dai Vernon" },
+    { title: "Svengali Deck", content: "Dek khusus yang memungkinkan efek kartu pilihan muncul di posisi manapun.", category: "Trik", tags: ["gimmick deck", "svengali"], inventor: "Burling Hull" },
+    { title: "Crazy Handcuff", content: "Efek karet tembus. Diciptakan oleh Artur Setterington.", category: "Trik", tags: ["rubber band", "handcuff"], inventor: "Artur Setterington" },
+    { title: "John Benzias Spin Out (1967)", content: "Efek karet tembus, tahun 1967.", category: "Trik", tags: ["rubber band", "spin", "1967"], inventor: "John Benzias" },
+    { title: "Mahatma Pass (1901)", content: "Card Control dari tahun 1901, diterbitkan di Mahatma Vol. 5 hal. 495.", category: "Teknik", tags: ["pass", "classic", "1901"], inventor: "Unknown" },
+    { title: "Red Hot Mama / Chicago Opener (1950)", content: "Trik kartu klasik tahun 1950 oleh Al Leech.", category: "Trik", tags: ["classic", "1950", "color change"], inventor: "Al Leech" },
+    { title: "Out of This World (1942)", content: "Trik legendaris oleh Paul Curry tahun 1942. Penonton memisahkan kartu merah dan hitam tanpa pesulap menyentuhnya.", category: "Trik", tags: ["curry", "1942", "classic"], inventor: "Paul Curry" },
+    { title: "Brainwave Deck", content: "Dek klasik oleh Dai Vernon. Satu kartu tersisa berbeda dari semua kartu lainnya.", category: "Trik", tags: ["gimmick deck", "vernon"], inventor: "Dai Vernon" },
+    { title: "Bluff Pass (1928)", content: "Teknik pass oleh Frederick Montague tahun 1928.", category: "Teknik", tags: ["pass", "1928"], inventor: "Frederick Montague" },
+    { title: "Lazy Man's Card Trick (1954)", content: "Trik oleh Lorayne / Prof. Jack Miller tahun 1954.", category: "Trik", tags: ["lazy", "1954", "lorayne"], inventor: "Prof. Jack Miller" },
+    { title: "The Altman Maneuver", content: "Teknik oleh Jeff Altman dari AOA.", category: "Teknik", tags: ["altman", "maneuver"], inventor: "Jeff Altman" },
+    { title: "False Hindu Shuffle / Calcutta Shuffle", content: "Oleh John Cornelius.", category: "Teknik", tags: ["hindu shuffle", "false"], inventor: "John Cornelius" },
+    { title: "Optical Shuffle", content: "Oleh John Hilliard.", category: "Teknik", tags: ["optical", "shuffle"], inventor: "John Hilliard" },
+    { title: "Nolap Switch (1982)", content: "Oleh Derek Dingle tahun 1982.", category: "Teknik", tags: ["switch", "dingle", "1982"], inventor: "Derek Dingle" },
+    { title: "Olram Subtlety Count", content: "Digunakan dalam Brainwave effect.", category: "Teknik", tags: ["count", "subtlety", "brainwave"], inventor: "Unknown (Olram)" },
+    { title: "Devil's Elevator (1971)", content: "Inspired by Dai Vernon & Bruce Cervon. The Devil's Elevator (Bruce Cervon, 1971).", category: "Teknik", tags: ["elevator", "cervon", "1971"], inventor: "Bruce Cervon" },
+    { title: "Himber Coin Vanish (Pinky Steal)", content: "Teknik menghilangkan koin menggunakan kelingking.", category: "Teknik", tags: ["coin", "vanish", "pinky"], inventor: "Himber" },
+    { title: "J.K. Hartman's Popover Move (1972)", content: "Published first in 'Packet Magic' (1972) Page 2. Modern take: Aaron Fisher's One Hand Popover in 'The Paper Engine' (2002) Page 29.", category: "Teknik", tags: ["pop-over", "packet", "paper engine"], inventor: "J.K. Hartman, Aaron Fisher" },
+    { title: "Entanglement - Pooky at a Distance", content: "Oleh Albert Einstein (nama sandi pesulap).", category: "Trik", tags: ["entanglement", "distance"], inventor: "Albert Einstein (stage name)" },
+    { title: "Classic Palm", content: "Teknik dasar memegang kartu di telapak tangan.", category: "Teknik", tags: ["palm", "classic", "fundamental"], inventor: "Traditional" },
+    { title: "Tenkai Palm", content: "Variasi teknik palm oleh Tenkai.", category: "Teknik", tags: ["palm", "tenkai"], inventor: "Tenkai" },
+    { title: "Diagonal Palm Shift (DPS)", content: "Teknik memindahkan kartu dari satu tangan ke tangan lain secara diagonal.", category: "Teknik", tags: ["palm", "shift", "diagonal"], inventor: "Unknown" },
+    { title: "Gibecière", content: "Kantong besar yang digunakan Pesulap Jalanan untuk membantu menyimpan muatan benda permainan Cups And Ball.", category: "Sejarah", tags: ["street magic", "cups and ball"], inventor: "Traditional" },
+    { title: "Harbin Pack Away Table", content: "Folding Table performance attribute oleh Harbin.", category: "Sejarah", tags: ["table", "folding", "harbin", "prop"], inventor: "Harbin" },
+    { title: "Tittle Bout by Martin Nash", content: "Magician vs Gambler theme.", category: "Trik", tags: ["nash", "gambler"], inventor: "Martin Nash" },
+    { title: "Klondike Shuffle", content: "Slide kartu atas dan bawah.", category: "Teknik", tags: ["shuffle", "klondike", "slide"], inventor: "Unknown" },
+    { title: "Charles Sanders Peirce & Kartu (1860)", content: "Filsuf pertama yang tertarik pada sulap kartu adalah ahli logika Amerika dan bapak pragmatisme, Charles Sanders Peirce. Pada 1860 ia meracik efek kartu berdasarkan 'aritmetika siklik' dengan judul 'First Curiosity' dan 'Second Curiosity'. First Curiosity didasarkan pada teorema Fermat, butuh 13 halaman cara main dan 52 halaman penjelasan.", category: "Sejarah", tags: ["peirce", "mathematics", "1860", "fermat"], inventor: "Charles Sanders Peirce" },
+    { title: "W.W. Rouse Ball - Mathematical Recreations (1892)", content: "16 kartu diletakkan membentuk persegi 4x4. Penonton memilih kartu dan memberi tahu kolom vertikalnya. Kartu dikumpulkan dan dibagikan horizontal. Dari perpotongan kolom dan baris, pesulap menunjuk kartu pilihan. Keberhasilan bergantung pada ketidakmampuan penonton mengikuti prosedurnya.", category: "Sejarah", tags: ["mathematics", "1892", "rouse ball", "grid"], inventor: "W.W. Rouse Ball" },
+    { title: "Perfect Production", content: "Referensi dalam literatur sulap kartu klasik.", category: "Sumber", tags: ["production", "classic"], inventor: "Walter Gibson" },
+    { title: "Gene Finnel Book - Free Cut Principle", content: "Buku Gene Finnel yang membahas Free Cut Principle. Publish Spell Any Card from John P Hamilton.", category: "Sumber", tags: ["free cut", "finnel", "hamilton"], inventor: "Gene Finnel, John P Hamilton" },
+    { title: "8 Brainwave Card Trick - Nick Trost (1974)", content: "Variasi trik Brainwave oleh Nick Trost tahun 1974.", category: "Trik", tags: ["brainwave", "trost", "1974"], inventor: "Nick Trost" },
+    { title: "Mechanic Grip", content: "Pegangan dasar kartu yang digunakan dalam banyak teknik sleight of hand. Posisi jari yang benar untuk kontrol optimal.", category: "Teknik", tags: ["grip", "fundamental", "mechanic"], inventor: "Traditional" },
+    { title: "Australian Shuffle", content: "Teknik shuffle khusus yang berasal dari tradisi kartu Australia.", category: "Teknik", tags: ["shuffle", "australian"], inventor: "Traditional" },
+    { title: "Clumsy False Shuffle", content: "Teknik false shuffle yang terlihat ceroboh namun sebenarnya mengontrol urutan kartu.", category: "Teknik", tags: ["false shuffle", "clumsy"], inventor: "Unknown" },
+    { title: "Reversal Card Trick", content: "Efek klasik di mana kartu yang dipilih berubah posisi menghadap terbalik di tengah dek.", category: "Trik", tags: ["reversal", "classic"], inventor: "Traditional" },
+    { title: "Peeking", content: "Teknik mengintip kartu secara rahasia untuk mengetahui informasi tertentu.", category: "Teknik", tags: ["peek", "secret look"], inventor: "Traditional" },
+    { title: "Gamblers Chop Palm", content: "Variasi palm technique yang digunakan dalam konteks gambling deception.", category: "Teknik", tags: ["palm", "gambler", "chop"], inventor: "Traditional" },
+    { title: "Longtudinal Palm", content: "Teknik palm di mana kartu dipegang secara longitudinal di tangan.", category: "Teknik", tags: ["palm", "longitudinal"], inventor: "Unknown" },
+    { title: "Letheral Palm", content: "Variasi teknik palm yang halus dan sulit terdeteksi.", category: "Teknik", tags: ["palm", "lethal"], inventor: "Unknown" }
+  ];
+
+  window.seedInitialData = async function() {
+    if (!confirm(`Akan menambahkan ${initialData.length} catatan awal ke Firestore. Lanjutkan?`)) return;
+    try {
+      const batch = writeBatch(db);
+      initialData.forEach(data => {
+        const docRef = doc(notesCollection);
+        batch.set(docRef, { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      });
+      await batch.commit();
+      showToast(`${initialData.length} catatan berhasil ditambahkan!`, 'success');
+      document.getElementById('seedBtn').classList.add('hidden');
+      await loadNotes();
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal seed data: ' + err.message, 'error');
+    }
+  };
+
+  function checkIfSeedNeeded() {
+    if (allNotes.length === 0) {
+      document.getElementById('seedBtn').classList.remove('hidden');
+    } else {
+      document.getElementById('seedBtn').classList.add('hidden');
+    }
+  }
+
+  // ====== CLOSE MODAL ON OVERLAY CLICK ======
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('active');
+    });
+  });
+
+  // ====== KEYBOARD SHORTCUTS ======
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      document.getElementById('searchInput').focus();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+      e.preventDefault();
+      openAddModal();
+    }
+  });
+
+  // ====== INIT ======
+  loadNotes();
+</script>
 </body>
 </html>
