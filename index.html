@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grimoire of Arcana — Conjuring Notes</title>
+<title>Grimoire of Arcana — Forum Sulap & Conjuring Notes</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,21 +16,18 @@
     --accent-gold: #d4af37;
     --accent-gold-dim: #b8941f;
     --accent-purple: #8b5cf6;
-    --accent-purple-dim: #6d28d9;
     --accent-cyan: #06b6d4;
     --accent-rose: #f43f5e;
     --accent-emerald: #10b981;
+    --accent-orange: #f97316;
     --text-primary: #f1f5f9;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
     --border: rgba(212, 175, 55, 0.15);
     --border-hover: rgba(212, 175, 55, 0.35);
-    --glow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
-    --glow-purple: 0 0 20px rgba(139, 92, 246, 0.3);
   }
 
   html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Inter', sans-serif;
     background: var(--bg-primary);
@@ -39,129 +36,192 @@
     overflow-x: hidden;
   }
 
-  /* ====== ANIMATED BACKGROUND ====== */
   .bg-effects {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
+    pointer-events: none; z-index: 0; overflow: hidden;
   }
-
   .bg-effects::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
+    content: ''; position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
     background: radial-gradient(ellipse at 20% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
     animation: bgShift 20s ease-in-out infinite;
   }
-
   @keyframes bgShift {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    33% { transform: translate(-2%, 1%) rotate(1deg); }
-    66% { transform: translate(1%, -1%) rotate(-0.5deg); }
-  }
-
-  .floating-particle {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    animation: floatParticle linear infinite;
-  }
-
-  @keyframes floatParticle {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(-2%, 1%); }
+    66% { transform: translate(1%, -1%); }
   }
 
   /* ====== HEADER ====== */
   .header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(10, 10, 15, 0.85);
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 10, 15, 0.9);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
+    padding: 0.85rem 2rem;
   }
-
   .header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
+    max-width: 1400px; margin: 0 auto;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 1.5rem;
     flex-wrap: wrap;
   }
-
   .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-decoration: none;
-    flex-shrink: 0;
+    display: flex; align-items: center; gap: 0.75rem;
+    text-decoration: none; flex-shrink: 0;
   }
-
   .logo-icon {
     width: 44px; height: 44px;
     background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
     border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 1.3rem;
-    box-shadow: var(--glow-gold);
     animation: logoPulse 3s ease-in-out infinite;
   }
-
   @keyframes logoPulse {
     0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
-    50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.5), 0 0 60px rgba(139, 92, 246, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); }
   }
-
   .logo-text h1 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700;
     background: linear-gradient(135deg, var(--accent-gold), #f5e6a3);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.2;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1.2;
   }
-
   .logo-text span {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    font-size: 0.65rem; color: var(--text-muted);
+    letter-spacing: 3px; text-transform: uppercase;
   }
 
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+  /* ====== MAIN NAV TABS ====== */
+  .main-nav {
+    display: flex; gap: 0.25rem;
+    background: var(--bg-card);
+    padding: 0.3rem; border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .nav-tab {
+    padding: 0.55rem 1.1rem;
+    background: transparent; border: none;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 0.4rem;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+  .nav-tab.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(139, 92, 246, 0.15));
+    color: var(--accent-gold);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
   }
 
-  .search-container {
-    position: relative;
-    flex: 1;
-    min-width: 250px;
-    max-width: 400px;
+  /* ====== USER AREA ====== */
+  .user-area { display: flex; align-items: center; gap: 0.75rem; }
+  .user-info {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .user-info:hover { border-color: var(--border-hover); }
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: #0a0a0f;
+    overflow: hidden;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name {
+    font-size: 0.85rem; font-weight: 600;
+    color: var(--text-primary);
+    max-width: 120px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .btn-login {
+    padding: 0.6rem 1.25rem;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dim));
+    color: #0a0a0f; border: none; border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  }
+  .btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4); }
+
+  /* ====== MAIN CONTENT ====== */
+  .main {
+    max-width: 1400px; margin: 0 auto;
+    padding: 1.5rem 2rem 4rem;
+    position: relative; z-index: 1;
+  }
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ====== FORUM VIEW ====== */
+  .forum-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 1.5rem;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .forum-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.75rem; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-gold), #f5e6a3);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .forum-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+
+  .forum-categories {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .cat-btn {
+    padding: 0.6rem 1.2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 0.4rem;
+    font-family: 'Inter', sans-serif;
+  }
+  .cat-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+  .cat-btn.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(139, 92, 246, 0.15));
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+  }
+  .cat-count {
+    background: rgba(255,255,255,0.08);
+    padding: 0.1rem 0.5rem; border-radius: 10px;
+    font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;
   }
 
-  .search-input {
+  .forum-search {
+    display: flex; gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .search-box {
+    flex: 1; position: relative;
+  }
+  .search-box input {
     width: 100%;
-    padding: 0.65rem 1rem 0.65rem 2.75rem;
-    background: var(--bg-secondary);
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 12px;
     color: var(--text-primary);
@@ -169,416 +229,210 @@
     font-family: 'Inter', sans-serif;
     transition: all 0.3s ease;
   }
-
-  .search-input:focus {
-    outline: none;
-    border-color: var(--accent-gold);
+  .search-box input:focus {
+    outline: none; border-color: var(--accent-gold);
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
   }
-
-  .search-input::placeholder { color: var(--text-muted); }
-
-  .search-icon {
-    position: absolute;
-    left: 0.9rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
+  .search-box::before {
+    content: '🔍'; position: absolute;
+    left: 1rem; top: 50%; transform: translateY(-50%);
     font-size: 0.9rem;
   }
 
   .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1.25rem;
-    border: none;
-    border-radius: 12px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.65rem 1.25rem; border: none; border-radius: 12px;
+    font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease;
+    text-decoration: none; white-space: nowrap;
   }
-
   .btn-primary {
     background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dim));
     color: #0a0a0f;
     box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
   }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
-  }
-
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   .btn-secondary {
-    background: var(--bg-card);
-    color: var(--text-primary);
+    background: var(--bg-card); color: var(--text-primary);
     border: 1px solid var(--border);
   }
-
-  .btn-secondary:hover {
-    border-color: var(--border-hover);
-    background: var(--bg-card-hover);
-  }
-
+  .btn-secondary:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
   .btn-danger {
-    background: rgba(244, 63, 94, 0.15);
-    color: var(--accent-rose);
+    background: rgba(244, 63, 94, 0.15); color: var(--accent-rose);
     border: 1px solid rgba(244, 63, 94, 0.3);
   }
+  .btn-danger:hover { background: rgba(244, 63, 94, 0.25); }
+  .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.78rem; border-radius: 8px; }
 
-  .btn-danger:hover {
-    background: rgba(244, 63, 94, 0.25);
-  }
-
-  .btn-sm {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.78rem;
-    border-radius: 8px;
-  }
-
-  /* ====== STATS BAR ====== */
-  .stats-bar {
-    max-width: 1400px;
-    margin: 1.5rem auto 0;
-    padding: 0 2rem;
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .stat-chip {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 0.8rem;
-  }
-
-  .stat-chip .stat-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--accent-gold);
-  }
-
-  .stat-chip .stat-label {
-    color: var(--text-muted);
-  }
-
-  /* ====== CATEGORY FILTERS ====== */
-  .filters {
-    max-width: 1400px;
-    margin: 1.25rem auto;
-    padding: 0 2rem;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .filter-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-right: 0.5rem;
-  }
-
-  .filter-chip {
-    padding: 0.45rem 1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .filter-chip:hover {
-    border-color: var(--border-hover);
-    color: var(--text-primary);
-  }
-
-  .filter-chip.active {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(139, 92, 246, 0.2));
-    border-color: var(--accent-gold);
-    color: var(--accent-gold);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
-  }
-
-  /* ====== MAIN CONTENT ====== */
-  .main {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1rem 2rem 4rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .notes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1.25rem;
-    margin-top: 1rem;
-  }
-
-  /* ====== NOTE CARD ====== */
-  .note-card {
+  /* ====== POST CARD ====== */
+  .posts-list { display: flex; flex-direction: column; gap: 1rem; }
+  .post-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 1.5rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    transition: all 0.3s ease;
     cursor: pointer;
     animation: cardFadeIn 0.5s ease forwards;
     opacity: 0;
   }
-
   @keyframes cardFadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
-  .note-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 3px;
-    background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .note-card:hover {
-    transform: translateY(-4px);
+  .post-card:hover {
     border-color: var(--border-hover);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(212, 175, 55, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
   }
-
-  .note-card:hover::before { opacity: 1; }
-
-  .note-card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+  .post-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 1rem; margin-bottom: 0.75rem;
   }
-
-  .note-category {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.65rem;
+  .post-author {
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .post-author-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; color: #0a0a0f;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .post-author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .post-author-info { display: flex; flex-direction: column; }
+  .post-author-name {
+    font-weight: 600; font-size: 0.9rem;
+    color: var(--text-primary);
+  }
+  .post-date {
+    font-size: 0.75rem; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .post-category-badge {
+    padding: 0.25rem 0.7rem;
     border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
     flex-shrink: 0;
   }
+  .badge-card { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+  .badge-coin { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.3); }
+  .badge-mentalism { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
 
-  .cat-teknik { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
-  .cat-trik { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.3); }
-  .cat-sejarah { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
-  .cat-sumber { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
-  .cat-penemu { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
-
-  .note-card-actions {
-    display: flex;
-    gap: 0.25rem;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  .post-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem; line-height: 1.4;
   }
-
-  .note-card:hover .note-card-actions { opacity: 1; }
-
-  .note-action-btn {
-    width: 30px; height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+  .post-preview {
+    font-size: 0.9rem; color: var(--text-secondary);
+    line-height: 1.65;
+    display: -webkit-box; -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical; overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .post-footer {
+    display: flex; justify-content: space-between;
+    align-items: center; padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+  .post-stats {
+    display: flex; gap: 1rem;
+    font-size: 0.8rem; color: var(--text-muted);
+  }
+  .post-stat {
+    display: flex; align-items: center; gap: 0.3rem;
+  }
+  .post-actions { display: flex; gap: 0.4rem; }
+  .action-btn {
+    padding: 0.35rem 0.7rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 8px;
     color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.8rem;
+    font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; gap: 0.3rem;
+    font-family: 'Inter', sans-serif;
   }
+  .action-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+  .action-btn.liked { color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.3); }
+  .action-btn.delete:hover { color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.3); background: rgba(244, 63, 94, 0.1); }
 
-  .note-action-btn:hover {
-    background: rgba(255,255,255,0.1);
-    color: var(--text-primary);
-  }
-
-  .note-action-btn.delete:hover {
-    background: rgba(244, 63, 94, 0.2);
-    color: var(--accent-rose);
-    border-color: rgba(244, 63, 94, 0.3);
-  }
-
-  .note-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
-  }
-
-  .note-inventor {
-    font-size: 0.78rem;
-    color: var(--accent-gold);
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .note-content {
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-    line-height: 1.65;
-    margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .note-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-  }
-
-  .note-tag {
-    padding: 0.2rem 0.55rem;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 6px;
-    font-size: 0.7rem;
+  /* ====== EMPTY STATE ====== */
+  .empty-state {
+    text-align: center; padding: 4rem 2rem;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
   }
-
-  .note-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(255,255,255,0.05);
+  .empty-state-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
+  .empty-state h3 {
+    font-family: 'Cinzel', serif; font-size: 1.25rem;
+    color: var(--text-secondary); margin-bottom: 0.5rem;
   }
-
-  .note-date {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .empty-state p { font-size: 0.9rem; }
 
   /* ====== MODAL ====== */
   .modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(8px);
     z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
+    display: none; align-items: center; justify-content: center;
     padding: 1rem;
-    animation: fadeIn 0.3s ease;
   }
-
-  .modal-overlay.active { display: flex; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
+  .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
   .modal {
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-radius: 20px;
-    width: 100%;
-    max-width: 650px;
-    max-height: 90vh;
-    overflow-y: auto;
+    width: 100%; max-width: 700px;
+    max-height: 90vh; overflow-y: auto;
     animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.1);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
   }
-
   @keyframes modalSlideIn {
     from { opacity: 0; transform: scale(0.9) translateY(20px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
-
   .modal-header {
     padding: 1.5rem 1.75rem;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
   }
-
   .modal-header h2 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.2rem;
+    font-family: 'Cinzel', serif; font-size: 1.2rem;
     background: linear-gradient(135deg, var(--accent-gold), #f5e6a3);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
   .modal-close {
     width: 36px; height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 10px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 1.1rem;
+    color: var(--text-muted); cursor: pointer;
+    transition: all 0.2s ease; font-size: 1.1rem;
   }
-
-  .modal-close:hover {
-    background: rgba(244, 63, 94, 0.15);
-    color: var(--accent-rose);
-  }
-
+  .modal-close:hover { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
   .modal-body { padding: 1.75rem; }
+  .modal-footer {
+    padding: 1.25rem 1.75rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 0.75rem;
+  }
 
   .form-group { margin-bottom: 1.25rem; }
-
   .form-label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    display: block; font-size: 0.8rem; font-weight: 600;
+    color: var(--text-secondary); margin-bottom: 0.5rem;
+    text-transform: uppercase; letter-spacing: 1px;
   }
-
   .form-input, .form-textarea, .form-select {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -590,149 +444,313 @@
     font-size: 0.9rem;
     transition: all 0.3s ease;
   }
-
   .form-input:focus, .form-textarea:focus, .form-select:focus {
-    outline: none;
-    border-color: var(--accent-gold);
+    outline: none; border-color: var(--accent-gold);
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
   }
-
-  .form-textarea {
-    min-height: 150px;
-    resize: vertical;
-    line-height: 1.6;
-  }
-
+  .form-textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
   .form-select {
-    appearance: none;
+    appearance: none; cursor: pointer;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     padding-right: 2.5rem;
-    cursor: pointer;
   }
-
-  .form-select option {
-    background: var(--bg-card);
-    color: var(--text-primary);
+  .form-select option { background: var(--bg-card); color: var(--text-primary); }
+  .form-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem; }
+  .char-count {
+    font-size: 0.75rem; color: var(--text-muted);
+    text-align: right; margin-top: 0.25rem;
+    font-family: 'JetBrains Mono', monospace;
   }
+  .char-count.warn { color: var(--accent-orange); }
+  .char-count.over { color: var(--accent-rose); }
 
-  .form-hint {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    margin-top: 0.35rem;
-  }
-
-  .modal-footer {
-    padding: 1.25rem 1.75rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-  }
-
-  /* ====== DETAIL MODAL ====== */
-  .detail-content {
-    padding: 1.75rem;
-  }
-
-  .detail-category {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.3rem 0.75rem;
+  /* ====== POST DETAIL ====== */
+  .detail-view { max-width: 900px; margin: 0 auto; }
+  .detail-back {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    color: var(--text-secondary); font-size: 0.85rem;
+    cursor: pointer; margin-bottom: 1rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--bg-card); border: 1px solid var(--border);
     border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
+    transition: all 0.2s ease;
   }
+  .detail-back:hover { color: var(--accent-gold); border-color: var(--border-hover); }
 
+  .detail-post {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
   .detail-title {
     font-family: 'Cinzel', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.75rem; font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
+    margin: 1rem 0; line-height: 1.3;
   }
-
-  .detail-inventor {
-    font-size: 0.9rem;
-    color: var(--accent-gold);
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   .detail-body {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-    white-space: pre-wrap;
+    font-size: 1rem; color: var(--text-secondary);
+    line-height: 1.85; white-space: pre-wrap;
+    margin: 1.5rem 0;
+    word-wrap: break-word;
   }
-
-  .detail-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .detail-meta {
-    display: flex;
-    gap: 1.5rem;
+  .detail-body strong { color: var(--text-primary); font-weight: 600; }
+  .detail-body em { color: var(--accent-gold); font-style: italic; }
+  .detail-actions {
+    display: flex; gap: 0.5rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--border);
-    font-size: 0.78rem;
-    color: var(--text-muted);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    flex-wrap: wrap;
+  }
+
+  /* ====== COMMENTS ====== */
+  .comments-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .comments-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .comment-form {
+    display: flex; gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+  }
+  .comment-form textarea {
+    flex: 1; min-height: 60px;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    resize: vertical;
+    transition: all 0.3s ease;
+  }
+  .comment-form textarea:focus {
+    outline: none; border-color: var(--accent-gold);
+  }
+  .comments-list { display: flex; flex-direction: column; gap: 1rem; }
+  .comment-item {
+    display: flex; gap: 0.75rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .comment-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: #0a0a0f;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .comment-content { flex: 1; }
+  .comment-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 0.35rem;
+    gap: 0.5rem; flex-wrap: wrap;
+  }
+  .comment-author { font-weight: 600; font-size: 0.88rem; color: var(--text-primary); }
+  .comment-date { font-size: 0.72rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+  .comment-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; word-wrap: break-word; }
+  .comment-delete {
+    background: transparent; border: none;
+    color: var(--text-muted); cursor: pointer;
+    font-size: 0.75rem; padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+  .comment-delete:hover { color: var(--accent-rose); background: rgba(244, 63, 94, 0.1); }
+
+  /* ====== PROFILE VIEW ====== */
+  .profile-header {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    display: flex; gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .profile-avatar {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 2.5rem; color: #0a0a0f;
+    overflow: hidden; flex-shrink: 0;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  }
+  .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-info { flex: 1; min-width: 200px; }
+  .profile-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+  }
+  .profile-email { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 0.75rem; }
+  .profile-bio {
+    color: var(--text-secondary);
+    font-size: 0.95rem; line-height: 1.6;
+    font-style: italic;
+  }
+  .profile-bio.empty { color: var(--text-muted); }
+  .profile-stats {
+    display: flex; gap: 1.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .profile-stat {
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    min-width: 100px;
+  }
+  .profile-stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem; font-weight: 700;
+    color: var(--accent-gold);
+  }
+  .profile-stat-label {
+    font-size: 0.75rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* ====== GRIMOIRE (Konjuring Notes) ====== */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .note-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    animation: cardFadeIn 0.5s ease forwards;
+    opacity: 0;
+  }
+  .note-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+    opacity: 0; transition: opacity 0.3s ease;
+  }
+  .note-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .note-card:hover::before { opacity: 1; }
+
+  .note-category {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.25rem 0.65rem; border-radius: 6px;
+    font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .cat-teknik { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+  .cat-trik { background: rgba(212, 175, 55, 0.15); color: var(--accent-gold); border: 1px solid rgba(212, 175, 55, 0.3); }
+  .cat-sejarah { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+  .cat-sumber { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+  .cat-penemu { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+  .note-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem; font-weight: 700;
+    color: var(--text-primary);
+    margin: 0.5rem 0; line-height: 1.4;
+  }
+  .note-inventor {
+    font-size: 0.78rem; color: var(--accent-gold);
+    margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.35rem;
+  }
+  .note-content {
+    font-size: 0.88rem; color: var(--text-secondary);
+    line-height: 1.65;
+    display: -webkit-box; -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .note-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.75rem; }
+  .note-tag {
+    padding: 0.2rem 0.55rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    font-size: 0.7rem; color: var(--text-muted);
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* ====== EMPTY STATE ====== */
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--text-muted);
+  /* ====== TOAST ====== */
+  .toast-container {
+    position: fixed; bottom: 2rem; right: 2rem;
+    z-index: 2000;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .toast {
+    padding: 0.85rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: toastIn 0.4s ease;
+    min-width: 250px;
+  }
+  .toast.success { border-left: 3px solid var(--accent-emerald); }
+  .toast.error { border-left: 3px solid var(--accent-rose); }
+  .toast.info { border-left: 3px solid var(--accent-cyan); }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
   }
 
-  .empty-state-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    opacity: 0.3;
+  mark {
+    background: rgba(212, 175, 55, 0.3);
+    color: var(--accent-gold);
+    padding: 0.1rem 0.2rem; border-radius: 3px;
   }
 
-  .empty-state h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.25rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-  }
-
-  .empty-state p { font-size: 0.9rem; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--bg-card-hover); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold-dim); }
 
   /* ====== LOADING ====== */
   .loading-overlay {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
     background: var(--bg-primary);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 9999; transition: opacity 0.5s ease;
   }
-
-  .loading-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
   .loading-spinner {
     width: 60px; height: 60px;
     border: 3px solid var(--border);
@@ -741,193 +759,266 @@
     animation: spin 1s linear infinite;
     margin-bottom: 1.5rem;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .loading-text {
-    font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    color: var(--accent-gold);
-    letter-spacing: 3px;
+    font-family: 'Cinzel', serif; font-size: 1.1rem;
+    color: var(--accent-gold); letter-spacing: 3px;
   }
-
-  /* ====== TOAST ====== */
-  .toast-container {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .toast {
-    padding: 0.85rem 1.25rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text-primary);
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    animation: toastIn 0.4s ease;
-    min-width: 250px;
-  }
-
-  .toast.success { border-left: 3px solid var(--accent-emerald); }
-  .toast.error { border-left: 3px solid var(--accent-rose); }
-  .toast.info { border-left: 3px solid var(--accent-cyan); }
-
-  @keyframes toastIn {
-    from { opacity: 0; transform: translateX(20px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  /* ====== HIGHLIGHT ====== */
-  mark {
-    background: rgba(212, 175, 55, 0.3);
-    color: var(--accent-gold);
-    padding: 0.1rem 0.2rem;
-    border-radius: 3px;
-  }
-
-  /* ====== SCROLLBAR ====== */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--bg-primary); }
-  ::-webkit-scrollbar-thumb { background: var(--bg-card-hover); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold-dim); }
 
   /* ====== RESPONSIVE ====== */
   @media (max-width: 768px) {
     .header { padding: 0.75rem 1rem; }
-    .header-inner { gap: 0.75rem; }
-    .logo-text h1 { font-size: 1rem; }
-    .search-container { min-width: 100%; order: 3; }
     .main { padding: 1rem; }
+    .logo-text h1 { font-size: 1rem; }
+    .main-nav { order: 3; width: 100%; overflow-x: auto; }
+    .nav-tab { font-size: 0.78rem; padding: 0.5rem 0.8rem; }
+    .user-name { display: none; }
     .notes-grid { grid-template-columns: 1fr; }
-    .stats-bar { padding: 0 1rem; }
-    .filters { padding: 0 1rem; }
-    .modal { border-radius: 16px; margin: 0.5rem; }
-    .detail-title { font-size: 1.2rem; }
+    .profile-header { flex-direction: column; text-align: center; }
+    .profile-stats { justify-content: center; }
+    .detail-title { font-size: 1.3rem; }
+    .forum-title { font-size: 1.3rem; }
   }
-
-  @media (max-width: 480px) {
-    .header-actions { width: 100%; }
-    .btn span.btn-text { display: none; }
-  }
-
-  /* ====== SEED BUTTON ====== */
-  .seed-btn {
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    z-index: 50;
-    padding: 0.6rem 1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .seed-btn:hover {
-    border-color: var(--accent-gold);
-    color: var(--accent-gold);
-  }
-
-  .seed-btn.hidden { display: none; }
 </style>
 </head>
 <body>
 
-<!-- Loading Screen -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
   <div class="loading-text">GRIMOIRE OF ARCANA</div>
 </div>
 
-<!-- Background Effects -->
-<div class="bg-effects" id="bgEffects"></div>
+<div class="bg-effects"></div>
 
-<!-- Header -->
+<!-- HEADER -->
 <header class="header">
   <div class="header-inner">
     <div class="logo">
       <div class="logo-icon">🎴</div>
       <div class="logo-text">
         <h1>Grimoire of Arcana</h1>
-        <span>Conjuring Notes</span>
+        <span>Magician Forum</span>
       </div>
     </div>
-    <div class="header-actions">
-      <div class="search-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" id="searchInput" placeholder="Cari trik, teknik, penemu...">
-      </div>
-      <button class="btn btn-primary" onclick="openAddModal()">
-        <span>✨</span>
-        <span class="btn-text">Catatan Baru</span>
+
+    <nav class="main-nav">
+      <button class="nav-tab active" data-view="forum" onclick="switchView('forum', this)">
+        <span>💬</span><span>Forum</span>
       </button>
+      <button class="nav-tab" data-view="grimoire" onclick="switchView('grimoire', this)">
+        <span>📖</span><span>Grimoire</span>
+      </button>
+      <button class="nav-tab" data-view="profile" onclick="switchView('profile', this)" id="profileTab" style="display:none;">
+        <span>👤</span><span>Profile</span>
+      </button>
+    </nav>
+
+    <div class="user-area" id="userArea">
+      <button class="btn-login" onclick="loginWithGoogle()" id="loginBtn">
+        <span>🔐</span><span>Masuk dengan Google</span>
+      </button>
+      <div class="user-info" onclick="switchView('profile', document.querySelector('[data-view=profile]'))" id="userInfo" style="display:none;">
+        <div class="user-avatar" id="userAvatar"></div>
+        <span class="user-name" id="userName"></span>
+      </div>
     </div>
   </div>
 </header>
 
-<!-- Stats Bar -->
-<div class="stats-bar" id="statsBar">
-  <div class="stat-chip">
-    <span class="stat-num" id="statTotal">0</span>
-    <span class="stat-label">Total Catatan</span>
-  </div>
-  <div class="stat-chip">
-    <span class="stat-num" id="statTeknik">0</span>
-    <span class="stat-label">Teknik</span>
-  </div>
-  <div class="stat-chip">
-    <span class="stat-num" id="statTrik">0</span>
-    <span class="stat-label">Trik</span>
-  </div>
-  <div class="stat-chip">
-    <span class="stat-num" id="statSejarah">0</span>
-    <span class="stat-label">Sejarah</span>
-  </div>
-</div>
-
-<!-- Category Filters -->
-<div class="filters">
-  <span class="filter-label">Filter:</span>
-  <button class="filter-chip active" data-category="all" onclick="filterCategory('all', this)">Semua</button>
-  <button class="filter-chip" data-category="Teknik" onclick="filterCategory('Teknik', this)">🎯 Teknik</button>
-  <button class="filter-chip" data-category="Trik" onclick="filterCategory('Trik', this)">🎪 Trik</button>
-  <button class="filter-chip" data-category="Sejarah" onclick="filterCategory('Sejarah', this)">📜 Sejarah</button>
-  <button class="filter-chip" data-category="Sumber" onclick="filterCategory('Sumber', this)">📚 Sumber</button>
-  <button class="filter-chip" data-category="Penemu" onclick="filterCategory('Penemu', this)">👤 Penemu</button>
-</div>
-
-<!-- Main Content -->
+<!-- MAIN CONTENT -->
 <main class="main">
-  <div class="notes-grid" id="notesGrid"></div>
-  <div class="empty-state" id="emptyState" style="display:none;">
-    <div class="empty-state-icon">🔮</div>
-    <h3>Tidak ada catatan ditemukan</h3>
-    <p>Coba ubah kata kunci pencarian atau filter kategori</p>
+
+  <!-- FORUM VIEW -->
+  <div class="view active" id="forumView">
+    <div class="forum-header">
+      <div>
+        <div class="forum-title">Forum Sulap</div>
+        <div class="forum-subtitle">Diskusi, berbagi trik, dan belajar dari sesama pesulap</div>
+      </div>
+      <button class="btn btn-primary" onclick="openCreatePost()" id="createPostBtn" disabled>
+        <span>✨</span><span>Posting Baru</span>
+      </button>
+    </div>
+
+    <div class="forum-categories">
+      <button class="cat-btn active" data-cat="all" onclick="filterForum('all', this)">
+        🌟 Semua <span class="cat-count" id="countAll">0</span>
+      </button>
+      <button class="cat-btn" data-cat="Card Magic" onclick="filterForum('Card Magic', this)">
+        🎴 Card Magic <span class="cat-count" id="countCard">0</span>
+      </button>
+      <button class="cat-btn" data-cat="Coin Magic" onclick="filterForum('Coin Magic', this)">
+        🪙 Coin Magic <span class="cat-count" id="countCoin">0</span>
+      </button>
+      <button class="cat-btn" data-cat="Mentalism" onclick="filterForum('Mentalism', this)">
+        🧠 Mentalism <span class="cat-count" id="countMental">0</span>
+      </button>
+    </div>
+
+    <div class="forum-search">
+      <div class="search-box">
+        <input type="text" id="forumSearch" placeholder="Cari thread, topik, atau author..." oninput="renderPosts()">
+      </div>
+    </div>
+
+    <div class="posts-list" id="postsList"></div>
+    <div class="empty-state" id="forumEmpty" style="display:none;">
+      <div class="empty-state-icon">🎭</div>
+      <h3>Belum ada thread</h3>
+      <p>Jadilah yang pertama memulai diskusi!</p>
+    </div>
   </div>
+
+  <!-- POST DETAIL VIEW -->
+  <div class="view" id="postDetailView">
+    <div class="detail-view">
+      <div class="detail-back" onclick="switchView('forum', document.querySelector('[data-view=forum]'))">
+        ← Kembali ke Forum
+      </div>
+      <div id="postDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- GRIMOIRE VIEW -->
+  <div class="view" id="grimoireView">
+    <div class="forum-header">
+      <div>
+        <div class="forum-title">📖 Grimoire of Arcana</div>
+        <div class="forum-subtitle">Kumpulan ilmu konjuring — teknik, trik, sejarah, dan sumber buku</div>
+      </div>
+      <button class="btn btn-primary" onclick="openAddNote()" id="addNoteBtn" disabled>
+        <span>✨</span><span>Catatan Baru</span>
+      </button>
+    </div>
+
+    <div class="forum-search">
+      <div class="search-box">
+        <input type="text" id="noteSearch" placeholder="Cari trik, teknik, penemu..." oninput="renderNotes()">
+      </div>
+    </div>
+
+    <div class="forum-categories">
+      <button class="cat-btn active" data-note-cat="all" onclick="filterNotes('all', this)">Semua</button>
+      <button class="cat-btn" data-note-cat="Teknik" onclick="filterNotes('Teknik', this)">🎯 Teknik</button>
+      <button class="cat-btn" data-note-cat="Trik" onclick="filterNotes('Trik', this)">🎪 Trik</button>
+      <button class="cat-btn" data-note-cat="Sejarah" onclick="filterNotes('Sejarah', this)">📜 Sejarah</button>
+      <button class="cat-btn" data-note-cat="Sumber" onclick="filterNotes('Sumber', this)">📚 Sumber</button>
+      <button class="cat-btn" data-note-cat="Penemu" onclick="filterNotes('Penemu', this)">👤 Penemu</button>
+    </div>
+
+    <div class="notes-grid" id="notesGrid"></div>
+    <div class="empty-state" id="notesEmpty" style="display:none;">
+      <div class="empty-state-icon">🔮</div>
+      <h3>Tidak ada catatan</h3>
+      <p>Coba ubah kata kunci pencarian atau filter</p>
+    </div>
+  </div>
+
+  <!-- PROFILE VIEW -->
+  <div class="view" id="profileView">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar"></div>
+      <div class="profile-info">
+        <div class="profile-name" id="profileName">-</div>
+        <div class="profile-email" id="profileEmail">-</div>
+        <div class="profile-bio empty" id="profileBio">Belum ada bio. Klik "Edit Profile" untuk menambahkan.</div>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="statPosts">0</div>
+            <div class="profile-stat-label">Posts</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="statComments">0</div>
+            <div class="profile-stat-label">Comments</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="statLikes">0</div>
+            <div class="profile-stat-label">Likes Received</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="openEditProfile()">✏️ Edit Profile</button>
+    </div>
+
+    <div class="forum-header" style="margin-top: 2rem;">
+      <div class="forum-title" style="font-size: 1.3rem;">📝 Postingan Saya</div>
+    </div>
+    <div class="posts-list" id="myPostsList"></div>
+    <div class="empty-state" id="myPostsEmpty" style="display:none;">
+      <div class="empty-state-icon">📭</div>
+      <h3>Belum ada postingan</h3>
+      <p>Mulai berbagi ilmu dengan membuat post pertamamu!</p>
+    </div>
+  </div>
+
 </main>
 
-<!-- Add/Edit Modal -->
-<div class="modal-overlay" id="formModal">
+<!-- MODALS -->
+<!-- Create/Edit Post Modal -->
+<div class="modal-overlay" id="postModal">
   <div class="modal">
     <div class="modal-header">
-      <h2 id="modalTitle">✨ Catatan Baru</h2>
-      <button class="modal-close" onclick="closeModal('formModal')">✕</button>
+      <h2 id="postModalTitle">✨ Posting Baru</h2>
+      <button class="modal-close" onclick="closeModal('postModal')">✕</button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="editId">
+      <input type="hidden" id="editPostId">
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <select class="form-select" id="postCategory">
+          <option value="Card Magic">🎴 Card Magic</option>
+          <option value="Coin Magic">🪙 Coin Magic</option>
+          <option value="Mentalism">🧠 Mentalism</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Judul Thread</label>
+        <input type="text" class="form-input" id="postTitle" placeholder="Judul yang menarik dan deskriptif..." maxlength="120">
+        <div class="char-count"><span id="titleCount">0</span>/120</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Isi Thread</label>
+        <textarea class="form-textarea" id="postContent" placeholder="Tuliskan isi thread kamu... (Mendukung *bold* dan _italic_)" maxlength="5000" style="min-height: 200px;"></textarea>
+        <div class="char-count"><span id="contentCount">0</span>/5000</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('postModal')">Batal</button>
+      <button class="btn btn-primary" onclick="savePost()">💾 Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>✏️ Edit Profile</h2>
+      <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Bio / Deskripsi Diri</label>
+        <textarea class="form-textarea" id="editBio" placeholder="Ceritakan tentang dirimu, spesialisasi sulap, pengalaman, dll..." maxlength="300" style="min-height: 120px;"></textarea>
+        <div class="char-count"><span id="bioCount">0</span>/300</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('profileModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveProfile()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Note Modal (Grimoire) -->
+<div class="modal-overlay" id="noteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="noteModalTitle">✨ Catatan Baru</h2>
+      <button class="modal-close" onclick="closeModal('noteModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editNoteId">
       <div class="form-group">
         <label class="form-label">Judul</label>
         <input type="text" class="form-input" id="noteTitle" placeholder="Nama trik, teknik, atau topik...">
@@ -944,50 +1035,46 @@
       </div>
       <div class="form-group">
         <label class="form-label">Penemu / Pencipta</label>
-        <input type="text" class="form-input" id="noteInventor" placeholder="Nama pencipta trik/teknik...">
+        <input type="text" class="form-input" id="noteInventor" placeholder="Nama pencipta...">
       </div>
       <div class="form-group">
-        <label class="form-label">Konten / Deskripsi</label>
+        <label class="form-label">Konten</label>
         <textarea class="form-textarea" id="noteContent" placeholder="Tuliskan detail catatan konjuring..."></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Tags</label>
-        <input type="text" class="form-input" id="noteTags" placeholder="Pisahkan dengan koma: pass, card, classic">
-        <div class="form-hint">Gunakan koma untuk memisahkan beberapa tag</div>
+        <input type="text" class="form-input" id="noteTags" placeholder="Pisahkan dengan koma">
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('formModal')">Batal</button>
+      <button class="btn btn-secondary" onclick="closeModal('noteModal')">Batal</button>
       <button class="btn btn-primary" onclick="saveNote()">💾 Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- Detail Modal -->
-<div class="modal-overlay" id="detailModal">
+<!-- Note Detail Modal -->
+<div class="modal-overlay" id="noteDetailModal">
   <div class="modal">
     <div class="modal-header">
       <h2>📖 Detail Catatan</h2>
-      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      <button class="modal-close" onclick="closeModal('noteDetailModal')">✕</button>
     </div>
-    <div class="detail-content" id="detailContent"></div>
+    <div class="modal-body" id="noteDetailContent"></div>
     <div class="modal-footer">
-      <button class="btn btn-danger btn-sm" id="detailDeleteBtn" onclick="deleteFromDetail()">🗑️ Hapus</button>
-      <button class="btn btn-primary btn-sm" id="detailEditBtn" onclick="editFromDetail()">✏️ Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteNoteFromDetail()">🗑️ Hapus</button>
+      <button class="btn btn-primary btn-sm" onclick="editNoteFromDetail()">✏️ Edit</button>
     </div>
   </div>
 </div>
 
-<!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- Seed Button -->
-<button class="seed-btn" id="seedBtn" onclick="seedInitialData()">🌱 Seed Data Awal</button>
-
-<!-- Firebase & App Script -->
+<!-- FIREBASE & APP SCRIPT -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, writeBatch, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, onSnapshot, where, getDoc, setDoc, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDmLQP7Es2hwOC8ByeIOcr6vlFKUGGgsx0",
@@ -1000,137 +1087,739 @@
   };
 
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // Collections
+  const postsCollection = collection(db, "forumPosts");
   const notesCollection = collection(db, "magicNotes");
+  const usersCollection = collection(db, "users");
 
   // ====== STATE ======
+  let currentUser = null;
+  let currentUserData = null;
+  let allPosts = [];
   let allNotes = [];
-  let currentFilter = 'all';
-  let currentSearch = '';
-  let currentDetailId = null;
+  let currentForumFilter = 'all';
+  let currentNoteFilter = 'all';
+  let currentPostDetailId = null;
+  let currentNoteDetailId = null;
+  let unsubPosts = null;
+  let unsubNotes = null;
 
-  // ====== BACKGROUND PARTICLES ======
-  function createParticles() {
-    const bg = document.getElementById('bgEffects');
-    const colors = ['rgba(212,175,55,0.3)', 'rgba(139,92,246,0.3)', 'rgba(6,182,212,0.2)'];
-    for (let i = 0; i < 20; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'floating-particle';
-      const size = Math.random() * 4 + 2;
-      particle.style.width = size + 'px';
-      particle.style.height = size + 'px';
-      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
-      particle.style.animationDelay = (Math.random() * 10) + 's';
-      bg.appendChild(particle);
-    }
-  }
-  createParticles();
-
-  // ====== LOAD NOTES ======
-  async function loadNotes() {
+  // ====== AUTH ======
+  window.loginWithGoogle = async function() {
     try {
-      const q = query(notesCollection, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-      allNotes = [];
-      snapshot.forEach(docSnap => {
-        allNotes.push({ id: docSnap.id, ...docSnap.data() });
-      });
-      renderNotes();
-      updateStats();
-      document.getElementById('loadingOverlay').classList.add('hidden');
-      checkIfSeedNeeded();
+      const result = await signInWithPopup(auth, provider);
+      showToast('Selamat datang, ' + result.user.displayName + '!', 'success');
     } catch (err) {
-      console.error("Error loading notes:", err);
-      document.getElementById('loadingOverlay').classList.add('hidden');
-      showToast('Gagal memuat catatan. Cek koneksi.', 'error');
+      console.error(err);
+      showToast('Login gagal: ' + err.message, 'error');
+    }
+  };
+
+  window.logout = async function() {
+    if (!confirm('Yakin ingin logout?')) return;
+    await signOut(auth);
+    showToast('Berhasil logout', 'info');
+  };
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      // Get or create user doc
+      const userDocRef = doc(usersCollection, user.uid);
+      const userSnap = await getDoc(userDocRef);
+      if (userSnap.exists()) {
+        currentUserData = userSnap.data();
+      } else {
+        currentUserData = {
+          displayName: user.displayName || 'User',
+          email: user.email,
+          photoURL: user.photoURL || '',
+          bio: '',
+          joinedAt: serverTimestamp()
+        };
+        await setDoc(userDocRef, currentUserData);
+      }
+      updateUserUI();
+    } else {
+      currentUser = null;
+      currentUserData = null;
+      updateUserUI();
+    }
+    document.getElementById('loadingOverlay').classList.add('hidden');
+  });
+
+  function updateUserUI() {
+    const loginBtn = document.getElementById('loginBtn');
+    const userInfo = document.getElementById('userInfo');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const profileTab = document.getElementById('profileTab');
+    const createPostBtn = document.getElementById('createPostBtn');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+
+    if (currentUser) {
+      loginBtn.style.display = 'none';
+      userInfo.style.display = 'flex';
+      profileTab.style.display = 'flex';
+      createPostBtn.disabled = false;
+      addNoteBtn.disabled = false;
+
+      if (currentUserData?.photoURL) {
+        userAvatar.innerHTML = `<img src="${currentUserData.photoURL}" alt="">`;
+      } else {
+        userAvatar.textContent = (currentUserData?.displayName || 'U').charAt(0).toUpperCase();
+      }
+      userName.textContent = currentUserData?.displayName || 'User';
+
+      renderProfile();
+    } else {
+      loginBtn.style.display = 'flex';
+      userInfo.style.display = 'none';
+      profileTab.style.display = 'none';
+      createPostBtn.disabled = true;
+      addNoteBtn.disabled = true;
     }
   }
 
-  // ====== RENDER ======
-  function renderNotes() {
-    const grid = document.getElementById('notesGrid');
-    const emptyState = document.getElementById('emptyState');
-
-    let filtered = allNotes;
-
-    if (currentFilter !== 'all') {
-      filtered = filtered.filter(n => n.category === currentFilter);
+  // ====== VIEW SWITCHING ======
+  window.switchView = function(view, tabEl) {
+    if (view === 'profile' && !currentUser) {
+      showToast('Login dulu untuk melihat profile', 'error');
+      return;
     }
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(view + 'View').classList.add('active');
+    if (tabEl) tabEl.classList.add('active');
+    window.scrollTo(0, 0);
+  };
 
-    if (currentSearch) {
-      const s = currentSearch.toLowerCase();
-      filtered = filtered.filter(n => {
-        return (n.title || '').toLowerCase().includes(s) ||
-               (n.content || '').toLowerCase().includes(s) ||
-               (n.inventor || '').toLowerCase().includes(s) ||
-               (n.tags || []).some(t => t.toLowerCase().includes(s));
+  // ====== FORUM POSTS ======
+  function initPostsListener() {
+    if (unsubPosts) unsubPosts();
+    const q = query(postsCollection, orderBy("createdAt", "desc"), limit(100));
+    unsubPosts = onSnapshot(q, (snapshot) => {
+      allPosts = [];
+      snapshot.forEach(docSnap => {
+        allPosts.push({ id: docSnap.id, ...docSnap.data() });
       });
+      renderPosts();
+      updateForumCounts();
+      if (currentPostDetailId) renderPostDetail(currentPostDetailId);
+      renderProfile();
+    }, (err) => {
+      console.error(err);
+      showToast('Gagal memuat forum', 'error');
+    });
+  }
+
+  function updateForumCounts() {
+    document.getElementById('countAll').textContent = allPosts.length;
+    document.getElementById('countCard').textContent = allPosts.filter(p => p.category === 'Card Magic').length;
+    document.getElementById('countCoin').textContent = allPosts.filter(p => p.category === 'Coin Magic').length;
+    document.getElementById('countMental').textContent = allPosts.filter(p => p.category === 'Mentalism').length;
+  }
+
+  window.filterForum = function(cat, el) {
+    currentForumFilter = cat;
+    document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    renderPosts();
+  };
+
+  function renderPosts() {
+    const list = document.getElementById('postsList');
+    const empty = document.getElementById('forumEmpty');
+    const search = (document.getElementById('forumSearch').value || '').toLowerCase();
+
+    let filtered = allPosts;
+    if (currentForumFilter !== 'all') {
+      filtered = filtered.filter(p => p.category === currentForumFilter);
+    }
+    if (search) {
+      filtered = filtered.filter(p =>
+        (p.title || '').toLowerCase().includes(search) ||
+        (p.content || '').toLowerCase().includes(search) ||
+        (p.authorName || '').toLowerCase().includes(search)
+      );
     }
 
     if (filtered.length === 0) {
-      grid.innerHTML = '';
-      emptyState.style.display = 'block';
+      list.innerHTML = '';
+      empty.style.display = 'block';
       return;
     }
+    empty.style.display = 'none';
 
-    emptyState.style.display = 'none';
-
-    grid.innerHTML = filtered.map((note, i) => {
-      const catClass = getCatClass(note.category);
-      const dateStr = formatDate(note.createdAt);
-      const content = currentSearch ? highlightText(note.content || '', currentSearch) : escapeHtml(note.content || '');
-      const title = currentSearch ? highlightText(note.title || '', currentSearch) : escapeHtml(note.title || '');
+    list.innerHTML = filtered.map((post, i) => {
+      const badgeClass = post.category === 'Card Magic' ? 'badge-card' : post.category === 'Coin Magic' ? 'badge-coin' : 'badge-mentalism';
+      const avatarHtml = post.authorPhoto ? `<img src="${post.authorPhoto}" alt="">` : (post.authorName || 'U').charAt(0).toUpperCase();
+      const isOwner = currentUser && currentUser.uid === post.authorId;
+      const isLiked = currentUser && (post.likes || []).includes(currentUser.uid);
+      const likeCount = (post.likes || []).length;
+      const commentCount = post.commentCount || 0;
+      const viewCount = post.viewCount || 0;
 
       return `
-        <div class="note-card" style="animation-delay: ${i * 0.05}s" onclick="showDetail('${note.id}')">
-          <div class="note-card-header">
-            <span class="note-category ${catClass}">${getCatIcon(note.category)} ${note.category || 'Umum'}</span>
-            <div class="note-card-actions">
-              <button class="note-action-btn" onclick="event.stopPropagation(); openEditModal('${note.id}')" title="Edit">✏️</button>
-              <button class="note-action-btn delete" onclick="event.stopPropagation(); confirmDelete('${note.id}')" title="Hapus">🗑️</button>
+        <div class="post-card" style="animation-delay: ${i * 0.05}s" onclick="openPostDetail('${post.id}')">
+          <div class="post-header">
+            <div class="post-author">
+              <div class="post-author-avatar">${avatarHtml}</div>
+              <div class="post-author-info">
+                <div class="post-author-name">${escapeHtml(post.authorName || 'Anonymous')}</div>
+                <div class="post-date">${formatDate(post.createdAt)}</div>
+              </div>
             </div>
+            <span class="post-category-badge ${badgeClass}">${post.category || 'Umum'}</span>
           </div>
-          <div class="note-title">${title}</div>
-          ${note.inventor ? `<div class="note-inventor">👤 ${escapeHtml(note.inventor)}</div>` : ''}
-          <div class="note-content">${content}</div>
-          ${(note.tags && note.tags.length) ? `
-            <div class="note-tags">
-              ${note.tags.slice(0, 5).map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('')}
-              ${note.tags.length > 5 ? `<span class="note-tag">+${note.tags.length - 5}</span>` : ''}
+          <div class="post-title">${search ? highlightText(post.title || '', search) : escapeHtml(post.title || '')}</div>
+          <div class="post-preview">${search ? highlightText(post.content || '', search) : escapeHtml(post.content || '')}</div>
+          <div class="post-footer">
+            <div class="post-stats">
+              <div class="post-stat">❤️ ${likeCount}</div>
+              <div class="post-stat">💬 ${commentCount}</div>
+              <div class="post-stat">👁️ ${viewCount}</div>
             </div>
-          ` : ''}
-          <div class="note-meta">
-            <span class="note-date">${dateStr}</span>
+            ${isOwner ? `
+              <div class="post-actions">
+                <button class="action-btn" onclick="event.stopPropagation(); openEditPost('${post.id}')">✏️ Edit</button>
+                <button class="action-btn delete" onclick="event.stopPropagation(); deletePost('${post.id}')">🗑️</button>
+              </div>
+            ` : ''}
           </div>
         </div>
       `;
     }).join('');
   }
 
-  function updateStats() {
-    document.getElementById('statTotal').textContent = allNotes.length;
-    document.getElementById('statTeknik').textContent = allNotes.filter(n => n.category === 'Teknik').length;
-    document.getElementById('statTrik').textContent = allNotes.filter(n => n.category === 'Trik').length;
-    document.getElementById('statSejarah').textContent = allNotes.filter(n => n.category === 'Sejarah').length;
+  window.openCreatePost = function() {
+    if (!currentUser) { showToast('Login dulu!', 'error'); return; }
+    document.getElementById('postModalTitle').textContent = '✨ Posting Baru';
+    document.getElementById('editPostId').value = '';
+    document.getElementById('postCategory').value = 'Card Magic';
+    document.getElementById('postTitle').value = '';
+    document.getElementById('postContent').value = '';
+    updateCharCount('postTitle', 'titleCount', 120);
+    updateCharCount('postContent', 'contentCount', 5000);
+    document.getElementById('postModal').classList.add('active');
+  };
+
+  window.openEditPost = function(id) {
+    const post = allPosts.find(p => p.id === id);
+    if (!post || !currentUser || currentUser.uid !== post.authorId) return;
+    document.getElementById('postModalTitle').textContent = '✏️ Edit Post';
+    document.getElementById('editPostId').value = id;
+    document.getElementById('postCategory').value = post.category || 'Card Magic';
+    document.getElementById('postTitle').value = post.title || '';
+    document.getElementById('postContent').value = post.content || '';
+    updateCharCount('postTitle', 'titleCount', 120);
+    updateCharCount('postContent', 'contentCount', 5000);
+    document.getElementById('postModal').classList.add('active');
+  };
+
+  window.savePost = async function() {
+    const editId = document.getElementById('editPostId').value;
+    const category = document.getElementById('postCategory').value;
+    const title = document.getElementById('postTitle').value.trim();
+    const content = document.getElementById('postContent').value.trim();
+
+    if (!title) { showToast('Judul wajib diisi!', 'error'); return; }
+    if (!content) { showToast('Isi post wajib diisi!', 'error'); return; }
+    if (title.length > 120) { showToast('Judul maksimal 120 karakter', 'error'); return; }
+    if (content.length > 5000) { showToast('Isi maksimal 5000 karakter', 'error'); return; }
+
+    try {
+      if (editId) {
+        await updateDoc(doc(db, "forumPosts", editId), {
+          category, title, content, updatedAt: serverTimestamp()
+        });
+        showToast('Post berhasil diperbarui!', 'success');
+      } else {
+        await addDoc(postsCollection, {
+          category, title, content,
+          authorId: currentUser.uid,
+          authorName: currentUserData.displayName,
+          authorPhoto: currentUserData.photoURL || '',
+          likes: [],
+          commentCount: 0,
+          viewCount: 0,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        showToast('Post berhasil dipublish!', 'success');
+      }
+      closeModal('postModal');
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal: ' + err.message, 'error');
+    }
+  };
+
+  window.deletePost = async function(id) {
+    const post = allPosts.find(p => p.id === id);
+    if (!post || !currentUser || currentUser.uid !== post.authorId) return;
+    if (!confirm(`Hapus post "${post.title}"?\n\nSemua komentar juga akan terhapus.`)) return;
+    try {
+      // Delete comments first
+      const commentsSnap = await getDocs(collection(db, "forumPosts", id, "comments"));
+      const batch = [];
+      commentsSnap.forEach(d => batch.push(deleteDoc(d.ref)));
+      await Promise.all(batch);
+      await deleteDoc(doc(db, "forumPosts", id));
+      showToast('Post berhasil dihapus', 'success');
+    } catch (err) {
+      console.error(err);
+      showToast('Gagal menghapus: ' + err.message, 'error');
+    }
+  };
+
+  // ====== POST DETAIL ======
+  window.openPostDetail = async function(id) {
+    currentPostDetailId = id;
+    // Increment view count
+    try {
+      await updateDoc(doc(db, "forumPosts", id), {
+        viewCount: (allPosts.find(p => p.id === id)?.viewCount || 0) + 1
+      });
+    } catch (e) { /* ignore */ }
+    switchView('postDetail', null);
+    // Keep forum tab active visually? No, show detail view
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    renderPostDetail(id);
+  };
+
+  function renderPostDetail(id) {
+    const post = allPosts.find(p => p.id === id);
+    if (!post) return;
+    const container = document.getElementById('postDetailContent');
+    const badgeClass = post.category === 'Card Magic' ? 'badge-card' : post.category === 'Coin Magic' ? 'badge-coin' : 'badge-mentalism';
+    const avatarHtml = post.authorPhoto ? `<img src="${post.authorPhoto}" alt="">` : (post.authorName || 'U').charAt(0).toUpperCase();
+    const isOwner = currentUser && currentUser.uid === post.authorId;
+    const isLiked = currentUser && (post.likes || []).includes(currentUser.uid);
+    const likeCount = (post.likes || []).length;
+    const formattedContent = formatPostContent(post.content || '');
+
+    container.innerHTML = `
+      <div class="detail-post">
+        <div class="post-header">
+          <div class="post-author">
+            <div class="post-author-avatar">${avatarHtml}</div>
+            <div class="post-author-info">
+              <div class="post-author-name">${escapeHtml(post.authorName || 'Anonymous')}</div>
+              <div class="post-date">${formatDate(post.createdAt)}</div>
+            </div>
+          </div>
+          <span class="post-category-badge ${badgeClass}">${post.category || 'Umum'}</span>
+        </div>
+        <div class="detail-title">${escapeHtml(post.title || '')}</div>
+        <div class="detail-body">${formattedContent}</div>
+        <div class="detail-actions">
+          <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${id}')">
+            ${isLiked ? '❤️' : '🤍'} <span>${likeCount} Like</span>
+          </button>
+          <span class="post-stat" style="margin-left: auto;">👁️ ${post.viewCount || 0} views</span>
+          ${isOwner ? `
+            <button class="action-btn" onclick="openEditPost('${id}')">✏️ Edit</button>
+            <button class="action-btn delete" onclick="deletePost('${id}')">🗑️ Hapus</button>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="comments-section">
+        <div class="comments-title">💬 Komentar (${post.commentCount || 0})</div>
+        ${currentUser ? `
+          <div class="comment-form">
+            <textarea id="commentInput" placeholder="Tulis komentar..." maxlength="500"></textarea>
+            <button class="btn btn-primary btn-sm" onclick="postComment('${id}')">Kirim</button>
+          </div>
+        ` : `<p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem;">Login untuk berkomentar</p>`}
+        <div class="comments-list" id="commentsList">
+          <p style="color: var(--text-muted); text-align: center; padding: 1rem;">Memuat komentar...</p>
+        </div>
+      </div>
+    `;
+    loadComments(id);
   }
+
+  function formatPostContent(text) {
+    let html = escapeHtml(text);
+    // Bold: *text*
+    html = html.replace(/\*([^*]+)\*/g, '<strong>$1</strong>');
+    // Italic: _text_
+    html = html.replace(/_([^_]+)_/g, '<em>$1</em>');
+    return html;
+  }
+
+  window.toggleLike = async function(postId) {
+    if (!currentUser) { showToast('Login dulu!', 'error'); return; }
+    const post = allPosts.find(p => p.id === postId);
+    if (!post) return;
+    const likes = post.likes || [];
+    const idx = likes.indexOf(currentUser.uid);
+    if (idx >= 0) likes.splice(idx, 1);
+    else likes.push(currentUser.uid);
+    try {
+      await updateDoc(doc(db, "forumPosts", postId), { likes });
+    } catch (err) {
+      showToast('Gagal: ' + err.message, 'error');
+    }
+  };
+
+  // ====== COMMENTS ======
+  async function loadComments(postId) {
+    const list = document.getElementById('commentsList');
+    if (!list) return;
+    try {
+      const q = query(collection(db, "forumPosts", postId, "comments"), orderBy("createdAt", "asc"));
+      const snap = await getDocs(q);
+      const comments = [];
+      snap.forEach(d => comments.push({ id: d.id, ...d.data() }));
+
+      if (comments.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 1rem;">Belum ada komentar. Jadilah yang pertama!</p>';
+        return;
+      }
+
+      list.innerHTML = comments.map(c => {
+        const avatarHtml = c.authorPhoto ? `<img src="${c.authorPhoto}" alt="">` : (c.authorName || 'U').charAt(0).toUpperCase();
+        const isOwner = currentUser && currentUser.uid === c.authorId;
+        return `
+          <div class="comment-item">
+            <div class="comment-avatar">${avatarHtml}</div>
+            <div class="comment-content">
+              <div class="comment-header">
+                <span class="comment-author">${escapeHtml(c.authorName || 'Anonymous')}</span>
+                <span class="comment-date">${formatDate(c.createdAt)}</span>
+              </div>
+              <div class="comment-text">${escapeHtml(c.content || '')}</div>
+              ${isOwner ? `<button class="comment-delete" onclick="deleteComment('${postId}', '${c.id}')">🗑️ Hapus</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error(err);
+      list.innerHTML = '<p style="color: var(--accent-rose); text-align: center;">Gagal memuat komentar</p>';
+    }
+  }
+
+  window.postComment = async function(postId) {
+    if (!currentUser) { showToast('Login dulu!', 'error'); return; }
+    const input = document.getElementById('commentInput');
+    const content = input.value.trim();
+    if (!content) { showToast('Komentar tidak boleh kosong', 'error'); return; }
+    if (content.length > 500) { showToast('Maksimal 500 karakter', 'error'); return; }
+
+    try {
+      await addDoc(collection(db, "forumPosts", postId, "comments"), {
+        content,
+        authorId: currentUser.uid,
+        authorName: currentUserData.displayName,
+        authorPhoto: currentUserData.photoURL || '',
+        createdAt: serverTimestamp()
+      });
+      // Update comment count
+      const post = allPosts.find(p => p.id === postId);
+      await updateDoc(doc(db, "forumPosts", postId), {
+        commentCount: (post?.commentCount || 0) + 1
+      });
+      input.value = '';
+      showToast('Komentar terkirim!', 'success');
+      loadComments(postId);
+    } catch (err) {
+      showToast('Gagal: ' + err.message, 'error');
+    }
+  };
+
+  window.deleteComment = async function(postId, commentId) {
+    if (!confirm('Hapus komentar ini?')) return;
+    try {
+      await deleteDoc(doc(db, "forumPosts", postId, "comments", commentId));
+      const post = allPosts.find(p => p.id === postId);
+      await updateDoc(doc(db, "forumPosts", postId), {
+        commentCount: Math.max(0, (post?.commentCount || 1) - 1)
+      });
+      showToast('Komentar dihapus', 'success');
+      loadComments(postId);
+    } catch (err) {
+      showToast('Gagal: ' + err.message, 'error');
+    }
+  };
+
+  // ====== PROFILE ======
+  function renderProfile() {
+    if (!currentUser || !currentUserData) return;
+    const avatar = document.getElementById('profileAvatar');
+    if (currentUserData.photoURL) {
+      avatar.innerHTML = `<img src="${currentUserData.photoURL}" alt="">`;
+    } else {
+      avatar.textContent = (currentUserData.displayName || 'U').charAt(0).toUpperCase();
+    }
+    document.getElementById('profileName').textContent = currentUserData.displayName || 'User';
+    document.getElementById('profileEmail').textContent = currentUserData.email || '';
+    const bioEl = document.getElementById('profileBio');
+    if (currentUserData.bio) {
+      bioEl.textContent = currentUserData.bio;
+      bioEl.classList.remove('empty');
+    } else {
+      bioEl.textContent = 'Belum ada bio. Klik "Edit Profile" untuk menambahkan.';
+      bioEl.classList.add('empty');
+    }
+
+    // Stats
+    const myPosts = allPosts.filter(p => p.authorId === currentUser.uid);
+    document.getElementById('statPosts').textContent = myPosts.length;
+    let totalComments = 0, totalLikes = 0;
+    // Count comments & likes (approximate - only from loaded posts)
+    allPosts.forEach(p => {
+      if (p.authorId === currentUser.uid) totalLikes += (p.likes || []).length;
+    });
+    document.getElementById('statLikes').textContent = totalLikes;
+    document.getElementById('statComments').textContent = totalComments;
+
+    // My posts
+    const myList = document.getElementById('myPostsList');
+    const myEmpty = document.getElementById('myPostsEmpty');
+    if (myPosts.length === 0) {
+      myList.innerHTML = '';
+      myEmpty.style.display = 'block';
+    } else {
+      myEmpty.style.display = 'none';
+      myList.innerHTML = myPosts.map((post, i) => {
+        const badgeClass = post.category === 'Card Magic' ? 'badge-card' : post.category === 'Coin Magic' ? 'badge-coin' : 'badge-mentalism';
+        return `
+          <div class="post-card" style="animation-delay: ${i * 0.05}s" onclick="openPostDetail('${post.id}')">
+            <div class="post-header">
+              <div class="post-author">
+                <div class="post-author-info">
+                  <div class="post-date">${formatDate(post.createdAt)}</div>
+                </div>
+              </div>
+              <span class="post-category-badge ${badgeClass}">${post.category}</span>
+            </div>
+            <div class="post-title">${escapeHtml(post.title || '')}</div>
+            <div class="post-preview">${escapeHtml(post.content || '')}</div>
+            <div class="post-footer">
+              <div class="post-stats">
+                <div class="post-stat">❤️ ${(post.likes || []).length}</div>
+                <div class="post-stat">💬 ${post.commentCount || 0}</div>
+              </div>
+              <div class="post-actions">
+                <button class="action-btn" onclick="event.stopPropagation(); openEditPost('${post.id}')">✏️ Edit</button>
+                <button class="action-btn delete" onclick="event.stopPropagation(); deletePost('${post.id}')">🗑️</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  window.openEditProfile = function() {
+    document.getElementById('editBio').value = currentUserData?.bio || '';
+    updateCharCount('editBio', 'bioCount', 300);
+    document.getElementById('profileModal').classList.add('active');
+  };
+
+  window.saveProfile = async function() {
+    const bio = document.getElementById('editBio').value.trim();
+    if (bio.length > 300) { showToast('Bio maksimal 300 karakter', 'error'); return; }
+    try {
+      await updateDoc(doc(usersCollection, currentUser.uid), { bio });
+      currentUserData.bio = bio;
+      showToast('Profile berhasil diperbarui!', 'success');
+      closeModal('profileModal');
+      renderProfile();
+      updateUserUI();
+    } catch (err) {
+      showToast('Gagal: ' + err.message, 'error');
+    }
+  };
+
+  // ====== GRIMOIRE NOTES ======
+  function initNotesListener() {
+    if (unsubNotes) unsubNotes();
+    const q = query(notesCollection, orderBy("createdAt", "desc"));
+    unsubNotes = onSnapshot(q, (snapshot) => {
+      allNotes = [];
+      snapshot.forEach(docSnap => {
+        allNotes.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      renderNotes();
+    }, (err) => {
+      console.error(err);
+    });
+  }
+
+  window.filterNotes = function(cat, el) {
+    currentNoteFilter = cat;
+    document.querySelectorAll('[data-note-cat]').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    renderNotes();
+  };
+
+  function renderNotes() {
+    const grid = document.getElementById('notesGrid');
+    const empty = document.getElementById('notesEmpty');
+    const search = (document.getElementById('noteSearch').value || '').toLowerCase();
+
+    let filtered = allNotes;
+    if (currentNoteFilter !== 'all') {
+      filtered = filtered.filter(n => n.category === currentNoteFilter);
+    }
+    if (search) {
+      filtered = filtered.filter(n =>
+        (n.title || '').toLowerCase().includes(search) ||
+        (n.content || '').toLowerCase().includes(search) ||
+        (n.inventor || '').toLowerCase().includes(search) ||
+        (n.tags || []).some(t => t.toLowerCase().includes(search))
+      );
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    const catClassMap = { 'Teknik': 'cat-teknik', 'Trik': 'cat-trik', 'Sejarah': 'cat-sejarah', 'Sumber': 'cat-sumber', 'Penemu': 'cat-penemu' };
+    const catIconMap = { 'Teknik': '🎯', 'Trik': '🎪', 'Sejarah': '📜', 'Sumber': '📚', 'Penemu': '👤' };
+
+    grid.innerHTML = filtered.map((note, i) => {
+      const catClass = catClassMap[note.category] || 'cat-trik';
+      const catIcon = catIconMap[note.category] || '📝';
+      const content = search ? highlightText(note.content || '', search) : escapeHtml(note.content || '');
+      const title = search ? highlightText(note.title || '', search) : escapeHtml(note.title || '');
+
+      return `
+        <div class="note-card" style="animation-delay: ${i * 0.05}s" onclick="showNoteDetail('${note.id}')">
+          <span class="note-category ${catClass}">${catIcon} ${note.category || 'Umum'}</span>
+          <div class="note-title">${title}</div>
+          ${note.inventor ? `<div class="note-inventor">👤 ${escapeHtml(note.inventor)}</div>` : ''}
+          <div class="note-content">${content}</div>
+          ${(note.tags && note.tags.length) ? `
+            <div class="note-tags">
+              ${note.tags.slice(0, 5).map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.openAddNote = function() {
+    if (!currentUser) { showToast('Login dulu!', 'error'); return; }
+    document.getElementById('noteModalTitle').textContent = '✨ Catatan Baru';
+    document.getElementById('editNoteId').value = '';
+    document.getElementById('noteTitle').value = '';
+    document.getElementById('noteCategory').value = 'Teknik';
+    document.getElementById('noteInventor').value = '';
+    document.getElementById('noteContent').value = '';
+    document.getElementById('noteTags').value = '';
+    document.getElementById('noteModal').classList.add('active');
+  };
+
+  window.showNoteDetail = function(id) {
+    const note = allNotes.find(n => n.id === id);
+    if (!note) return;
+    currentNoteDetailId = id;
+    const catClassMap = { 'Teknik': 'cat-teknik', 'Trik': 'cat-trik', 'Sejarah': 'cat-sejarah', 'Sumber': 'cat-sumber', 'Penemu': 'cat-penemu' };
+    const catIconMap = { 'Teknik': '🎯', 'Trik': '🎪', 'Sejarah': '📜', 'Sumber': '📚', 'Penemu': '👤' };
+    const catClass = catClassMap[note.category] || 'cat-trik';
+    const catIcon = catIconMap[note.category] || '📝';
+
+    document.getElementById('noteDetailContent').innerHTML = `
+      <span class="note-category ${catClass}" style="margin-bottom: 1rem; display: inline-flex;">${catIcon} ${note.category || 'Umum'}</span>
+      <h2 style="font-family: 'Cinzel', serif; font-size: 1.5rem; margin: 0.75rem 0; color: var(--text-primary);">${escapeHtml(note.title || '')}</h2>
+      ${note.inventor ? `<div style="color: var(--accent-gold); margin-bottom: 1rem;">👤 ${escapeHtml(note.inventor)}</div>` : ''}
+      <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; white-space: pre-wrap; margin-bottom: 1rem;">${escapeHtml(note.content || '')}</div>
+      ${(note.tags && note.tags.length) ? `
+        <div class="note-tags">
+          ${note.tags.map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('')}
+        </div>
+      ` : ''}
+    `;
+    document.getElementById('noteDetailModal').classList.add('active');
+  };
+
+  window.editNoteFromDetail = function() {
+    const note = allNotes.find(n => n.id === currentNoteDetailId);
+    if (!note) return;
+    closeModal('noteDetailModal');
+    document.getElementById('noteModalTitle').textContent = '✏️ Edit Catatan';
+    document.getElementById('editNoteId').value = currentNoteDetailId;
+    document.getElementById('noteTitle').value = note.title || '';
+    document.getElementById('noteCategory').value = note.category || 'Teknik';
+    document.getElementById('noteInventor').value = note.inventor || '';
+    document.getElementById('noteContent').value = note.content || '';
+    document.getElementById('noteTags').value = (note.tags || []).join(', ');
+    document.getElementById('noteModal').classList.add('active');
+  };
+
+  window.deleteNoteFromDetail = async function() {
+    const note = allNotes.find(n => n.id === currentNoteDetailId);
+    if (!note) return;
+    if (!confirm(`Hapus catatan "${note.title}"?`)) return;
+    try {
+      await deleteDoc(doc(db, "magicNotes", currentNoteDetailId));
+      showToast('Catatan dihapus', 'success');
+      closeModal('noteDetailModal');
+    } catch (err) {
+      showToast('Gagal: ' + err.message, 'error');
+    }
+  };
+
+  window.saveNote = async function() {
+    const editId = document.getElementById('editNoteId').value;
+    const title = document.getElementById('noteTitle').value.trim();
+    const category = document.getElementById('noteCategory').value;
+    const inventor = document.getElementById('noteInventor').value.trim();
+    const content = document.getElementById('noteContent').value.trim();
+    const tagsRaw = document.getElementById('noteTags').value.trim();
+    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(t => t) : [];
+
+    if (!title) { showToast('Judul wajib diisi!', 'error'); return; }
+    if (!content) { showToast('Konten wajib diisi!', 'error'); return; }
+
+    try {
+      if (editId) {
+        await updateDoc(doc(db, "magicNotes", editId), {
+          title, category, inventor, content, tags, updatedAt: serverTimestamp()
+        });
+        showToast('Catatan diperbarui!', 'success');
+      } else {
+        await addDoc(notesCollection, {
+          title, category, inventor, content, tags,
+          createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+        });
+        showToast('Catatan ditambahkan!', 'success');
+      }
+      closeModal('noteModal');
+    } catch (err) {
+      showToast('Gagal: ' + err.message, 'error');
+    }
+  };
 
   // ====== HELPERS ======
-  function getCatClass(cat) {
-    const map = { 'Teknik': 'cat-teknik', 'Trik': 'cat-trik', 'Sejarah': 'cat-sejarah', 'Sumber': 'cat-sumber', 'Penemu': 'cat-penemu' };
-    return map[cat] || 'cat-trik';
-  }
-
-  function getCatIcon(cat) {
-    const map = { 'Teknik': '🎯', 'Trik': '🎪', 'Sejarah': '📜', 'Sumber': '📚', 'Penemu': '👤' };
-    return map[cat] || '📝';
-  }
+  window.closeModal = function(id) {
+    document.getElementById(id).classList.remove('active');
+  };
 
   function formatDate(ts) {
     if (!ts) return 'Baru saja';
     try {
       const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const now = new Date();
+      const diff = (now - d) / 1000;
+      if (diff < 60) return 'Baru saja';
+      if (diff < 3600) return Math.floor(diff / 60) + ' menit lalu';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' jam lalu';
+      if (diff < 604800) return Math.floor(diff / 86400) + ' hari lalu';
       return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
     } catch { return 'Baru saja'; }
   }
@@ -1148,133 +1837,17 @@
     return escaped.replace(regex, '<mark>$1</mark>');
   }
 
-  // ====== MODAL FUNCTIONS ======
-  window.openAddModal = function() {
-    document.getElementById('modalTitle').textContent = '✨ Catatan Baru';
-    document.getElementById('editId').value = '';
-    document.getElementById('noteTitle').value = '';
-    document.getElementById('noteCategory').value = 'Teknik';
-    document.getElementById('noteInventor').value = '';
-    document.getElementById('noteContent').value = '';
-    document.getElementById('noteTags').value = '';
-    document.getElementById('formModal').classList.add('active');
-  };
+  function updateCharCount(inputId, countId, max) {
+    const input = document.getElementById(inputId);
+    const counter = document.getElementById(countId);
+    const len = input.value.length;
+    counter.textContent = len;
+    const parent = counter.parentElement;
+    parent.classList.remove('warn', 'over');
+    if (len > max) parent.classList.add('over');
+    else if (len > max * 0.85) parent.classList.add('warn');
+  }
 
-  window.openEditModal = function(id) {
-    const note = allNotes.find(n => n.id === id);
-    if (!note) return;
-    document.getElementById('modalTitle').textContent = '✏️ Edit Catatan';
-    document.getElementById('editId').value = id;
-    document.getElementById('noteTitle').value = note.title || '';
-    document.getElementById('noteCategory').value = note.category || 'Teknik';
-    document.getElementById('noteInventor').value = note.inventor || '';
-    document.getElementById('noteContent').value = note.content || '';
-    document.getElementById('noteTags').value = (note.tags || []).join(', ');
-    document.getElementById('formModal').classList.add('active');
-  };
-
-  window.closeModal = function(id) {
-    document.getElementById(id).classList.remove('active');
-  };
-
-  window.showDetail = function(id) {
-    const note = allNotes.find(n => n.id === id);
-    if (!note) return;
-    currentDetailId = id;
-    const catClass = getCatClass(note.category);
-    const content = currentSearch ? highlightText(note.content || '', currentSearch) : escapeHtml(note.content || '');
-
-    document.getElementById('detailContent').innerHTML = `
-      <span class="detail-category ${catClass}">${getCatIcon(note.category)} ${note.category || 'Umum'}</span>
-      <div class="detail-title">${currentSearch ? highlightText(note.title || '', currentSearch) : escapeHtml(note.title || '')}</div>
-      ${note.inventor ? `<div class="detail-inventor">👤 ${escapeHtml(note.inventor)}</div>` : ''}
-      <div class="detail-body">${content}</div>
-      ${(note.tags && note.tags.length) ? `
-        <div class="detail-tags">
-          ${note.tags.map(t => `<span class="note-tag">#${escapeHtml(t)}</span>`).join('')}
-        </div>
-      ` : ''}
-      <div class="detail-meta">
-        <span>📅 Dibuat: ${formatDate(note.createdAt)}</span>
-        ${note.updatedAt ? `<span>🔄 Diperbarui: ${formatDate(note.updatedAt)}</span>` : ''}
-      </div>
-    `;
-    document.getElementById('detailModal').classList.add('active');
-  };
-
-  window.editFromDetail = function() {
-    closeModal('detailModal');
-    if (currentDetailId) openEditModal(currentDetailId);
-  };
-
-  window.deleteFromDetail = function() {
-    if (currentDetailId) {
-      closeModal('detailModal');
-      confirmDelete(currentDetailId);
-    }
-  };
-
-  // ====== SAVE NOTE ======
-  window.saveNote = async function() {
-    const editId = document.getElementById('editId').value;
-    const title = document.getElementById('noteTitle').value.trim();
-    const category = document.getElementById('noteCategory').value;
-    const inventor = document.getElementById('noteInventor').value.trim();
-    const content = document.getElementById('noteContent').value.trim();
-    const tagsRaw = document.getElementById('noteTags').value.trim();
-    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(t => t) : [];
-
-    if (!title) { showToast('Judul wajib diisi!', 'error'); return; }
-    if (!content) { showToast('Konten wajib diisi!', 'error'); return; }
-
-    const data = { title, category, inventor, content, tags, updatedAt: serverTimestamp() };
-
-    try {
-      if (editId) {
-        await updateDoc(doc(db, "magicNotes", editId), data);
-        showToast('Catatan berhasil diperbarui!', 'success');
-      } else {
-        data.createdAt = serverTimestamp();
-        await addDoc(notesCollection, data);
-        showToast('Catatan baru berhasil ditambahkan!', 'success');
-      }
-      closeModal('formModal');
-      await loadNotes();
-    } catch (err) {
-      console.error(err);
-      showToast('Gagal menyimpan catatan.', 'error');
-    }
-  };
-
-  // ====== DELETE ======
-  window.confirmDelete = async function(id) {
-    const note = allNotes.find(n => n.id === id);
-    if (!note) return;
-    if (!confirm(`Hapus catatan "${note.title}"?`)) return;
-    try {
-      await deleteDoc(doc(db, "magicNotes", id));
-      showToast('Catatan berhasil dihapus.', 'success');
-      await loadNotes();
-    } catch (err) {
-      console.error(err);
-      showToast('Gagal menghapus catatan.', 'error');
-    }
-  };
-
-  // ====== FILTER & SEARCH ======
-  window.filterCategory = function(cat, el) {
-    currentFilter = cat;
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    renderNotes();
-  };
-
-  document.getElementById('searchInput').addEventListener('input', function(e) {
-    currentSearch = e.target.value.trim();
-    renderNotes();
-  });
-
-  // ====== TOAST ======
   window.showToast = function(msg, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -1290,117 +1863,26 @@
     }, 3000);
   };
 
-  // ====== SEED DATA ======
-  const initialData = [
-    { title: "Srechko Howard Pop-Out", content: "Pop out dari tengah menggunakan telunjuk dan kelingking untuk membuat lengkungan.", category: "Teknik", tags: ["pop-out", "finger manipulation"], inventor: "Srechko Howard" },
-    { title: "All Alike Display / Diminishing Lift Display", content: "Istilah lama yang merujuk pada efek 'semua kartu terlihat sama'. Ed Marlo awal, selanjutnya Larry Jennings yang mempopulerkannya.", category: "Teknik", tags: ["display", "lift", "diminishing"], inventor: "Ed Marlo, Larry Jennings" },
-    { title: "Slop Shuffle Triumph", content: "Trik aslinya adalah SL. Reverse Card by Sid Lorraine.", category: "Trik", tags: ["triumph", "shuffle", "reverse"], inventor: "Sid Lorraine" },
-    { title: "Stuart Gordon Double Lift", content: "Variasi double lift oleh Stuart Gordon.", category: "Teknik", tags: ["double lift", "sleight"], inventor: "Stuart Gordon" },
-    { title: "Las Vegas Leaper", content: "Efek kartu melompat oleh Paul Harris.", category: "Trik", tags: ["leap", "card", "visual"], inventor: "Paul Harris" },
-    { title: "P.A.T.E.O Force", content: "Pick Any Two Eliminate One by Roy Baker in Banox Baker.", category: "Teknik", tags: ["force", "psychological"], inventor: "Roy Baker" },
-    { title: "A.C.A.A.N - Any Card at Any Number", content: "Trik legendaris di mana penonton memilih kartu apa saja dan nomor berapa saja, lalu kartu tersebut ditemukan pada posisi yang dipilih.", category: "Trik", tags: ["acan", "classic"], inventor: "Various" },
-    { title: "The Glide", content: "Jog bottom card for count, hold one card. Teknik kontrol kartu bawah.", category: "Teknik", tags: ["glide", "bottom card", "control"], inventor: "Unknown" },
-    { title: "Rub a Dub Vanish", content: "Teknik menghilangkan objek dengan gerakan menggosok.", category: "Teknik", tags: ["vanish", "rub", "close-up"], inventor: "Unknown" },
-    { title: "Bow to Stern Card Control", content: "Kontrol kartu oleh Ernest Earick.", category: "Teknik", tags: ["control", "card"], inventor: "Ernest Earick" },
-    { title: "Real Dribble Toss", content: "Teknik oleh Steve Bedwell.", category: "Teknik", tags: ["dribble", "toss"], inventor: "Steve Bedwell" },
-    { title: "Swing Set Control", content: "Kontrol kartu oleh Terry Gerald.", category: "Teknik", tags: ["swing", "control"], inventor: "Terry Gerald" },
-    { title: "Hammond Count", content: "Teknik menghitung kartu secara palsu.", category: "Teknik", tags: ["count", "false count"], inventor: "Hammond" },
-    { title: "Shuffle Bored", content: "Trik klasik oleh Simon Aronson.", category: "Trik", tags: ["shuffle", "stack", "aronson"], inventor: "Simon Aronson" },
-    { title: "Cascade Control", content: "Kontrol kartu oleh Charlie Miller.", category: "Teknik", tags: ["cascade", "control"], inventor: "Charlie Miller" },
-    { title: "Roll Over Count", content: "Menggunakan 5 kartu sebagai 4. Teknik hitungan palsu.", category: "Teknik", tags: ["count", "false", "5 as 4"], inventor: "Unknown" },
-    { title: "3 Card Monte (This and That)", content: "Trik klasik 3 Card Monte.", category: "Trik", tags: ["monte", "3 card", "gambling"], inventor: "Traditional" },
-    { title: "Biddle Move / Biddle Grip", content: "Menggunakan Biddle grip atau sebelumnya bernama End Grip. Digunakan dalam Biddle Card Trick, Braue Addition by Fred Braue, Secret Subtraction by JK Hartman.", category: "Teknik", tags: ["biddle", "grip", "addition"], inventor: "Elmer Biddle" },
-    { title: "Out of Sight Out of Mind", content: "Trik oleh Dai Vernon.", category: "Trik", tags: ["vernon", "mental", "classic"], inventor: "Dai Vernon" },
-    { title: "Svengali Deck", content: "Dek khusus yang memungkinkan efek kartu pilihan muncul di posisi manapun.", category: "Trik", tags: ["gimmick deck", "svengali"], inventor: "Burling Hull" },
-    { title: "Crazy Handcuff", content: "Efek karet tembus. Diciptakan oleh Artur Setterington.", category: "Trik", tags: ["rubber band", "handcuff"], inventor: "Artur Setterington" },
-    { title: "John Benzias Spin Out (1967)", content: "Efek karet tembus, tahun 1967.", category: "Trik", tags: ["rubber band", "spin", "1967"], inventor: "John Benzias" },
-    { title: "Mahatma Pass (1901)", content: "Card Control dari tahun 1901, diterbitkan di Mahatma Vol. 5 hal. 495.", category: "Teknik", tags: ["pass", "classic", "1901"], inventor: "Unknown" },
-    { title: "Red Hot Mama / Chicago Opener (1950)", content: "Trik kartu klasik tahun 1950 oleh Al Leech.", category: "Trik", tags: ["classic", "1950", "color change"], inventor: "Al Leech" },
-    { title: "Out of This World (1942)", content: "Trik legendaris oleh Paul Curry tahun 1942. Penonton memisahkan kartu merah dan hitam tanpa pesulap menyentuhnya.", category: "Trik", tags: ["curry", "1942", "classic"], inventor: "Paul Curry" },
-    { title: "Brainwave Deck", content: "Dek klasik oleh Dai Vernon. Satu kartu tersisa berbeda dari semua kartu lainnya.", category: "Trik", tags: ["gimmick deck", "vernon"], inventor: "Dai Vernon" },
-    { title: "Bluff Pass (1928)", content: "Teknik pass oleh Frederick Montague tahun 1928.", category: "Teknik", tags: ["pass", "1928"], inventor: "Frederick Montague" },
-    { title: "Lazy Man's Card Trick (1954)", content: "Trik oleh Lorayne / Prof. Jack Miller tahun 1954.", category: "Trik", tags: ["lazy", "1954", "lorayne"], inventor: "Prof. Jack Miller" },
-    { title: "The Altman Maneuver", content: "Teknik oleh Jeff Altman dari AOA.", category: "Teknik", tags: ["altman", "maneuver"], inventor: "Jeff Altman" },
-    { title: "False Hindu Shuffle / Calcutta Shuffle", content: "Oleh John Cornelius.", category: "Teknik", tags: ["hindu shuffle", "false"], inventor: "John Cornelius" },
-    { title: "Optical Shuffle", content: "Oleh John Hilliard.", category: "Teknik", tags: ["optical", "shuffle"], inventor: "John Hilliard" },
-    { title: "Nolap Switch (1982)", content: "Oleh Derek Dingle tahun 1982.", category: "Teknik", tags: ["switch", "dingle", "1982"], inventor: "Derek Dingle" },
-    { title: "Olram Subtlety Count", content: "Digunakan dalam Brainwave effect.", category: "Teknik", tags: ["count", "subtlety", "brainwave"], inventor: "Unknown (Olram)" },
-    { title: "Devil's Elevator (1971)", content: "Inspired by Dai Vernon & Bruce Cervon. The Devil's Elevator (Bruce Cervon, 1971).", category: "Teknik", tags: ["elevator", "cervon", "1971"], inventor: "Bruce Cervon" },
-    { title: "Himber Coin Vanish (Pinky Steal)", content: "Teknik menghilangkan koin menggunakan kelingking.", category: "Teknik", tags: ["coin", "vanish", "pinky"], inventor: "Himber" },
-    { title: "J.K. Hartman's Popover Move (1972)", content: "Published first in 'Packet Magic' (1972) Page 2. Modern take: Aaron Fisher's One Hand Popover in 'The Paper Engine' (2002) Page 29.", category: "Teknik", tags: ["pop-over", "packet", "paper engine"], inventor: "J.K. Hartman, Aaron Fisher" },
-    { title: "Entanglement - Pooky at a Distance", content: "Oleh Albert Einstein (nama sandi pesulap).", category: "Trik", tags: ["entanglement", "distance"], inventor: "Albert Einstein (stage name)" },
-    { title: "Classic Palm", content: "Teknik dasar memegang kartu di telapak tangan.", category: "Teknik", tags: ["palm", "classic", "fundamental"], inventor: "Traditional" },
-    { title: "Tenkai Palm", content: "Variasi teknik palm oleh Tenkai.", category: "Teknik", tags: ["palm", "tenkai"], inventor: "Tenkai" },
-    { title: "Diagonal Palm Shift (DPS)", content: "Teknik memindahkan kartu dari satu tangan ke tangan lain secara diagonal.", category: "Teknik", tags: ["palm", "shift", "diagonal"], inventor: "Unknown" },
-    { title: "Gibecière", content: "Kantong besar yang digunakan Pesulap Jalanan untuk membantu menyimpan muatan benda permainan Cups And Ball.", category: "Sejarah", tags: ["street magic", "cups and ball"], inventor: "Traditional" },
-    { title: "Harbin Pack Away Table", content: "Folding Table performance attribute oleh Harbin.", category: "Sejarah", tags: ["table", "folding", "harbin", "prop"], inventor: "Harbin" },
-    { title: "Tittle Bout by Martin Nash", content: "Magician vs Gambler theme.", category: "Trik", tags: ["nash", "gambler"], inventor: "Martin Nash" },
-    { title: "Klondike Shuffle", content: "Slide kartu atas dan bawah.", category: "Teknik", tags: ["shuffle", "klondike", "slide"], inventor: "Unknown" },
-    { title: "Charles Sanders Peirce & Kartu (1860)", content: "Filsuf pertama yang tertarik pada sulap kartu adalah ahli logika Amerika dan bapak pragmatisme, Charles Sanders Peirce. Pada 1860 ia meracik efek kartu berdasarkan 'aritmetika siklik' dengan judul 'First Curiosity' dan 'Second Curiosity'. First Curiosity didasarkan pada teorema Fermat, butuh 13 halaman cara main dan 52 halaman penjelasan.", category: "Sejarah", tags: ["peirce", "mathematics", "1860", "fermat"], inventor: "Charles Sanders Peirce" },
-    { title: "W.W. Rouse Ball - Mathematical Recreations (1892)", content: "16 kartu diletakkan membentuk persegi 4x4. Penonton memilih kartu dan memberi tahu kolom vertikalnya. Kartu dikumpulkan dan dibagikan horizontal. Dari perpotongan kolom dan baris, pesulap menunjuk kartu pilihan. Keberhasilan bergantung pada ketidakmampuan penonton mengikuti prosedurnya.", category: "Sejarah", tags: ["mathematics", "1892", "rouse ball", "grid"], inventor: "W.W. Rouse Ball" },
-    { title: "Perfect Production", content: "Referensi dalam literatur sulap kartu klasik.", category: "Sumber", tags: ["production", "classic"], inventor: "Walter Gibson" },
-    { title: "Gene Finnel Book - Free Cut Principle", content: "Buku Gene Finnel yang membahas Free Cut Principle. Publish Spell Any Card from John P Hamilton.", category: "Sumber", tags: ["free cut", "finnel", "hamilton"], inventor: "Gene Finnel, John P Hamilton" },
-    { title: "8 Brainwave Card Trick - Nick Trost (1974)", content: "Variasi trik Brainwave oleh Nick Trost tahun 1974.", category: "Trik", tags: ["brainwave", "trost", "1974"], inventor: "Nick Trost" },
-    { title: "Mechanic Grip", content: "Pegangan dasar kartu yang digunakan dalam banyak teknik sleight of hand. Posisi jari yang benar untuk kontrol optimal.", category: "Teknik", tags: ["grip", "fundamental", "mechanic"], inventor: "Traditional" },
-    { title: "Australian Shuffle", content: "Teknik shuffle khusus yang berasal dari tradisi kartu Australia.", category: "Teknik", tags: ["shuffle", "australian"], inventor: "Traditional" },
-    { title: "Clumsy False Shuffle", content: "Teknik false shuffle yang terlihat ceroboh namun sebenarnya mengontrol urutan kartu.", category: "Teknik", tags: ["false shuffle", "clumsy"], inventor: "Unknown" },
-    { title: "Reversal Card Trick", content: "Efek klasik di mana kartu yang dipilih berubah posisi menghadap terbalik di tengah dek.", category: "Trik", tags: ["reversal", "classic"], inventor: "Traditional" },
-    { title: "Peeking", content: "Teknik mengintip kartu secara rahasia untuk mengetahui informasi tertentu.", category: "Teknik", tags: ["peek", "secret look"], inventor: "Traditional" },
-    { title: "Gamblers Chop Palm", content: "Variasi palm technique yang digunakan dalam konteks gambling deception.", category: "Teknik", tags: ["palm", "gambler", "chop"], inventor: "Traditional" },
-    { title: "Longtudinal Palm", content: "Teknik palm di mana kartu dipegang secara longitudinal di tangan.", category: "Teknik", tags: ["palm", "longitudinal"], inventor: "Unknown" },
-    { title: "Letheral Palm", content: "Variasi teknik palm yang halus dan sulit terdeteksi.", category: "Teknik", tags: ["palm", "lethal"], inventor: "Unknown" }
-  ];
+  // ====== EVENT LISTENERS ======
+  document.getElementById('postTitle').addEventListener('input', () => updateCharCount('postTitle', 'titleCount', 120));
+  document.getElementById('postContent').addEventListener('input', () => updateCharCount('postContent', 'contentCount', 5000));
+  document.getElementById('editBio').addEventListener('input', () => updateCharCount('editBio', 'bioCount', 300));
 
-  window.seedInitialData = async function() {
-    if (!confirm(`Akan menambahkan ${initialData.length} catatan awal ke Firestore. Lanjutkan?`)) return;
-    try {
-      const batch = writeBatch(db);
-      initialData.forEach(data => {
-        const docRef = doc(notesCollection);
-        batch.set(docRef, { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
-      });
-      await batch.commit();
-      showToast(`${initialData.length} catatan berhasil ditambahkan!`, 'success');
-      document.getElementById('seedBtn').classList.add('hidden');
-      await loadNotes();
-    } catch (err) {
-      console.error(err);
-      showToast('Gagal seed data: ' + err.message, 'error');
-    }
-  };
-
-  function checkIfSeedNeeded() {
-    if (allNotes.length === 0) {
-      document.getElementById('seedBtn').classList.remove('hidden');
-    } else {
-      document.getElementById('seedBtn').classList.add('hidden');
-    }
-  }
-
-  // ====== CLOSE MODAL ON OVERLAY CLICK ======
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
       if (e.target === this) this.classList.remove('active');
     });
   });
 
-  // ====== KEYBOARD SHORTCUTS ======
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
     }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      document.getElementById('searchInput').focus();
-    }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-      e.preventDefault();
-      openAddModal();
-    }
   });
 
   // ====== INIT ======
-  loadNotes();
+  initPostsListener();
+  initNotesListener();
 </script>
 </body>
 </html>
